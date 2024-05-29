@@ -1,0 +1,8 @@
+{
+  "name": "tritek",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "7b002478"
+}
