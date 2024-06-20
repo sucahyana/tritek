@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
 import ContainerStarter from "../components/Organisms/ContainerStarter.jsx";
 import DetailHeader from "../components/Molecules/DetailHeader.jsx";
 import DetailInfo from "../components/Molecules/DetailInfo.jsx";
 import MaterialHistory from "../components/Molecules/Materials/MaterialHistory.jsx";
 import ApiService from '../services/ApiService.jsx';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { Box } from '@mui/system';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const MaterialDetail = () => {
     const { id } = useParams();
@@ -15,10 +21,9 @@ const MaterialDetail = () => {
     const [history, setHistory] = useState(null);
 
     useEffect(() => {
-        const fetchMaterial = async () => {
+        async function fetchMaterial() {
             try {
                 const response = await ApiService.getMaterial(id);
-
                 setMaterial(response.material);
                 setHistory(response.history);
             } catch (err) {
@@ -26,32 +31,59 @@ const MaterialDetail = () => {
             } finally {
                 setLoading(false);
             }
-        };
-
+        }
         fetchMaterial();
     }, [id]);
-console.log('ini adlaha material',material)
-    const contentFish = () => {
-        return (
-            <h1>
-                Nothing Info
-            </h1>
-        )
-    }
-    const contentCat = () => {
-        return (
-            <h1 className={`text-center font-medium text-2xl text-white uppercase`}>
-                {material.total_quantity} {material.unit}
-            </h1>
-        )
-    }
+
+    const contentFish = () => (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
+            <Card sx={{ maxWidth: 345, bgcolor: 'error.main' }}>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div" color="common.white">
+                        Tidak Ada Informasi
+                    </Typography>
+                    <Typography variant="body2" color="common.white">
+                        Informasi lebih lanjut tidak tersedia.
+                    </Typography>
+                </CardContent>
+            </Card>
+        </motion.div>
+    );
+
+    const contentCat = () => (
+        <motion.div
+            initial={{ x: -100 }}
+            animate={{ x: 0 }}
+            transition={{ type: 'spring', stiffness: 100 }}
+        >
+            <Card sx={{ maxWidth: 345, bgcolor: 'primary.main' }}>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div" color="primary.contrastText">
+                    {material.total_quantity} {material.unit}
+                    </Typography>
+                    <Typography variant="body2" color="primary.contrastText">
+                       Jumlah Material
+                    </Typography>
+                </CardContent>
+            </Card>
+        </motion.div>
+    );
+
     const content = () => {
         if (loading) {
-            return <div className="text-white text-center">Loading...</div>;
+            return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>;
         }
 
         if (error) {
-            return <div className="text-white text-center">Error: {error.message}</div>;
+            return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Typography>Error: {error.message}</Typography>
+            </Box>;
         }
 
         return (

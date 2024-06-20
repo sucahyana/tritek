@@ -5,6 +5,7 @@ import { Button } from 'primereact/button';
 import { MdAddToPhotos } from 'react-icons/md';
 import { InputText } from 'primereact/inputtext';
 import { Checkbox } from 'primereact/checkbox';
+import { motion } from 'framer-motion';
 
 const CardList = ({
     title,
@@ -111,7 +112,12 @@ const CardList = ({
     };
 
     return (
-        <div className="p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 shadow-md rounded-xl">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 shadow-md rounded-xl"
+        >
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
                 <h1 className="text-2xl text-white font-medium">{title}</h1>
                 <div className="flex flex-wrap items-center gap-2">
@@ -154,12 +160,12 @@ const CardList = ({
                     className="text-sm p-2 rounded bg-martinique-200 border border-martinique-300 w-full lg:w-1/2 focus:outline-none focus:ring-2 focus:ring-martinique-500 shadow"
                 />
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto text-left">
                 <table className="min-w-full bg-martinique-100 rounded-xl shadow-md overflow-hidden">
                     <thead>
                         <tr className="bg-martinique-600 text-white">
                             {editMode && enableSelect && (
-                                <th className="px-4 py-2 lg:px-6">
+                                <th className="px-2 py-2 lg:px-6">
                                     <Checkbox
                                         onChange={(e) => setSelectedRows(e.checked ? filteredData.map((_, index) => index) : [])}
                                         checked={selectedRows.length === filteredData.length}
@@ -167,7 +173,7 @@ const CardList = ({
                                 </th>
                             )}
                             {headers.map(header => (
-                                <th key={header.field} className="px-4 py-2 lg:px-6">
+                                <th key={header.field} className="px-2 py-2 lg:px-6">
                                     {header.header}
                                 </th>
                             ))}
@@ -177,10 +183,10 @@ const CardList = ({
                         {filteredData.map((rowData, rowIndex) => (
                             <tr
                                 key={rowIndex}
-                                className={`${rowIndex % 2 === 0 ? 'bg-martinique-300' : 'bg-martinique-200'} hover:bg-martinique-200 border-b border-martinique-300`}
+                                className={`${rowIndex % 2 === 0 ? 'bg-martinique-300' : 'bg-martinique-200'} hover:bg-martinique-200 border-b border-martinique-300 text-gray-900 font-bold`}
                             >
                                 {editMode && enableSelect && (
-                                    <td className="px-4 py-2 lg:px-6">
+                                    <td className="px-2 py-2 lg:px-6">
                                         <Checkbox
                                             onChange={(e) => handleRowSelection(e, rowIndex)}
                                             checked={selectedRows.includes(rowIndex)}
@@ -190,7 +196,7 @@ const CardList = ({
                                 {headers.map(header => (
                                     <td
                                         key={header.field}
-                                        className="px-4 py-2 lg:px-6"
+                                        className="px-2 py-2 lg:px-6"
                                         onDoubleClick={() => handleDoubleClick(rowIndex, header.field)}
                                     >
                                         {editRowIndex === rowIndex && editField === header.field ? (
@@ -211,7 +217,7 @@ const CardList = ({
                     </tbody>
                 </table>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

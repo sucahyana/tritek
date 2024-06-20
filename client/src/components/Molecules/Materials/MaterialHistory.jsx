@@ -29,7 +29,6 @@ const MaterialHistory = ({ material, history }) => {
             await ApiService.deleteMaterialHistory(historyId);
         } catch (error) {
             console.error('Failed to delete material history:', error);
-            // Handle error
         }
     };
 
@@ -96,7 +95,7 @@ const MaterialHistory = ({ material, history }) => {
                 core_id={material.id}
             />}
             onUpdate={handleUpdateHistory}
-            onDelete={handleDeleteHistory} // Tambahkan prop onDelete dan fungsi handleDeleteHistory
+            onDelete={handleDeleteHistory}
         />
     );
 };

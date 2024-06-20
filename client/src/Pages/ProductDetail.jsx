@@ -35,7 +35,7 @@ const ProductDetail = () => {
 
         fetchProduct();
     }, [id]);
-    console.log("ini adalah proses",processes)
+
     const content = () => {
         if (loading) {
             return <div className="text-white text-center">Loading...</div>;
@@ -53,17 +53,17 @@ const ProductDetail = () => {
                     info={product}
                     infoWaste={'Product Siap'}
                     pageName={'Product Detail'}
-                    infoReady={'Total Inventory'}
-                    contentCat={<ContentCat productReady={product.total_quantity} unit={product.unit} progress={processes} update={product.updated_at} />}
+                    infoReady={'Progress Thumb'}
+                    contentCat={<ContentCat productReady={product.total_quantity} unit={product.unit} progress={processes} update={product.updated_at} product={product}/>}
                     contentFish={<ContentFish productReady={product.total_quantity} unit={product.unit} update={product.updated_at} />}
                 />
-                <DataProduct material={product} processes={processes} />
+                <DataProduct product={product} processes={processes} />
             </div>
         );
     };
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-700 text-white">
             <ContainerStarter Content={content()} />
         </div>
     );

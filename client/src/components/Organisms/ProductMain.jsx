@@ -7,24 +7,6 @@ import FormNewProduct from "../Molecules/Products/FormNewProduct.jsx";
 import {useSelector} from 'react-redux';
 import React from "react";
 
-const data = [
-    {
-        id: 1,
-        created_at: '2024-05-01',
-        stok: 10,
-        name: 'Korek',
-        unit: 'KG',
-        weight: '200 gr',
-        reason: 'Kualitas tidak memenuhi standar',
-        user: {
-            id: 1,
-            name: 'John Doe',
-            profile_image: 'https://example.com/profile-image.jpg',
-            status: 'Bergabung',
-        },
-    },
-    // Tambahkan data lainnya sesuai kebutuhan
-];
 
 const ProductMain = () => {
     const navigate = useNavigate();
@@ -129,7 +111,7 @@ const ProductMain = () => {
     ];
 
     const handleDetailClick = (rowData) => {
-        navigate(`/product/${rowData.id}`);
+        navigate(`/product/${rowData.model}`);
     };
 
     const headers = [

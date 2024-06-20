@@ -1,6 +1,7 @@
 import React from 'react';
 import LeftSidebar from '../Molecules/SideBar';
 import Navbar from "../Molecules/Navbar.jsx";
+import { motion } from 'framer-motion';
 
 const ContainerStarter = ({ Content }) => {
     return (
@@ -8,9 +9,12 @@ const ContainerStarter = ({ Content }) => {
             <LeftSidebar className="hidden lg:block"/>
             <div className="flex flex-grow">
 
-                <main className="flex-grow p-4 sm:p-8">
+                <motion.div className="flex-grow p-4 sm:p-8" initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
                     {Content}
-                </main>
+                </motion.div>
             </div>
         </div>
     );

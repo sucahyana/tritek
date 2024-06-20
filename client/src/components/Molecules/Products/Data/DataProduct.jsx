@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import * as XLSX from 'xlsx';
 
@@ -12,24 +13,6 @@ import Button from '@mui/material/Button';
 import ReportProses from "../ReportProsses.jsx";
 import ExternalProsses from "@/components/Molecules/Products/Data/ExternalProsses.jsx";
 import Packaging from "@/components/Molecules/Products/Data/Packaging.jsx";
-
-
-export const materialData = {
-    history: [
-        { created_at: '2024-06-01', unit: 'kg', total: 50, status: 'Approved' },
-        { created_at: '2024-06-02', unit: 'kg', total: 30, status: 'Pending' },
-        { created_at: '2024-06-03', unit: 'kg', total: 20, status: 'Rejected' },
-    ],
-};
-
-export const tabsData = [
-    { label: 'stamping', title: 'Riwayat Stamping', buttonLabel: 'Laporan Stamping', history: materialData.history },
-    { label: 'Paket mas', title: 'Riwayat Paket Mas', buttonLabel: 'Laporan Paket Mas', history: materialData.history },
-    { label: 'Ngopi Mas', title: 'Riwayat Ngopi Mas', buttonLabel: 'Laporan Ngopi Mas', history: materialData.history },
-    { label: 'Anjay', title: 'Riwayat Anjay', buttonLabel: 'Laporan Anjay', history: materialData.history },
-    { label: 'External Prosses', title: 'Riwayat Prosses Diluar PT', component: <ExternalProsses /> },
-    { label: 'Pengemasan', title: 'Riwayat Prosses Pengemasan', component: <Packaging /> },
-];
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -52,50 +35,59 @@ const TabPanel = (props) => {
     );
 };
 
-const DataProduct = () => {
+const DataProduct = ({ product, processes }) => {
     const [value, setValue] = useState(0);
     const [formData, setFormData] = useState([]);
+
+    const materials = useSelector(state => state.material.materials);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    // Fungsi untuk mengambil data dari API
-    const fetchData = async () => {
-        // Gantilah URL ini dengan endpoint API Anda yang sebenarnya
-        const response = await fetch('https://api.example.com/report');
-        const data = await response.json();
-        // Contoh data yang mungkin diterima dari API
-        const formattedData = data.map(item => ({
-            label: item.fieldName, // Nama field dari API
-            value: '' // Kosongkan untuk diisi oleh operator
-        }));
-        setFormData(formattedData);
-    };
-
     useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch('https://api.example.com/report');
+            const data = await response.json();
+            const formattedData = data.map(item => ({
+                label: item.fieldName,
+                value: '' 
+            }));
+            setFormData(formattedData);
+        };
+
         fetchData();
     }, []);
+
+    const getMaterialName = (materialId) => {
+        const material = materials.find(mat => mat.id === materialId);
+        return material ? material.name : 'Unknown';
+    };
 
     const dataTable = (tabData) => {
         if (tabData.component) {
             return tabData.component;
         }
 
+        const dataWithMaterialNames = tabData.history.map(item => ({
+            ...item,
+            material: getMaterialName(item.material_id)
+        }));
+
         return (
             <CardList
                 title={tabData.title}
                 buttonLabel={tabData.buttonLabel}
-                data={tabData.history}
+                data={dataWithMaterialNames}
                 headers={[
                     { field: 'created_at', header: 'Tanggal' },
                     { field: 'author', header: 'Author' },
                     { field: 'unit', header: 'Satuan/Unit barang jadi' },
                     { field: 'material', header: 'Material' },
-                    { field: 'total', header: 'Jumlah' },
-                    { field: 'not_good', header: 'NG' },
-                    { field: 'good', header: 'Good' },
-                    { field: 'reason', header: 'Alasan/Keterangan' },
+                    { field: 'total_quantity', header: 'Jumlah' },
+                    { field: 'total_not_goods', header: 'NG' },
+                    { field: 'total_goods', header: 'Good' },
+                    { field: 'notes', header: 'Alasan/Keterangan' },
                 ]}
                 globalFilterPlaceholder="Search history..."
                 modalContent={<FormInput
@@ -141,6 +133,38 @@ const DataProduct = () => {
         XLSX.writeFile(workbook, "laporan-produksi.xlsx");
     };
 
+    let tabsData = []; // Inisialisasi array tabsData
+
+    // Add processes tabs, excluding 'External Process' and 'Packaging'
+    processes.forEach(process => {
+        if (process.name !== 'External Process' && process.name !== 'Packaging') {
+            tabsData.push({
+                label: process.name,
+                title: `Riwayat ${process.name}`,
+                buttonLabel: `Laporan ${process.name}`,
+                history: process.product_processes
+            });
+        }
+    });
+
+    // Add 'External Process' tab if it exists
+    processes.forEach(process => {
+        if (process.name === 'External Process') {
+            tabsData.push({
+                label: 'External Process',
+                title: 'Riwayat Proses Diluar PT',
+                component: <ExternalProsses />
+            });
+        }
+    });
+
+    // Add 'Packaging' tab
+    tabsData.push({
+        label: 'Pengemasan',
+        title: 'Riwayat Proses Pengemasan',
+        component: <Packaging />
+    });
+
     return (
         <Box sx={{ width: '100%' }}>
             <Tabs
@@ -161,13 +185,11 @@ const DataProduct = () => {
                     },
                 }}
             >
-                {tabsData.length > 0 ? tabsData.map((tab, index) => (
+                {tabsData.map((tab, index) => (
                     <Tab key={index} label={tab.label} />
-                )) : (
-                    <Tab label="No Tabs Available" />
-                )}
+                ))}
             </Tabs>
-            {tabsData.length > 0 ? tabsData.map((tab, index) => (
+            {tabsData.map((tab, index) => (
                 <TabPanel key={index} value={value} index={index}>
                     {dataTable(tab)}
                     <Box display="flex" justifyContent="space-between" mt={2}>
@@ -183,11 +205,7 @@ const DataProduct = () => {
                         </Button>
                     </Box>
                 </TabPanel>
-            )) : (
-                <TabPanel value={value} index={0}>
-                    <p>No tab data available</p>
-                </TabPanel>
-            )}
+            ))}
         </Box>
     );
 };
