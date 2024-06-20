@@ -7,25 +7,25 @@ import { InputText } from 'primereact/inputtext';
 import { Checkbox } from 'primereact/checkbox';
 
 const CardList = ({
-                      title,
-                      data = [],
-                      headers = [],
-                      globalFilterPlaceholder,
-                      modalContent,
-                      buttonLabel,
-                      enableEdit = true,
-                      enableSelect = true,
-                      onUpdate, // Prop untuk menangani pembaruan data
-                      onDelete // Prop untuk menangani penghapusan data
-                  }) => {
+    title,
+    data = [],
+    headers = [],
+    globalFilterPlaceholder,
+    modalContent,
+    buttonLabel,
+    enableEdit = true,
+    enableSelect = true,
+    onUpdate,
+    onDelete
+}) => {
     const [globalFilter, setGlobalFilter] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editRowIndex, setEditRowIndex] = useState(null);
     const [editField, setEditField] = useState(null);
     const [editValue, setEditValue] = useState('');
     const [selectedRows, setSelectedRows] = useState([]);
-    const [editMode, setEditMode] = useState(false); // State untuk edit mode
-    const [filteredData, setFilteredData] = useState(data); // State untuk menyimpan data yang akan diubah
+    const [editMode, setEditMode] = useState(false);
+    const [filteredData, setFilteredData] = useState(data);
 
     useEffect(() => {
         setFilteredData(data);
@@ -72,7 +72,7 @@ const CardList = ({
             const updatedData = [...filteredData];
             updatedData[rowIndex][field] = editValue;
             setFilteredData(updatedData);
-            onUpdate(updatedData[rowIndex].id, { [field]: editValue }); // Panggil onUpdate prop untuk memperbarui data
+            onUpdate(updatedData[rowIndex].id, { [field]: editValue });
         }
 
         setEditRowIndex(null);
@@ -99,7 +99,7 @@ const CardList = ({
 
     const handleDeleteSelected = () => {
         selectedRows.forEach(rowIndex => {
-            onDelete(filteredData[rowIndex].id); // Panggil onDelete prop untuk menghapus data
+            onDelete(filteredData[rowIndex].id);
         });
         setSelectedRows([]);
         setFilteredData(filteredData.filter((_, index) => !selectedRows.includes(index)));
@@ -107,31 +107,31 @@ const CardList = ({
 
     const toggleEditMode = () => {
         setEditMode(!editMode);
-        setSelectedRows([]); // Reset selected rows ketika edit mode berubah
+        setSelectedRows([]);
     };
 
     return (
         <div className="p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 shadow-md rounded-xl">
-            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center">
-                <h1 className="text-2xl text-white font-medium lg:mb-0">{title}</h1>
-                <div className="flex items-center">
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+                <h1 className="text-2xl text-white font-medium">{title}</h1>
+                <div className="flex flex-wrap items-center gap-2">
                     <Button
                         icon={<MdAddToPhotos size={26} />}
-                        className="lg:ml-4 bg-blue-400 p-2 text-martinique-800 hover:scale-105 gap-2 hover:shadow-inner font-bold"
+                        className="bg-blue-400 p-2 text-martinique-800 hover:scale-105 gap-2 hover:shadow-inner font-bold"
                         label={buttonLabel}
                         onClick={openModal}
                     />
                     {enableSelect && (
                         <Button
                             label="Select"
-                            className="lg:ml-4 bg-yellow-400 p-2 text-martinique-800 hover:scale-105 gap-2 hover:shadow-inner font-bold"
+                            className="bg-yellow-400 p-2 text-martinique-800 hover:scale-105 gap-2 hover:shadow-inner font-bold"
                             onClick={toggleEditMode}
                         />
                     )}
                     {editMode && enableSelect && (
                         <Button
                             label="Delete Selected"
-                            className="lg:ml-4 bg-red-400 p-2 text-white hover:scale-105 gap-2 hover:shadow-inner font-bold"
+                            className="bg-red-400 p-2 text-white hover:scale-105 gap-2 hover:shadow-inner font-bold"
                             onClick={handleDeleteSelected}
                             disabled={selectedRows.length === 0}
                         />
@@ -139,7 +139,6 @@ const CardList = ({
                 </div>
             </div>
             <hr className="border-martinique-500 my-4 border" />
-            {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 flex w-screen justify-center items-center bg-black bg-opacity-50" onClick={closeModal}>
                     <div onClick={handleModalClick}>
@@ -158,58 +157,57 @@ const CardList = ({
             <div className="overflow-x-auto">
                 <table className="min-w-full bg-martinique-100 rounded-xl shadow-md overflow-hidden">
                     <thead>
-                    <tr className="bg-martinique-600 text-white">
-                        {editMode && enableSelect && (
-                            <th className="px-6 py-4 text-left lg:px-12">
-                                <Checkbox
-                                    onChange={(e) => setSelectedRows(e.checked ? filteredData.map((_, index) => index) : [])}
-                                    checked={selectedRows.length === filteredData.length}
-                                />
-                            </th>
-                        )}
-                        {headers.map(header => (
-                            <th key={header.field} className="px-6 py-4 text-left lg:px-12">
-                                {header.header}
-                            </th>
-                        ))}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {filteredData.map((rowData, rowIndex) => (
-                        <tr
-                            key={rowIndex}
-                            className={`${rowIndex % 2 === 0 ? 'bg-martinique-300' : 'bg-martinique-200'} hover:bg-martinique-200 border-b border-martinique-300`}
-                        >
+                        <tr className="bg-martinique-600 text-white">
                             {editMode && enableSelect && (
-                                <td className="px-6 py-4 text-martinique-900 lg:px-12 font-medium">
+                                <th className="px-4 py-2 lg:px-6">
                                     <Checkbox
-                                        onChange={(e) => handleRowSelection(e, rowIndex)}
-                                        checked={selectedRows.includes(rowIndex)}
+                                        onChange={(e) => setSelectedRows(e.checked ? filteredData.map((_, index) => index) : [])}
+                                        checked={selectedRows.length === filteredData.length}
                                     />
-                                </td>
+                                </th>
                             )}
                             {headers.map(header => (
-                                <td
-                                    key={header.field}
-                                    className="px-6 py-4 text-martinique-900 lg:px-12 font-medium"
-                                    onDoubleClick={() => handleDoubleClick(rowIndex, header.field)}
-                                >
-                                    {editRowIndex === rowIndex && editField === header.field ? (
-                                        <InputText
-                                            value={editValue}
-                                            onChange={handleInputChange}
-                                            onBlur={() => handleBlur(rowIndex, header.field)}
-                                            autoFocus
-                                            className="w-full px-2 py-1 border rounded bg-white"
-                                        />
-                                    ) : (
-                                        formatColumnBody(rowData, header.field, header.customRender)
-                                    )}
-                                </td>
+                                <th key={header.field} className="px-4 py-2 lg:px-6">
+                                    {header.header}
+                                </th>
                             ))}
-
                         </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+                        {filteredData.map((rowData, rowIndex) => (
+                            <tr
+                                key={rowIndex}
+                                className={`${rowIndex % 2 === 0 ? 'bg-martinique-300' : 'bg-martinique-200'} hover:bg-martinique-200 border-b border-martinique-300`}
+                            >
+                                {editMode && enableSelect && (
+                                    <td className="px-4 py-2 lg:px-6">
+                                        <Checkbox
+                                            onChange={(e) => handleRowSelection(e, rowIndex)}
+                                            checked={selectedRows.includes(rowIndex)}
+                                        />
+                                    </td>
+                                )}
+                                {headers.map(header => (
+                                    <td
+                                        key={header.field}
+                                        className="px-4 py-2 lg:px-6"
+                                        onDoubleClick={() => handleDoubleClick(rowIndex, header.field)}
+                                    >
+                                        {editRowIndex === rowIndex && editField === header.field ? (
+                                            <InputText
+                                                value={editValue}
+                                                onChange={handleInputChange}
+                                                onBlur={() => handleBlur(rowIndex, header.field)}
+                                                autoFocus
+                                                className="w-full px-2 py-1 border rounded bg-white"
+                                            />
+                                        ) : (
+                                            formatColumnBody(rowData, header.field, header.customRender)
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>

@@ -55,4 +55,8 @@ class Process extends Model
 					->withPivot('id', 'date', 'author', 'unit', 'material_id', 'quantity_used', 'process_send_total', 'process_receive_total', 'total_goods', 'total_not_goods', 'status', 'notes')
 					->withTimestamps();
 	}
+	public function productProcesses()
+    {
+        return $this->hasMany(ProductProcess::class);
+    }
 }

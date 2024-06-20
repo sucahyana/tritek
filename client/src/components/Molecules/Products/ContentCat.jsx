@@ -22,7 +22,7 @@ const ContentCat = ({ productReady, unit, progress, update }) => {
                                 style={{ color: randomHexColor(), animationDelay: `${index * 1}s` }}
                             />
                             <h1 className={'item-center align-middle text-center justify-center'}>
-                                {progressItem.progress_name}: {progressItem.stok} {progressItem.unit}
+                                {progressItem.name}: {progressItem.total_quantity} {progressItem.unit}
                             </h1>
                         </section>
                     ))}
@@ -31,9 +31,9 @@ const ContentCat = ({ productReady, unit, progress, update }) => {
                     series={[
                         {
                             data: progress.map(progressItem => ({
-                                id: progressItem.progress_name,
-                                label: progressItem.progress_name,
-                                value: Number(progressItem.stok),
+                                id: progressItem.name,
+                                label: progressItem.name,
+                                value: Number(progressItem.total_quantity),
                             })),
                             highlightScope: { faded: 'global', highlighted: 'item' },
                             faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },

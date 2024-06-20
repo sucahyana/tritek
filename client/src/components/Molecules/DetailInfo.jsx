@@ -1,4 +1,5 @@
 const DetailInfo = ({info,contentFish,contentCat,pageName,infoWaste,infoReady}) => (
+
     <header className="grid grid-col-3 grid-flow-col gap-4">
         <section
             className="p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 shadow-md rounded-xl w-full row-span-3">

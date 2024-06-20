@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -38,47 +34,48 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ProductProcess extends Model
 {
-	use HasUuids;
+    use HasUuids;
 
-	public $incrementing = false;
-	protected $table = 'product_process';
-	protected $casts = [
-		'date' => 'datetime',
-		'process_send_total' => 'float',
-		'process_receive_total' => 'float',
-		'total_goods' => 'float',
-		'total_not_goods' => 'float',
-		'total_quantity' => 'float'
-	];
+    public $incrementing = false;
+    protected $table = 'product_process';
+    protected $casts = [
+        'date' => 'datetime',
+        'process_send_total' => 'float',
+        'process_receive_total' => 'float',
+        'total_goods' => 'float',
+        'total_not_goods' => 'float',
+        'total_quantity' => 'float'
+    ];
 
-	protected $fillable = [
-		'product_id',
-		'process_id',
-		'date',
-		'author',
-		'unit',
-		'material_id',
-		'process_send_total',
-		'process_receive_total',
-		'total_goods',
-		'total_not_goods',
-		'total_quantity',
-		'status',
-		'notes'
-	];
+    protected $fillable = [
+        'product_id',
+        'process_id',
+        'date',
+        'author',
+        'unit',
+        'material_id',
+        'quantity_used',
+        'process_send_total',
+        'process_receive_total',
+        'total_goods',
+        'total_not_goods',
+        'total_quantity',
+        'status',
+        'notes'
+    ];
 
-	public function material()
-	{
-		return $this->belongsTo(Material::class);
-	}
+    public function material()
+    {
+        return $this->belongsTo(Material::class);
+    }
 
-	public function process()
-	{
-		return $this->belongsTo(Process::class);
-	}
+    public function process()
+    {
+        return $this->belongsTo(Process::class);
+    }
 
-	public function product()
-	{
-		return $this->belongsTo(Product::class);
-	}
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

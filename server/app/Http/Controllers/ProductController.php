@@ -98,15 +98,25 @@ class ProductController extends Controller
 		}
 	}
 
-	public function show($id)
-	{
-		try {
-			$products = Product::findOrFail($id);
-			return $this->successResponse('Product berhasil diambil', $products);
-		} catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-			return $this->notFoundResponse('Product tidak ditemukan');
-		} catch (\Exception $e) {
-			return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
-		}
-	}
+	public function show(Request $request, $id)
+{
+    try {
+        $product = Product::where('model', $id)->first();
+        if (!$product) {
+            return $this->notFoundResponse('Product tidak ditemukan');
+        }
+
+        // Memuat proses terkait dengan product dan laporan produksi untuk setiap proses
+        $processes = Process::with('productProcesses')->where('product_id', $product->id)->get();
+
+        $response = [
+            'product' => $product,
+            'processes' => $processes
+        ];
+        return $this->successResponse('Data berhasil diambil', $response);
+    } catch (\Exception $e) {
+        return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+    }
+}
+	
 }

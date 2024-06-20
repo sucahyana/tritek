@@ -18,29 +18,33 @@ class ProductProcessController extends Controller
 			$validated = $request->validate([
 				'product_id' => 'required|exists:products,id',
 				'process_id' => 'required|exists:processes,id',
-				'date' => 'required|date',
-				'process_send_total' => 'required|numeric',
-				'process_receive_total' => 'required|numeric',
-				'total_goods' => 'required|numeric',
-				'total_not_goods' => 'required|numeric',
-				'total_quantity' => 'required|numeric',
+				'material_id' => 'required|exists:materials,id',
+				'date' => 'sometimes|date',
+				'author' => 'sometimes|string',
+				'process_send_total' => 'sometimes|numeric',
+				'process_receive_total' => 'sometimes|numeric',
+				'total_goods' => 'sometimes|numeric',
+				'total_not_goods' => 'sometimes|numeric',
+				'total_quantity' => 'sometimes|numeric',
 				'unit' => [
-					'required',
+					'sometimes',
 					'string',
 					Rule::in(array_merge(UnitOptions::$massUnits, UnitOptions::$lengthUnits, UnitOptions::$otherUnits))
 				],
 				'status' => [
-					'required',
+					'sometimes',
 					'string',
 					Rule::in(['plus', 'minus']),
 				],
-				'notes' => 'required|string',
+				'notes' => 'sometimes|string',
 			]);
 
 			$productProcess = ProductProcess::create([
 				'product_id' => $validated['product_id'],
 				'process_id' => $validated['process_id'],
+				'material_id' => $validated['material_id'],
 				'date' => $validated['date'],
+				'author' => $validated['author'],
 				'process_send_total' => $validated['process_send_total'],
 				'process_receive_total' => $validated['process_receive_total'],
 				'total_goods' => $validated['total_goods'],

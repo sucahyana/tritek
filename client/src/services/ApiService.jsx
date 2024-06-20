@@ -3,7 +3,6 @@ import {notifyError, notifyLoading, notifySuccess, stopLoading} from '../compone
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api/v1',
-    timeout: 10000,
 });
 
 class ApiService {
@@ -111,7 +110,7 @@ class ApiService {
     static async getProduct(id) {
         try {
             notifyLoading('Mengambil Products...');
-            const response = await api.get(`/product/history/${id}`);
+            const response = await api.get(`/product/${id}`);
             stopLoading();
             if (response.data.success) {
                 return response.data.data;
