@@ -6,6 +6,7 @@ import {unitOptions} from "../constants/UnitOption.jsx";
 import FormNewProduct from "../Molecules/Products/FormNewProduct.jsx";
 import {useSelector} from 'react-redux';
 import React from "react";
+import { Skeleton } from 'primereact/skeleton'; // Added import for Skeleton component
 
 
 const ProductMain = () => {
@@ -137,8 +138,8 @@ const ProductMain = () => {
 
     return (
         <div>
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
+            {loading && <Skeleton width="100%" height="2rem" />}
+            {error && <Skeleton width="100%" height="2rem" style={{ backgroundColor: '#ff0000' }} />}
             {message && <p className="text-green-500">{message}</p>}
             {errors && <p className="text-red-500">{Object.values(errors).flat().join(' ')}</p>}
             <CardList

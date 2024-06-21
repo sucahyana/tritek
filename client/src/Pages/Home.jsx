@@ -1,13 +1,17 @@
 import React from 'react';
-import CardList from "../components/Molecules/CardList.jsx";
 import ContainerStarter from "../components/Organisms/ContainerStarter.jsx";
+import ProductCard from "../components/Molecules/Products/ProductCard.jsx";
 
 const Home = () => {
+    const data = {
+        name: "Product Name",
+        description: "Product Description",
+        imageUrl: "https://example.com/image.jpg"
+    };
 
     return (
         <div className={`min-h-screen`}>
-            {/* Panggil CardList dan berikan prop data */}
-            <ContainerStarter Content={<CardList data={data} />} />
+            <ContainerStarter Content={<ProductCard product={data} />} />
         </div>
     );
 };

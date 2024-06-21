@@ -7,6 +7,8 @@ import DataProduct from "../components/Molecules/Products/Data/DataProduct.jsx";
 import ContentCat from "@/components/Molecules/Products/ContentCat.jsx";
 import ContentFish from "@/components/Molecules/Products/ContentFish.jsx";
 import ApiService from '../services/ApiService'; // Import the ApiService
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 const ProductDetail = () => {
     const { id } = useParams();
@@ -38,11 +40,17 @@ const ProductDetail = () => {
 
     const content = () => {
         if (loading) {
-            return <div className="text-white text-center">Loading...</div>;
+            // Menggunakan CircularProgress dari MUI untuk loading
+            return <div className="flex justify-center items-center h-full">
+                <CircularProgress color="secondary" />
+            </div>;
         }
 
         if (error) {
-            return <div className="text-white text-center">Error: {error.message}</div>;
+            // Menggunakan Alert dari MUI untuk menampilkan error
+            return <div className="text-center">
+                <Alert severity="error">{error.message}</Alert>
+            </div>;
         }
 
         return (
