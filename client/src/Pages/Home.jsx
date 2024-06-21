@@ -33,13 +33,19 @@ const Home = () => {
     const [rowsProduct, setRowsProduct] = useState(5);
     const [firstMaterial, setFirstMaterial] = useState(0);
     const [rowsMaterial, setRowsMaterial] = useState(5);
-
     useEffect(() => {
         if (searchTerm) {
+            // Filter products by name or model
             const filteredProds = products.filter(product =>
-                product.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                product.model.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            // Filter materials by name or model
             const filteredMats = materials.filter(material =>
-                material.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                material.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                material.model.toLowerCase().includes(searchTerm.toLowerCase())
+            );
 
             setFilteredProducts(filteredProds);
             setFilteredMaterials(filteredMats);
@@ -59,6 +65,7 @@ const Home = () => {
         setRowsMaterial(e.rows);
     };
 
+
     const content = () => {
         return (
             <div className="flex flex-col gap-8 justify-center w-full px-4 py-8 sm:px-6 lg:px-8 text-white">
@@ -72,7 +79,7 @@ const Home = () => {
                             <InputText
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Search by name"
+                                placeholder="Search by name and model"
                                 className="w-full max-w-md mb-4 p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 text-gray-50"
                             />
                         </div>

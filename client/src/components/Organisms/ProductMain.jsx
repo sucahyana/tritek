@@ -6,7 +6,10 @@ import {unitOptions} from "../constants/UnitOption.jsx";
 import FormNewProduct from "../Molecules/Products/FormNewProduct.jsx";
 import {useSelector} from 'react-redux';
 import React from "react";
-import { Skeleton } from 'primereact/skeleton'; // Added import for Skeleton component
+import { Skeleton } from 'primereact/skeleton';
+import {Box} from "@mui/system";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography"; // Added import for Skeleton component
 
 
 const ProductMain = () => {
@@ -135,13 +138,20 @@ const ProductMain = () => {
             )
         },
     ];
+    if (loading) {
+        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress />
+        </Box>;
+    }
 
+    if (error) {
+        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <Typography>Error: {error.message}</Typography>
+        </Box>;
+    }
     return (
         <div>
-            {loading && <Skeleton width="100%" height="2rem" />}
-            {error && <Skeleton width="100%" height="2rem" style={{ backgroundColor: '#ff0000' }} />}
-            {message && <p className="text-green-500">{message}</p>}
-            {errors && <p className="text-red-500">{Object.values(errors).flat().join(' ')}</p>}
+
             <CardList
                 title={'Products List'}
                 showAddButton={true}

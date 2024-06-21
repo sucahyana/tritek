@@ -7,6 +7,9 @@ import CardList from '../Molecules/CardList.jsx';
 import FormInput from '../Molecules/Materials/FormInput.jsx';
 import { unitOptions } from '../constants/UnitOption.jsx';
 import {createMaterial, fetchMaterials} from "@/stores/actions/materialActions.js";
+import {Box} from "@mui/system";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 
 
 
@@ -44,13 +47,20 @@ const MaterialMain = () => {
             ),
         },
     ];
+    if (loading) {
+        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress />
+        </Box>;
+    }
 
+    if (error) {
+        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <Typography>Error: {error.message}</Typography>
+        </Box>;
+    }
     return (
         <div>
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            {message && <p className="text-green-500">{message}</p>}
-            {errors && <p className="text-red-500">{Object.values(errors).flat().join(' ')}</p>}
+
             <CardList
                 title={'Material List'}
                 showAddButton={true}

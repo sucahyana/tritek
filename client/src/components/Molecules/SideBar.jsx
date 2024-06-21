@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaFirstOrder } from "react-icons/fa";
-import { MdMonitor } from "react-icons/md";
+import { GiJigsawBox } from "react-icons/gi";
 import logo from "../../assets/logo.png";
+import {SiMaterialformkdocs} from "react-icons/si";
+import {FaHome} from "react-icons/fa";
 
 const menuItems = [
-    { title: 'Products', icon: <FaFirstOrder size="20px" />, path: '/Products' },
-    { title: 'Materials', icon: <MdMonitor size="20px" />, path: '/Materials' }
+    { title: 'Dashboard', icon: <FaHome size="20px" />, path: '/' },
+    { title: 'Products', icon: <GiJigsawBox size="20px" />, path: '/Products' },
+    { title: 'Materials', icon: <SiMaterialformkdocs size="20px" />, path: '/Materials' }
 ];
 
 export default function LeftSidebar() {
@@ -19,13 +21,11 @@ export default function LeftSidebar() {
             <div className="flex flex-col justify-between w-full mt-12 sm:mt-14 md:mt-16 lg:mt-18">
                 <nav className="-mx-2 space-y-3 sm:space-y-4 md:space-y-5">
                     <div className="space-y-1 sm:space-y-2 md:space-y-3">
-                        <span className="border ml-3 border-martinique-300"></span>
-                        <label className="px-2 text-xs sm:text-sm md:text-base lg:text-lg text-martinique-50 font-semibold">Menu</label>
                         {menuItems.map((item, index) => (
                             <Link
                                 key={index}
                                 to={item.path}
-                                className={`flex items-center px-2 py-1 text-martinique-50 transition-colors duration-300 transform rounded-lg hover:bg-martinique-700 hover:text-white ${location.pathname === item.path ? 'bg-martinique-700 text-white' : ''}`}
+                                className={`flex items-center px-2 py-2  text-martinique-50 transition-colors duration-300 transform rounded-lg hover:bg-martinique-700 hover:text-white ${location.pathname === item.path ? 'bg-martinique-700 text-white' : ''}`}
                                 style={{ transition: 'all 0.3s ease-in-out' }}
                             >
                                 {item.icon}
