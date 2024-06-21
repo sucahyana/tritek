@@ -1,34 +1,60 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
 import Typography from '@mui/material/Typography';
-import { Button } from 'primereact/button';
+import CardHeader from '@mui/material/CardHeader';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
+import { format } from 'date-fns';
+import { GiJigsawBox } from "react-icons/gi";
 
 const ProductCard = ({ product }) => {
+    const navigate = useNavigate();
+    const formattedUpdateDate = product.update_date ? format(new Date(product.update_date), 'PP') : 'N/A';
+
+    const handleCardClick = () => {
+        navigate(`/product/${product.model}`);
+    };
+
     return (
-        <Card sx={{ maxWidth: 345 }} className='bg-blue-200 !important'>
-            <Typography variant="body2" color="text.secondary">
-                {product.model}
-            </Typography>
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                    {product.name}
+        <Card 
+            sx={{ 
+                maxWidth: 345, 
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': { transform: 'scale(1.05)', cursor: 'pointer' },
+                boxShadow: 3,
+                borderRadius: 2
+            }}
+            className="bg-gradient-to-r from-martinique-200 to-martinique-400"
+            onClick={handleCardClick}
+        >
+            <CardHeader
+                avatar={
+                    <GiJigsawBox  className={`text-${product.status === 'Active' ? 'martinique-500' : 'red-500'}`} size={32} />
+                }
+                title= <span className='text-base font-bold'>{product.name}</span>
+                subheader={ 
+                    <Typography variant="body2" color="text.secondary">
+                        <span className='text-base font-bold'>{product.model}</span>
+                    </Typography>
+                }
+            />
+            <CardContent className='flex flex-col'>
+                <Typography variant="h6" component="div" gutterBottom>
+                    Total Quantity: {product.total_quantity} {product.unit}
                 </Typography>
-                
-                <Typography variant="body2" color="text.secondary" className="mt-2">
-                    Stok: {product.stock}
+                <Typography variant="body2" className="text-end" color="text.secondary">
+                <span className='text-base font-bold'> Last Updated: {formattedUpdateDate}</span>
                 </Typography>
-                <Typography variant="body2" className={`mt-1 ${product.isActive ? 'text-green-500' : 'text-red-500'}`}>
-                    Status: {product.isActive ? 'Aktif' : 'Tidak Aktif'}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button
-                    label="Lihat Detailnya"
-                    className="p-button-secondary bg-blue-500 text-white no-underline inline-block text-center no-border px-1 py-1 text-xs sm:p-1 sm:text-sm md:px-2 md:py-1.5 md:text-base font-normal tracking-wider m-1 cursor-pointer rounded-md"
+                <Chip 
+                    className='w-fit '
+                    label={product.status} 
+                    color={product.status === 'Active' ? 'success' : 'warning'} 
+                    sx={{ mt: 1 }}
+                  
                 />
-            </CardActions>
+            </CardContent>
         </Card>
     );
 };
