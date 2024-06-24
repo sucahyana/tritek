@@ -6,6 +6,7 @@ use App\Constants\UnitOptions;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Models\ProductProcess;
+use App\Models\Product;
 use Illuminate\Validation\Rule;
 
 class ProductProcessController extends Controller
@@ -43,19 +44,28 @@ class ProductProcessController extends Controller
 				'product_id' => $validated['product_id'],
 				'process_id' => $validated['process_id'],
 				'material_id' => $validated['material_id'],
-				'date' => $validated['date'],
-				'author' => $validated['author'],
-				'process_send_total' => $validated['process_send_total'],
-				'process_receive_total' => $validated['process_receive_total'],
-				'total_goods' => $validated['total_goods'],
-				'total_not_goods' => $validated['total_not_goods'],
-				'total_quantity' => $validated['total_quantity'],
-				'unit' => $validated['unit'],
-				'status' => $validated['status'],
-				'notes' => $validated['notes'],
+				'date' => $validated['date'] ?? now(),
+				'author' => $validated['author'] ?? 'Unknown',
+				'process_send_total' => $validated['process_send_total'] ?? 0,
+				'process_receive_total' => $validated['process_receive_total'] ?? 0,
+				'total_goods' => $validated['total_goods'] ?? 0,
+				'total_not_goods' => $validated['total_not_goods'] ?? 0,
+				'total_quantity' => $validated['total_quantity'] ?? 0,
+				'unit' => $validated['unit'] ?? 'unit',
+				'status' => $validated['status'] ?? 'plus',
+				'notes' => $validated['notes'] ?? '',
 			]);
 
-			// Tambahkan logika untuk mengupdate data produk di sini
+			// Update product data based on process
+			$product = Product::find($validated['product_id']);
+
+			if ($validated['status'] === 'plus') {
+				$product->total_quantity += $validated['total_quantity'];
+			} else if ($validated['status'] === 'minus') {
+				$product->total_quantity -= $validated['total_quantity'];
+			}
+
+			$product->save();
 
 			return $this->createdResponse('Riwayat proses produk berhasil ditambahkan', $productProcess);
 		} catch (\Illuminate\Validation\ValidationException $e) {
@@ -64,5 +74,4 @@ class ProductProcessController extends Controller
 			return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
 		}
 	}
-
 }
