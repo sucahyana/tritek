@@ -23,6 +23,8 @@ class CreateProductsTable extends Migration
 			$table->float('total_quantity');
 			$table->string('unit');
 			$table->string('status')->nullable();
+            $table->uuid('material_id');
+            $table->foreign('material_id')->references('id')->on('materials')->onDelete('cascade');
 			$table->timestamp('update_date')->useCurrent();
 			$table->timestamps();
 		});

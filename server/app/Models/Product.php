@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Product
- * 
+ *
  * @property string $id
  * @property string $name
  * @property string $description
@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $update_date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Collection|Process[] $processes
  * @property Collection|ProductionReport[] $production_reports
  *
@@ -47,6 +47,7 @@ class Product extends Model
 		'description',
 		'net_weight',
 		'model',
+        'material_id',
 		'material_used',
 		'total_quantity',
 		'unit',

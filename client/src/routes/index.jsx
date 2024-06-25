@@ -8,6 +8,7 @@ import {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {fetchMaterials} from "@/stores/actions/materialActions.js";
 import {fetchProducts} from "@/stores/actions/productAction.js";
+import ProductSetting from "@/Pages/ProductSetting.jsx";
 
 const AppRoutes = () => {
     const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const AppRoutes = () => {
             <Route path="/material/:id" element={<MaterialDetail/>}/>
             <Route path="/products" element={<Products/>}/>
             <Route path="/product/:id" element={<ProductDetail/>}/>
+            <Route path="/product/:id/setting" element={<ProductSetting/>}/>
         </Routes>
     );
 };

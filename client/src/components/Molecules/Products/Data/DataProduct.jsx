@@ -94,24 +94,11 @@ const DataProduct = ({product, processes}) => {
             placeholder: 'Penanggung Jawab Laporan'
         },
         {
-            title: 'Kuantitas',
-            inputName: 'quantity',
-            inputType: 'number',
-            placeholder: 'Masukan Kuantitas'
-        },
-        {
             title: 'Satuan/Unit',
             inputName: 'unit',
             type: 'dropdown',
             options: unitOptions,
             placeholder: 'Masukan Satuan/Unit'
-        },
-        {
-            title: 'Material',
-            inputName: 'material_id',
-            type: 'dropdown',
-            options: materials.map(material => ({label: material.name, value: material.id})),
-            placeholder: 'Pilih Material'
         },
         {
             title: 'Status',
@@ -122,10 +109,16 @@ const DataProduct = ({product, processes}) => {
             placeholder: 'Masukan Status'
         },
         {
-            title: 'Total Barang',
+            title: 'Kuantitas',
+            inputName: 'total_quantity',
+            inputType: 'number',
+            placeholder: 'Masukan Kuantitas'
+        },
+        {
+            title: 'Total Barang OK',
             inputName: 'total_goods',
             inputType: 'number',
-            placeholder: 'Total Barang'
+            placeholder: 'Total Barang OK'
         },
         {
             title: 'Total Barang NG',
@@ -150,6 +143,7 @@ const DataProduct = ({product, processes}) => {
             ...item,
             material: getMaterialName(item.material_id)
         }));
+        console.log(tabData.id)
 
         return (
             <CardList
@@ -173,6 +167,12 @@ const DataProduct = ({product, processes}) => {
                     headerText={tabData.title}
                     submitButtonText={'Tambahkan'}
                     onSubmit={handleSubmitProcess}
+                    core_id={{
+                        'product_id': product.id,
+                        'process_id': tabData.id,
+                        'material_id': product.material_id,
+                    }}
+                    endpoint={'addProductProcessHistory'}
                 />}
             />
         );
@@ -193,7 +193,9 @@ const DataProduct = ({product, processes}) => {
                 label: process.name,
                 title: `Riwayat ${process.name}`,
                 buttonLabel: `Laporan ${process.name}`,
-                history: process.product_processes
+                history: process.product_processes,
+                id: process.id
+
             });
         }
     });

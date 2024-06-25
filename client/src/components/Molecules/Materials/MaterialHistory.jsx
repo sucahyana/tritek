@@ -92,7 +92,7 @@ const MaterialHistory = ({ material, history }) => {
                 headerText={`Atur ${material.name}`}
                 submitButtonText={'Tambahkan'}
                 endpoint="addMaterialHistory"
-                core_id={material.id}
+                core_id={{ material_id: material.id }}
             />}
             onUpdate={handleUpdateHistory}
             onDelete={handleDeleteHistory}

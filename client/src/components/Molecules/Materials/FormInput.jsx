@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
-import { Dialog } from 'primereact/dialog';
+import React, {useState, useEffect} from 'react';
+import {Button} from 'primereact/button';
+import {InputText} from 'primereact/inputtext';
+import {Dropdown} from 'primereact/dropdown';
+import {Dialog} from 'primereact/dialog';
 import ApiService from '../../../services/ApiService.jsx';
+import {fetchMaterials} from "@/stores/actions/materialActions.js";
+import {fetchProduct} from "@/stores/actions/productAction.js";
+import {useDispatch} from "react-redux";
 
-const FormInput = ({ inputs, showDialogOnMount, headerText, submitButtonText, endpoint , core_id }) => {
+const FormInput = ({inputs, showDialogOnMount, headerText, submitButtonText, endpoint, core_id}) => {
     const [formData, setFormData] = useState({});
     const [showDialog, setShowDialog] = useState(showDialogOnMount);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const dispatch = useDispatch();
     const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
@@ -48,10 +52,13 @@ const FormInput = ({ inputs, showDialogOnMount, headerText, submitButtonText, en
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const response = await ApiService[endpoint]({ ...formData, 'material_id': core_id });
+            const response = await ApiService[endpoint]({...formData, ...core_id});
+
+            // Logging the request payload for debugging
+            console.log('Request Payload:', {...formData, core_id});
+            console.log('Response:', response);
 
             setLoading(false);
-            console.log(formData);
             if (response.success) {
                 setSuccessMessage(response.message);
                 setShowDialog(false);
@@ -62,6 +69,9 @@ const FormInput = ({ inputs, showDialogOnMount, headerText, submitButtonText, en
             setLoading(false);
             setErrorMessage('Terjadi kesalahan saat mengirim permintaan.');
             console.error('Error:', error);
+        } finally {
+            dispatch(fetchMaterials)
+            dispatch(fetchProduct)
         }
     };
 
@@ -94,7 +104,8 @@ const FormInput = ({ inputs, showDialogOnMount, headerText, submitButtonText, en
                         <div key={index} className="mb-4">
                             {input.type === 'dropdown' ? (
                                 <div className="mb-2">
-                                    <label htmlFor={input.inputName} className="block text-sm font-medium text-martinique-600">{input.title}</label>
+                                    <label htmlFor={input.inputName}
+                                           className="block text-sm font-medium text-martinique-600">{input.title}</label>
                                     <Dropdown
                                         id={input.inputName}
                                         name={input.inputName}
@@ -109,7 +120,8 @@ const FormInput = ({ inputs, showDialogOnMount, headerText, submitButtonText, en
                                 </div>
                             ) : (
                                 <div className="mb-2">
-                                    <label htmlFor={input.inputName} className="block text-sm font-medium text-martinique-600">{input.title}</label>
+                                    <label htmlFor={input.inputName}
+                                           className="block text-sm font-medium text-martinique-600">{input.title}</label>
                                     <InputText
                                         id={input.inputName}
                                         name={input.inputName}
@@ -137,4 +149,3 @@ const FormInput = ({ inputs, showDialogOnMount, headerText, submitButtonText, en
 };
 
 export default FormInput;
-

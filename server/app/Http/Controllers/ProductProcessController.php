@@ -19,7 +19,7 @@ class ProductProcessController extends Controller
 			$validated = $request->validate([
 				'product_id' => 'required|exists:products,id',
 				'process_id' => 'required|exists:processes,id',
-				'material_id' => 'required|exists:materials,id',
+				'material_id' => 'sometimes|exists:materials,id',
 				'date' => 'sometimes|date',
 				'author' => 'sometimes|string',
 				'process_send_total' => 'sometimes|numeric',

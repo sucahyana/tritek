@@ -6,13 +6,16 @@ import {TabView, TabPanel} from 'primereact/tabview';
 import axios from 'axios';
 import {Dialog} from 'primereact/dialog';
 import Checkbox from '@mui/material/Checkbox';
-import ApiService from "@/services/ApiService.jsx"; // Import Checkbox from Material-UI
+import ApiService from "@/services/ApiService.jsx";
+import {fetchProduct} from "@/stores/actions/productAction.js";
+import {useDispatch} from "react-redux"; // Import Checkbox from Material-UI
 
 
 const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText}) => {
     const [formData, setFormData] = useState({});
     const [showDialog, setShowDialog] = useState(showDialogOnMount);
     const [processFields, setProcessFields] = useState([]);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         setShowDialog(showDialogOnMount);
@@ -61,7 +64,7 @@ const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText
                 }))
             };
             const response = await ApiService.newProduct(productData);
-            console.log('Form submitted successfully:', response);
+            dispatch(fetchProduct)
         } catch (error) {
             console.error('Error submitting form:', error);
         }

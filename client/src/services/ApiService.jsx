@@ -282,7 +282,7 @@ class ApiService {
                                    }) {
         try {
             notifyLoading('Sending request...');
-            const response = await api.post('/product_processes', {
+            const response = await api.post('/product-processes', {
                 product_id,
                 process_id,
                 material_id,
@@ -405,6 +405,46 @@ class ApiService {
             } else {
                 notifyError(response.data.message || 'Failed to delete product process.');
                 return { success: false, message: response.data.message || 'Failed to delete product process.' };
+            }
+        } catch (error) {
+            let errorMessage = 'An unexpected error occurred.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
+    }
+    static async updateProduct(id, updatedFields) {
+        try {
+            const currentProduct = await this.getProduct(id);
+            if (!currentProduct) {
+                return { success: false, message: 'Product not found.' };
+            }
+
+            const updatedProduct = { ...currentProduct, ...updatedFields };
+
+            // Determine what fields have changed
+            const changedFields = {};
+            for (const key in updatedFields) {
+                if (currentProduct[key] !== updatedFields[key]) {
+                    changedFields[key] = updatedFields[key];
+                }
+            }
+
+            const response = await api.put(`/product/${id}`, changedFields);
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return { success: true, message: response.data.message };
+            } else {
+                notifyError(response.data.message || 'Failed to update product.');
+                return { success: false, message: response.data.message || 'Failed to update product.' };
             }
         } catch (error) {
             let errorMessage = 'An unexpected error occurred.';
