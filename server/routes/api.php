@@ -31,11 +31,9 @@ Route::prefix('v1')->group(function () {
 	Route::delete('/product/{id}', [ProductController::class, 'destroy']);
 
 // Processes
-	Route::get('/processes', [ProcessController::class, 'index']);
-	Route::post('/processes', [ProcessController::class, 'store']);
-	Route::get('/processes/{id}', [ProcessController::class, 'show']);
 	Route::put('/processes/{id}', [ProcessController::class, 'update']);
 	Route::delete('/processes/{id}', [ProcessController::class, 'destroy']);
+	Route::post('/processes', [ProcessController::class, 'add']);
 
 // Product Processes
 	Route::get('/product-processes', [ProductProcessController::class, 'index']);

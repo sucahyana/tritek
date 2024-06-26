@@ -1,16 +1,18 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useState, useRef} from "react";
 import ContainerStarter from "../components/Organisms/ContainerStarter";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { Toast } from "primereact/toast";
-import { motion } from "framer-motion";
-import { IoSave, IoArrowBack, IoAdd } from "react-icons/io5";
-import { BiDetail } from "react-icons/bi";
-import { Skeleton } from "primereact/skeleton";
+import {Button} from "primereact/button";
+import {InputText} from "primereact/inputtext";
+import {Dropdown} from "primereact/dropdown";
+import {Toast} from "primereact/toast";
+import {motion} from "framer-motion";
+import {IoSave, IoArrowBack, IoAdd, IoTrash} from "react-icons/io5";
+import {BiDetail} from "react-icons/bi";
+import {Skeleton} from "primereact/skeleton";
 
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import ApiService from "@/services/ApiService.jsx";
+import {Dialog} from "primereact/dialog";
+import {unitOptions} from "@/components/constants/UnitOption.jsx";
 
 const ProductSetting = () => {
     const [initialProduct, setInitialProduct] = useState(null);
@@ -29,13 +31,14 @@ const ProductSetting = () => {
         created_at: "",
         updated_at: "",
     });
-    const { id } = useParams();
+    const {id} = useParams();
     const [processes, setProcesses] = useState([]);
     const [initialProcesses, setInitialProcesses] = useState([]);
-    const [newProcess, setNewProcess] = useState({ name: "", description: "" });
+    const [newProcess, setNewProcess] = useState({name: "", description: ""});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const toast = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -81,8 +84,7 @@ const ProductSetting = () => {
     };
 
     const handleBackClick = () => {
-        console.log("Back clicked");
-        // Implement your navigation logic here
+        navigate(-1);
     };
 
     const handleProcessChange = (index, field, value) => {
@@ -90,7 +92,51 @@ const ProductSetting = () => {
         updatedProcesses[index][field] = value;
         setProcesses(updatedProcesses);
     };
+    const [isDialogVisible, setIsDialogVisible] = useState(false);
+    const [processToDelete, setProcessToDelete] = useState(null);
 
+    const showDeleteDialog = (index) => {
+        setProcessToDelete(index);
+        setIsDialogVisible(true);
+    };
+
+    const confirmDeleteProcess = async () => {
+        if (processToDelete !== null) {
+            await handleDeleteProcess(processToDelete);
+            setProcessToDelete(null);
+            setIsDialogVisible(false);
+        }
+    };
+
+    const handleDeleteProcess = async (index) => {
+        try {
+            const process = processes[index];
+            const response = await ApiService.deleteProcess(process.id);
+            if (response.success) {
+                setProcesses(processes.filter((_, i) => i !== index));
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "Process deleted",
+                    life: 3000,
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: response.message || "Failed to delete process",
+                    life: 3000,
+                });
+            }
+        } catch (err) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Failed to delete process",
+                life: 3000,
+            });
+        }
+    };
     const handleProcessSave = async (index) => {
         try {
             const process = processes[index];
@@ -102,6 +148,7 @@ const ProductSetting = () => {
                 life: 3000,
             });
         } catch (err) {
+
             toast.current.show({
                 severity: "error",
                 summary: "Error",
@@ -112,20 +159,29 @@ const ProductSetting = () => {
     };
 
     const handleNewProcessChange = (field, value) => {
-        setNewProcess({ ...newProcess, [field]: value });
+        setNewProcess({...newProcess, [field]: value});
     };
 
     const handleAddProcess = async () => {
         try {
-            const response = await ApiService.addProcess(id, newProcess);
-            setProcesses([...processes, response.process]);
-            setNewProcess({ name: "", description: "" });
-            toast.current.show({
-                severity: "success",
-                summary: "Success",
-                detail: "Process added",
-                life: 3000,
-            });
+            const response = await ApiService.addProcess({product_id: product.id, ...newProcess});
+            if (response.success) {
+                setProcesses([...processes, response.process]);
+                setNewProcess({name: "", description: ""});
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "Process added",
+                    life: 3000,
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: response.message || "Failed to add process",
+                    life: 3000,
+                });
+            }
         } catch (err) {
             toast.current.show({
                 severity: "error",
@@ -171,7 +227,7 @@ const ProductSetting = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-700 text-white">
-            <ContainerStarter Content={content()} />
+            <ContainerStarter Content={content()}/>
         </div>
     );
 
@@ -179,9 +235,9 @@ const ProductSetting = () => {
         return (
             <motion.div
                 className="container mx-auto px-4 py-8 border-2 border-martinique-400 rounded-xl drop-shadow-xl"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+                transition={{duration: 0.5}}
             >
                 <div className="flex items-center mb-4">
                     <IoArrowBack
@@ -194,17 +250,17 @@ const ProductSetting = () => {
                 </div>
                 {loading ? (
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <Skeleton className="lg:col-span-2" height="40px" />
-                        <Skeleton className="lg:col-span-1" height="40px" />
-                        <Skeleton className="lg:col-span-1" height="40px" />
-                        <Skeleton className="lg:col-span-2" height="80px" />
-                        <Skeleton className="lg:col-span-1" height="40px" />
-                        <Skeleton className="lg:col-span-1" height="40px" />
-                        <Skeleton className="lg:col-span-1" height="40px" />
-                        <Skeleton className="lg:col-span-1" height="40px" />
+                        <Skeleton className="lg:col-span-2" height="40px"/>
+                        <Skeleton className="lg:col-span-1" height="40px"/>
+                        <Skeleton className="lg:col-span-1" height="40px"/>
+                        <Skeleton className="lg:col-span-2" height="80px"/>
+                        <Skeleton className="lg:col-span-1" height="40px"/>
+                        <Skeleton className="lg:col-span-1" height="40px"/>
+                        <Skeleton className="lg:col-span-1" height="40px"/>
+                        <Skeleton className="lg:col-span-1" height="40px"/>
                         <div className="lg:col-span-2 flex justify-end space-x-4 mt-4">
-                            <Skeleton width="120px" height="40px" />
-                            <Skeleton width="120px" height="40px" />
+                            <Skeleton width="120px" height="40px"/>
+                            <Skeleton width="120px" height="40px"/>
                         </div>
                     </div>
                 ) : (
@@ -217,7 +273,7 @@ const ProductSetting = () => {
                                 <InputText
                                     id="name"
                                     value={product.name}
-                                    onChange={(e) => setProduct({ ...product, name: e.target.value })}
+                                    onChange={(e) => setProduct({...product, name: e.target.value})}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                 />
                             </div>
@@ -228,7 +284,7 @@ const ProductSetting = () => {
                                 <InputText
                                     id="model"
                                     value={product.model}
-                                    onChange={(e) => setProduct({ ...product, model: e.target.value })}
+                                    onChange={(e) => setProduct({...product, model: e.target.value})}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                 />
                             </div>
@@ -236,10 +292,11 @@ const ProductSetting = () => {
                                 <label htmlFor="unit" className="block text-sm font-medium text-gray-400">
                                     Unit
                                 </label>
-                                <InputText
+                                <Dropdown
                                     id="unit"
                                     value={product.unit}
-                                    onChange={(e) => setProduct({ ...product, unit: e.target.value })}
+                                    options={unitOptions}
+                                    onChange={(e) => setProduct({...product, unit: e.target.value})}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                 />
                             </div>
@@ -250,55 +307,55 @@ const ProductSetting = () => {
                                 <InputText
                                     id="description"
                                     value={product.description}
-                                    onChange={(e) => setProduct({ ...product, description: e.target.value })}
+                                    onChange={(e) => setProduct({...product, description: e.target.value})}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                     rows={4}
                                     textarea
                                 />
                             </div>
                             <div className="lg:col-span-1">
-                                <label htmlFor="netWeight" className="block text-sm font-medium text-gray-400">
+                                <label htmlFor="net_weight" className="block text-sm font-medium text-gray-400">
                                     Net Weight
                                 </label>
                                 <InputText
-                                    id="netWeight"
-                                    type="number"
+                                    id="net_weight"
                                     value={product.net_weight}
                                     onChange={(e) => setProduct({
                                         ...product,
                                         net_weight: parseFloat(e.target.value) || 0
                                     })}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
+                                    type="number"
                                 />
                             </div>
                             <div className="lg:col-span-1">
-                                <label htmlFor="materialUsed" className="block text-sm font-medium text-gray-400">
+                                <label htmlFor="material_used" className="block text-sm font-medium text-gray-400">
                                     Material Used
                                 </label>
                                 <InputText
-                                    id="materialUsed"
-                                    type="number"
+                                    id="material_used"
                                     value={product.material_used}
                                     onChange={(e) => setProduct({
                                         ...product,
                                         material_used: parseFloat(e.target.value) || 0
                                     })}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
+                                    type="number"
                                 />
                             </div>
                             <div className="lg:col-span-1">
-                                <label htmlFor="totalQuantity" className="block text-sm font-medium text-gray-400">
+                                <label htmlFor="total_quantity" className="block text-sm font-medium text-gray-400">
                                     Total Quantity
                                 </label>
                                 <InputText
-                                    id="totalQuantity"
-                                    type="number"
+                                    id="total_quantity"
                                     value={product.total_quantity}
                                     onChange={(e) => setProduct({
                                         ...product,
-                                        total_quantity: parseInt(e.target.value) || 0
+                                        total_quantity: parseFloat(e.target.value) || 0
                                     })}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
+                                    type="number"
                                 />
                             </div>
                             <div className="lg:col-span-1">
@@ -308,115 +365,132 @@ const ProductSetting = () => {
                                 <Dropdown
                                     id="status"
                                     value={product.status}
+                                    onChange={(e) => setProduct({...product, status: e.value})}
                                     options={[
-                                        { label: "Active", value: "Active" },
-                                        { label: "Inactive", value: "Inactive" },
+                                        {label: "Active", value: "active"},
+                                        {label: "Inactive", value: "inactive"},
                                     ]}
-                                    onChange={(e) => setProduct({ ...product, status: e.value })}
-                                    placeholder="Select Status"
-                                    className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
+                                    className="mt-1 bg-martinique-300 text-gray-800 rounded-md w-full"
                                 />
                             </div>
                             <div className="lg:col-span-2 flex justify-end space-x-4 mt-4">
                                 <Button
-                                    type="submit"
-                                    icon={<IoSave />}
-                                    className="p-button-secondary bg-martinique-900 text-white px-6 py-2 rounded-md"
+                                    icon={<IoSave/>}
                                     label="Save"
-                                />
-                                <Button
-                                    type="button"
-                                    icon={<BiDetail />}
-                                    className="p-button-secondary bg-martinique-900 text-white px-6 py-2 rounded-md"
-                                    label="View Details"
-                                    onClick={() => console.log("View Details clicked")}
+                                    type="submit"
+                                    className="p-button p-component p-button-success bg-teal-500 border-teal-500 p-button-icon-only"
                                 />
                             </div>
                         </form>
-
-                        <div className="mt-8 w-full">
-                            <h2 className="text-xl font-semibold mb-4">Processes</h2>
+                        <h2 className="text-2xl sm:text-3xl font-semibold mt-8 mb-4">Processes</h2>
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                             {processes.map((process, index) => (
-                                <div key={process.id} className="w-full mb-6">
-                                    <div className="grid grid-cols-1 gap-2 lg:grid-cols-3">
-                                        <div>
-                                            <label htmlFor={`processName-${index}`}
-                                                   className="block text-sm font-medium text-gray-400">
-                                                Process Name
-                                            </label>
-                                            <InputText
-                                                id={`processName-${index}`}
-                                                value={process.name}
-                                                onChange={(e) => handleProcessChange(index, "name", e.target.value)}
-                                                className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label htmlFor={`processDescription-${index}`}
-                                                   className="block text-sm font-medium text-gray-400">
-                                                Description
-                                            </label>
-                                            <InputText
-                                                id={`processDescription-${index}`}
-                                                value={process.description}
-                                                onChange={(e) => handleProcessChange(index, "description", e.target.value)}
-                                                className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
-                                            />
-                                        </div>
-                                        <div className={'my-auto mt-[5%]'}>
-                                            <Button
-                                                type="button"
-                                                icon={<IoSave />}
-                                                className="p-button-secondary bg-martinique-900 w-fit my-auto text-white px-6 py-2 rounded-md"
-                                                label="Save"
-                                                onClick={() => handleProcessSave(index)}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                            <div className="mt-8 p-4 ">
-                                <h3 className="text-lg font-semibold mb-4">Add New Process</h3>
-                                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                                    <div>
-                                        <label htmlFor="newProcessName"
+                                <div key={process?.id || index}
+                                     className="lg:col-span-1 border border-gray-500 rounded-md p-4">
+                                    <div className="mb-4">
+                                        <label htmlFor={`process-name-${index}`}
                                                className="block text-sm font-medium text-gray-400">
                                             Process Name
                                         </label>
                                         <InputText
-                                            id="newProcessName"
-                                            value={newProcess.name}
-                                            onChange={(e) => handleNewProcessChange("name", e.target.value)}
+                                            id={`process-name-${index}`}
+                                            value={process?.name || ''}
+                                            onChange={(e) => handleProcessChange(index, "name", e.target.value)}
                                             className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                         />
                                     </div>
-                                    <div>
-                                        <label htmlFor="newProcessDescription"
+                                    <div className="mb-4">
+                                        <label htmlFor={`process-description-${index}`}
                                                className="block text-sm font-medium text-gray-400">
-                                            Description
+                                            Process Description
                                         </label>
                                         <InputText
-                                            id="newProcessDescription"
-                                            value={newProcess.description}
-                                            onChange={(e) => handleNewProcessChange("description", e.target.value)}
+                                            id={`process-description-${index}`}
+                                            value={process?.description || ''}
+                                            onChange={(e) => handleProcessChange(index, "description", e.target.value)}
                                             className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                         />
                                     </div>
+
+                                    <div className="flex justify-end gap-5">
+                                        <Button
+                                            icon={<IoTrash/>}
+                                            className="p-button p-component p-button-danger bg-red-500 border-red-500 p-button-icon-only"
+                                            onClick={() => showDeleteDialog(index)}
+                                            tooltip="Delete Process"
+                                            tooltipOptions={{position: 'top'}}
+                                        />
+                                        <Button
+                                            icon={<IoSave/>}
+                                            label="Save"
+                                            onClick={() => handleProcessSave(index)}
+                                            className="p-button p-component p-button-success bg-teal-500 border-teal-500 p-button-icon-only"
+                                        />
+
+                                        <Dialog
+                                            header="Confirm"
+                                            visible={isDialogVisible}
+                                            style={{width: '350px'}}
+                                            footer={(
+                                                <div>
+                                                    <Button label="No" icon="pi pi-times"
+                                                            onClick={() => setIsDialogVisible(false)}
+                                                            className="p-button-text"/>
+                                                    <Button label="Yes" icon="pi pi-check"
+                                                            onClick={confirmDeleteProcess} autoFocus/>
+                                                </div>
+                                            )}
+                                            onHide={() => setIsDialogVisible(false)}
+                                        >
+                                            <div className="confirmation-content">
+                                                <i className="pi pi-exclamation-triangle mr-3"
+                                                   style={{fontSize: '2rem'}}/>
+                                                {processToDelete !== null &&
+                                                    <span>Are you sure you want to delete this process?</span>}
+                                            </div>
+                                        </Dialog>
+                                    </div>
                                 </div>
-                                <div className="flex justify-end space-x-4 mt-4">
-                                    <Button
-                                        type="button"
-                                        icon={<IoAdd />}
-                                        className="p-button-secondary bg-martinique-900 text-white px-6 py-2 rounded-md"
-                                        label="Add Process"
-                                        onClick={handleAddProcess}
-                                    />
-                                </div>
+                            ))}
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-semibold mt-8 mb-4">Add New Process</h2>
+                        <div className="lg:col-span-2 border border-gray-500 rounded-md p-4">
+                            <div className="mb-4">
+                                <label htmlFor="new-process-name" className="block text-sm font-medium text-gray-400">
+                                    Process Name
+                                </label>
+                                <InputText
+                                    id="new-process-name"
+                                    value={newProcess.name}
+                                    onChange={(e) => handleNewProcessChange("name", e.target.value)}
+                                    className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor="new-process-description"
+                                       className="block text-sm font-medium text-gray-400">
+                                    Process Description
+                                </label>
+                                <InputText
+                                    id="new-process-description"
+                                    value={newProcess.description}
+                                    onChange={(e) => handleNewProcessChange("description", e.target.value)}
+                                    className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
+                                />
+                            </div>
+                            <div className="flex justify-end">
+                                <Button
+                                    icon={<IoAdd/>}
+                                    label="Add Process"
+                                    onClick={handleAddProcess}
+                                    className="p-button p-component p-button-success bg-teal-500 border-teal-500 p-button-icon-only"
+                                />
                             </div>
                         </div>
                     </>
                 )}
-                <Toast ref={toast} position="bottom-right" />
+                <Toast ref={toast}/>
+
             </motion.div>
         );
     }

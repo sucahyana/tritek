@@ -461,6 +461,123 @@ class ApiService {
             return { success: false, message: errorMessage };
         }
     }
+    static async addProcess({ product_id, name, description }) {
+        try {
+            notifyLoading('Adding process...');
+            const response = await api.post('/processes', {
+                product_id,
+                name,
+                description
+            });
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return { success: true, message: response.data.message };
+            } else {
+                notifyError(response.data.message || 'Failed to add process.');
+                return {
+                    success: false,
+                    message: response.data.message || 'Failed to add process.',
+                    errors: response.data.errors
+                };
+            }
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred.';
+            let errors = null;
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+                if (error.response.data.errors) {
+                    errors = error.response.data.errors;
+                    const errorDetails = Object.values(errors).flat().join(' ');
+                    errorMessage += ` ${errorDetails}`;
+                }
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage, errors };
+        }
+    }
+
+    static async updateProcess(id, { name, description }) {
+        try {
+            notifyLoading('Updating process...');
+            const response = await api.put(`/processes/${id}`, {
+                name,
+                description
+            });
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return { success: true, message: response.data.message };
+            } else {
+                notifyError(response.data.message || 'Failed to update process.');
+                return {
+                    success: false,
+                    message: response.data.message || 'Failed to update process.',
+                    errors: response.data.errors
+                };
+            }
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred.';
+            let errors = null;
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+                if (error.response.data.errors) {
+                    errors = error.response.data.errors;
+                    const errorDetails = Object.values(errors).flat().join(' ');
+                    errorMessage += ` ${errorDetails}`;
+                }
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage, errors };
+        }
+    }
+
+    static async deleteProcess(id) {
+        try {
+            notifyLoading('Deleting process...');
+            const response = await api.delete(`/processes/${id}`);
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return { success: true, message: response.data.message };
+            } else {
+                notifyError(response.data.message || 'Failed to delete process.');
+                return {
+                    success: false,
+                    message: response.data.message || 'Failed to delete process.',
+                    errors: response.data.errors
+                };
+            }
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
+    }
 }
 
 export default ApiService;

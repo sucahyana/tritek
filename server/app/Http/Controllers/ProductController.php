@@ -146,9 +146,6 @@ class ProductController extends Controller
                 'status' => 'nullable|string|max:255',
                 'net_weight' => 'sometimes|required|numeric',
                 'external_process' => 'sometimes|required|boolean',
-                'processes' => 'sometimes|array|min:1',
-                'processes.*.name' => 'required_with:processes|string|max:255',
-                'processes.*.description' => 'required_with:processes|string|max:255',
                 'material_used' => 'sometimes|required|numeric',
                 'material_id' => 'sometimes|exists:materials,id',
             ]);
@@ -169,36 +166,8 @@ class ProductController extends Controller
             if (isset($validated['material_used'])) $product->material_used = $validated['material_used'];
             $product->save();
 
-            $updatedProcesses = [];
-
-            if (isset($validated['processes'])) {
-                // Delete existing processes
-                Process::where('product_id', $product->id)->delete();
-
-                // Create new processes based on request
-                foreach ($validated['processes'] as $processData) {
-                    $process = new Process();
-                    $process->product_id = $product->id;
-                    $process->name = $processData['name'];
-                    $process->description = $processData['description'];
-                    $process->save();
-                    $updatedProcesses[] = $process;
-                }
-
-                // Create packaging process
-                $this->createProcess($product->id, 'Packaging', 'Packaging');
-                $updatedProcesses[] = ['name' => 'Packaging', 'description' => 'Packaging'];
-
-                // Create external_process if needed
-                if ($validated['external_process']) {
-                    $this->createProcess($product->id, 'External Process', 'External Process');
-                    $updatedProcesses[] = ['name' => 'External Process', 'description' => 'External Process'];
-                }
-            }
-
-            return $this->successResponse('Product dan prosesnya berhasil diperbarui', [
+            return $this->successResponse('Product berhasil diperbarui', [
                 'product' => $product,
-                'processes' => $updatedProcesses,
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return $this->badRequestResponse('Validasi Gagal', $e->errors());
@@ -206,6 +175,7 @@ class ProductController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
 
 
 }
