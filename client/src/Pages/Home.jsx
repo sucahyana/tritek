@@ -1,38 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import CardHeader from '@mui/material/CardHeader';
-import Tooltip from '@mui/material/Tooltip';
-import Chip from '@mui/material/Chip';
-import { format } from 'date-fns';
-import { SiMaterialformkdocs } from "react-icons/si";
-import { Paginator } from 'primereact/paginator';
 import { InputText } from 'primereact/inputtext';
+import { Paginator } from 'primereact/paginator';
 import { Skeleton } from 'primereact/skeleton';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ContainerStarter from "@/components/Organisms/ContainerStarter.jsx";
 import MaterialCard from "@/components/Molecules/Materials/MaterialCard.jsx";
 import ProductCard from "@/components/Molecules/Products/ProductCard.jsx";
+import { fetchMaterials } from "@/stores/actions/materialActions.js";
+import { fetchProducts } from "@/stores/actions/productAction.js";
 
 const Home = () => {
     const navigate = useNavigate();
-    const materials = useSelector(state => state.material.materials);
-    const products = useSelector(state => state.product.products);
-    const loading = useSelector(state => state.material.loading);
-    const error = useSelector(state => state.material.error);
-    const message = useSelector(state => state.material.message);
-    const errors = useSelector(state => state.material.errors);
+    const dispatch = useDispatch();
 
-    const [filteredProducts, setFilteredProducts] = useState(products);
-    const [filteredMaterials, setFilteredMaterials] = useState(materials);
+    // Redux state
+    const { materials, loading: materialLoading } = useSelector(state => state.material.materials);
+    const { products, loading: productLoading } = useSelector(state => state.product.products);
+    const paginationMaterial = useSelector(state => state.material.materials.pagination);
+    const paginationProduct = useSelector(state => state.product.products.pagination);
+
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [filteredMaterials, setFilteredMaterials] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [pageProduct, setPageProduct] = useState(1);
+    const [rowsProduct, setRowsProduct] = useState(10);
+    const [pageMaterial, setPageMaterial] = useState(1);
+    const [rowsMaterial, setRowsMaterial] = useState(10);
+    const rowsPerPageOptions = [5, 10, 25, 50, 100];
+    const currentPage = paginationMaterial?.current_page || 1;
+    const perPage = paginationMaterial?.per_page || 10;
+    const totalRecords = paginationMaterial?.total || 0;
+    const currentPageProduct = paginationProduct?.current_page || 1;
+    const perPageProduct = paginationProduct?.per_page || 10;
+    const totalRecordsProduct = paginationProduct?.total || 0;
 
-    const [firstProduct, setFirstProduct] = useState(0);
-    const [rowsProduct, setRowsProduct] = useState(5);
-    const [firstMaterial, setFirstMaterial] = useState(0);
-    const [rowsMaterial, setRowsMaterial] = useState(5);
+    useEffect(() => {
+        dispatch(fetchMaterials(pageMaterial, rowsMaterial));
+        dispatch(fetchProducts(pageProduct, rowsProduct));
+    }, [dispatch, pageMaterial, pageProduct, rowsMaterial, rowsProduct]);
+
     useEffect(() => {
         if (searchTerm) {
             // Filter products by name or model
@@ -55,92 +62,119 @@ const Home = () => {
         }
     }, [searchTerm, products, materials]);
 
-    const onPageChangeProduct = (e) => {
-        setFirstProduct(e.first);
-        setRowsProduct(e.rows);
+    const onPageChangeProduct = (event) => {
+        setPageProduct(event.page + 1); // PrimeReact Paginator starts indexing from 0
+        setRowsProduct(event.rows);
     };
 
-    const onPageChangeMaterial = (e) => {
-        setFirstMaterial(e.first);
-        setRowsMaterial(e.rows);
+    const onPageChangeMaterial = (event) => {
+        setPageMaterial(event.page + 1); // PrimeReact Paginator starts indexing from 0
+        setRowsMaterial(event.rows);
     };
 
+    const renderProducts = () => {
+        if (productLoading) {
+            return Array.from(Array(5).keys()).map(index => (
+                <Skeleton key={index} width="100%" height="200px" />
+            ));
+        }
 
-    const content = () => {
-        return (
-            <div className="flex flex-col gap-8 justify-center w-full px-4 py-8 sm:px-6 lg:px-8 text-white">
+        if (Array.isArray(filteredProducts) && filteredProducts.length > 0) {
+            return filteredProducts.map((product, index) => (
+                <ProductCard product={product} key={index} />
+            ));
+        }
 
-                <section className="mb-4">
-                    <header className='flex flex-col justify-start'>
-                        <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-right mb-2">
-                            DASHBOARD
-                        </h1>
-                        <div className="flex justify-end">
-                            <InputText
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Search by name and model"
-                                className="w-full max-w-md mb-4 p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 text-gray-50"
-                            />
-                        </div>
-                    </header>
+        return <div>No products found</div>;
+    };
 
+    const renderMaterials = () => {
+        if (materialLoading) {
+            return Array.from(Array(5).keys()).map(index => (
+                <Skeleton key={index} width="100%" height="200px" />
+            ));
+        }
 
-                    <a href={'/products'} className="text-lg sm:text-xl lg:text-2xl font-bold  mb-2">
-                        Products
-                    </a>
-                    <hr className="border-t-2 mb-4 "></hr>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        {loading ? (
-                            Array.from(Array(5).keys()).map((index) => (
-                                <Skeleton key={index} width="100%" height="200px" />
-                            ))
-                        ) : (
-                            filteredProducts.slice(firstProduct, firstProduct + rowsProduct).map((product, index) => (
-                                <ProductCard product={product} key={index} />
-                            ))
-                        )}
-                    </div>
-                    <div className="flex justify-center">
-                        <Paginator
-                            first={firstProduct}
-                            rows={rowsProduct}
-                            totalRecords={filteredProducts.length}
-                            rowsPerPageOptions={[5, 10, 20]}
-                            onPageChange={onPageChangeProduct}
-                            className="mt-4 w-full lg:w-1/2 rounded-lg bg-gradient-to-r from-martinique-900 to-martinique-700 shadow"
+        if (Array.isArray(filteredMaterials) && filteredMaterials.length > 0) {
+            return filteredMaterials.map((material, index) => (
+                <MaterialCard material={material} key={index} />
+            ));
+        }
+
+        return <div>No materials found</div>;
+    };
+
+    const content = () => (
+        <div className="flex flex-col gap-8 justify-center w-full px-4 py-8 sm:px-6 lg:px-8 text-white">
+            <section className="mb-4">
+                <header className="flex flex-col justify-start">
+                    <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-right mb-2">
+                        DASHBOARD
+                    </h1>
+                    <div className="flex justify-end">
+                        <InputText
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder="Search by name and model"
+                            className="w-full max-w-md mb-4 p-4 bg-gradient-to-r from-martinique-900 to-martinique-700 text-gray-50"
                         />
                     </div>
+                </header>
 
-                    <a href={'/materials'} className="text-lg sm:text-xl lg:text-2xl font-bold  mb-2 mt-8">
-                        Materials
-                    </a>
-                    <hr className="border-t-2 mb-4 "></hr>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        {loading ? (
-                            Array.from(Array(5).keys()).map((index) => (
-                                <Skeleton key={index} width="100%" height="200px" />
-                            ))
-                        ) : (
-                            filteredMaterials.slice(firstMaterial, firstMaterial + rowsMaterial).map((material, index) => (
-                                <MaterialCard material={material} key={index} />
-                            ))
-                        )}
-                    </div>
-                    <div className="flex justify-center">
-                        <Paginator
-                            first={firstMaterial}
-                            rows={rowsMaterial}
-                            totalRecords={filteredMaterials.length}
-                            rowsPerPageOptions={[5, 10, 20]}
-                            onPageChange={onPageChangeMaterial}
-                            className="mt-4 w-full lg:w-1/2 rounded-lg bg-gradient-to-r from-martinique-900 to-martinique-700 shadow"
-                        />
-                    </div>
-                </section>
-            </div>
-        );
-    };
+                <a href={'/products'} className="text-lg sm:text-xl lg:text-2xl font-bold  mb-2">
+                    Products
+                </a>
+                <hr className="border-t-2 mb-4 "></hr>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {renderProducts()}
+                </div>
+                <div className="flex justify-center">
+                    <Paginator
+                        first={(currentPageProduct - 1) * perPageProduct}
+                        rows={perPageProduct}
+                        totalRecords={totalRecordsProduct}
+                        rowsPerPageOptions={rowsPerPageOptions}
+                        onPageChange={onPageChangeProduct}
+                        className="mt-4 w-full rounded-lg bg-gradient-to-r from-martinique-800 to-martinique-600 shadow active:from-martinique-600 active:to-martinique-800"
+                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Page {currentPage} | dari {first} Ke {last}"
+                        pt={{
+                            pageButton: {
+                                className:
+                                    'hover:scale-105 hover:ring-2 active:from-martinique-600 active:to-martinique-800 focus:outline-none focus:ring-2 focus:ring-martinique-500',
+                            },
+                        }}
+                    />
+                </div>
+
+                <a href={'/materials'} className="text-lg sm:text-xl lg:text-2xl font-bold  mb-2 mt-8">
+                    Materials
+                </a>
+                <hr className="border-t-2 mb-4 "></hr>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {renderMaterials()}
+                </div>
+                <div className="flex justify-center">
+                    <Paginator
+                        first={(currentPage - 1) * perPage}
+                        rows={perPage}
+                        totalRecords={totalRecords}
+                        rowsPerPageOptions={rowsPerPageOptions}
+                        onPageChange={onPageChangeMaterial}
+                        className="mt-4 w-full rounded-lg bg-gradient-to-r from-martinique-800 to-martinique-600 shadow active:from-martinique-600 active:to-martinique-800"
+                        template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Page {currentPage} | dari {first} Ke {last}"
+                        pt={{
+                            pageButton: {
+                                className:
+                                    'hover:scale-105 hover:ring-2 active:from-martinique-600 active:to-martinique-800 focus:outline-none focus:ring-2 focus:ring-martinique-500',
+                            },
+                        }}
+                    />
+                </div>
+            </section>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-gray-900">

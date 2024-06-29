@@ -1,26 +1,27 @@
 import CardList from '../../CardList.jsx';
-import { unitOptions } from '../../../constants/UnitOption.jsx';
+import {unitOptions} from '../../../constants/UnitOption.jsx';
 import FormInput from '../../Materials/FormInput.jsx';
 
-const ExternalProsses = () => {
-    const externalHistoryData = [
-        { created_at: '2024-06-01', unit: 'kg', total: 50, status: 'Approved' },
-        { created_at: '2024-06-02', unit: 'kg', total: 30, status: 'Pending' },
-        { created_at: '2024-06-03', unit: 'kg', total: 20, status: 'Rejected' },
-    ];
+const ExternalProsses = (dataProcess) => {
 
-    const internalHistoryData = [
-        { created_at: '2024-06-01', unit: 'kg', total: 40, status: 'Approved' },
-        { created_at: '2024-06-02', unit: 'kg', total: 25, status: 'Pending' },
-        { created_at: '2024-06-03', unit: 'kg', total: 15, status: 'Rejected' },
-    ];
+
+    const product = dataProcess.product;
+    const materialId = dataProcess.materialId.material_id;
+
+    const externalHistoryData = dataProcess.product.product_processes.filter(
+        item => item.status === 'delivery'
+    );
+
+    const internalHistoryData = dataProcess.product.product_processes.filter(
+        item => item.status === 'return'
+    );
 
     const handleUpdate = (id, updatedData) => {
-        console.log('Update Data:', id, updatedData);
+
     };
 
     const handleDelete = (id) => {
-        console.log('Delete Data:', id);
+
     };
 
     const dataTable = (tabData) => {
@@ -29,65 +30,147 @@ const ExternalProsses = () => {
                 title={tabData.title}
                 buttonLabel={tabData.buttonLabel}
                 data={tabData.history}
-                headers={[
-                    { field: 'created_at', header: 'Tanggal' },
-                    { field: 'author', header: 'Author' },
-                    { field: 'unit', header: 'Satuan/Unit barang jadi' },
-                    { field: 'total', header: 'Jumlah' },
-                    { field: 'status', header: 'Status' },
-                    { field: 'reason', header: 'Alasan/Keterangan' },
-                ]}
+                headers={tabData.headers}
                 globalFilterPlaceholder="Search history..."
                 modalContent={<FormInput
-                    inputs={[
-                        {
-                            title: 'Tanggal',
-                            inputName: 'date',
-                            inputType: 'date',
-                            placeholder: 'Masukan Tanggal'
-                        },
-                        {
-                            title: 'Nama Barang',
-                            inputName: 'name',
-                            inputType: 'text',
-                            placeholder: 'Masukan Nama'
-                        },
-                        {
-                            title: 'Kuantitas',
-                            inputName: 'quantity',
-                            inputType: 'number',
-                            placeholder: 'Masukan Kuantitas'
-                        },
-                        {
-                            title: 'Satuan/Unit',
-                            inputName: 'unit',
-                            type: 'dropdown',
-                            options: unitOptions,
-                            placeholder: 'Masukan Satuan/Unit'
-                        },
-                    ]}
+                    inputs={tabData.formInputs}
                     showDialogOnMount={true}
-                    headerText={'Material Masuk'}
+                    headerText={tabData.formHeader}
                     submitButtonText={'Tambahkan'}
+                    core_id={{
+                        product_id: product.process.product_id,
+                        process_id: product.process.id,
+                        material_id: materialId
+                    }}
+                    endpoint={'addProductProcessHistory'}
                 />}
                 onUpdate={handleUpdate}
                 onDelete={handleDelete}
+                pagination={product.pagination}
+                onPageChange={dataProcess.onPageChange}
+                rowsPerPageOptions={[10, 15, 20,50,100]}
             />
         );
     };
 
+    const externalDataTable = {
+        title: 'Riwayat Proses Diluar PT',
+        buttonLabel: 'Laporan Pengiriman Proses diluar PT',
+        history: externalHistoryData,
+        formHeader: 'Tambah Riwayat Proses Diluar PT',
+        headers: [
+            { field: 'created_at', header: 'Tanggal' },
+            { field: 'author', header: 'Author' },
+            { field: 'unit', header: 'Satuan/Unit barang jadi' },
+            { field: 'process_send_total', header: 'Jumlah' },
+            { field: 'status', header: 'Status' },
+            { field: 'notes', header: 'Alasan/Keterangan' },
+        ],
+        formInputs: [
+            {
+                title: 'Tanggal',
+                inputName: 'date',
+                inputType: 'date',
+                placeholder: 'Masukan Tanggal'
+            },
+            {
+                title: 'Author',
+                inputName: 'author',
+                inputType: 'text',
+                placeholder: 'Masukan Penanggung Jawab'
+            },
+            {
+                title: 'Kuantitas',
+                inputName: 'process_send_total',
+                inputType: 'number',
+                placeholder: 'Masukan Kuantitas'
+            },
+            {
+                title: 'Satuan/Unit',
+                inputName: 'unit',
+                type: 'dropdown',
+                options: unitOptions,
+                placeholder: 'Masukan Satuan/Unit'
+            },
+            {
+                title: 'Status',
+                inputName: 'status',
+                type: 'dropdown',
+                options: [
+                    { label: 'Pengiriman', value: 'delivery' },
+                ],
+                placeholder: 'Masukan statusnya'
+            },
+            {
+                title: 'Alasan/Keterangan',
+                inputName: 'notes',
+                inputType: 'text',
+                placeholder: 'Masukan alasan atau keterangan'
+            },
+        ],
+    };
+
+    const internalDataTable = {
+        title: 'Riwayat Proses Didalam PT',
+        buttonLabel: 'Laporan Pengiriman Proses didalam PT',
+        history: internalHistoryData,
+        formHeader: 'Tambah Riwayat Proses Penerimaan',
+        headers: [
+            { field: 'created_at', header: 'Tanggal' },
+            { field: 'author', header: 'Author' },
+            { field: 'unit', header: 'Satuan/Unit barang jadi' },
+            { field: 'process_receive_total', header: 'Jumlah' },
+            { field: 'status', header: 'Status' },
+            { field: 'notes', header: 'Alasan/Keterangan' },
+        ],
+        formInputs: [
+            {
+                title: 'Tanggal',
+                inputName: 'date',
+                inputType: 'date',
+                placeholder: 'Masukan Tanggal'
+            },
+            {
+                title: 'Author',
+                inputName: 'author',
+                inputType: 'text',
+                placeholder: 'Masukan Penanggung Jawab'
+            },
+            {
+                title: 'Kuantitas',
+                inputName: 'process_receive_total',
+                inputType: 'number',
+                placeholder: 'Masukan Kuantitas'
+            },
+            {
+                title: 'Satuan/Unit',
+                inputName: 'unit',
+                type: 'dropdown',
+                options: unitOptions,
+                placeholder: 'Masukan Satuan/Unit'
+            },
+            {
+                title: 'Status',
+                inputName: 'status',
+                type: 'dropdown',
+                options: [
+                    { label: 'Pengembalian', value: 'return' },
+                ],
+                placeholder: 'Masukan statusnya'
+            },
+            {
+                title: 'Alasan/Keterangan',
+                inputName: 'notes',
+                inputType: 'text',
+                placeholder: 'Masukan alasan atau keterangan'
+            },
+        ],
+    };
+
     return (
         <div className={'flex flex-col gap-5'}>
-            {dataTable({
-                title: 'Riwayat Prosses Diluar PT',
-                buttonLabel: 'Laporan Pengiriman Prosses diluar PT',
-                history: externalHistoryData,
-            })}
-            {dataTable({
-                title: 'Riwayat Prosses Didalam PT',
-                buttonLabel: 'Laporan Pengiriman Prosses didalam PT',
-                history: internalHistoryData,
-            })}
+            {dataTable(externalDataTable)}
+            {dataTable(internalDataTable)}
         </div>
     );
 };

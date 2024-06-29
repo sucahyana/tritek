@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class MaterialHistory
- * 
+ *
  * @property string $id
  * @property string $material_id
  * @property string $process_id
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Material $material
  * @property Process $process
  *
@@ -42,6 +42,7 @@ class MaterialHistory extends Model
 		'material_id',
 		'process_id',
 		'quantity',
+        'date',
 		'unit',
 		'status',
 		'notes'

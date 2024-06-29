@@ -4,22 +4,44 @@ import {Button} from "primereact/button";
 import {IoNavigate} from "react-icons/io5";
 import {unitOptions} from "../constants/UnitOption.jsx";
 import FormNewProduct from "../Molecules/Products/FormNewProduct.jsx";
-import {useSelector} from 'react-redux';
-import React from "react";
-import { Skeleton } from 'primereact/skeleton';
+import {useDispatch, useSelector} from 'react-redux';
+import React, {useEffect, useState} from "react";
 import {Box} from "@mui/system";
 import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography"; // Added import for Skeleton component
+import Typography from "@mui/material/Typography";
+import {fetchProducts} from "@/stores/actions/productAction.js";
+import apiService from "@/services/ApiService.jsx";
 
 
 const ProductMain = () => {
+    const dispatch = useDispatch();
+    const [page, setPage] = useState(1);
+    const [rows, setRows] = useState(10);
+    const [materials, setMaterials] = useState([]);
+
+    useEffect(() => {
+        apiService.getAllMaterials()
+            .then(response => {
+                setMaterials(response);
+            })
+            .catch(error => {
+                console.error('Error fetching materials:', error);
+            });
+        dispatch(fetchProducts(page, rows));
+    }, [apiService,page, rows]);
+
+    const handlePageChange = (event) => {
+        setPage(event.page + 1);
+        setRows(event.rows);
+    };
+    const rowsPerPageOptions = [5, 10, 25, 50, 100];
     const navigate = useNavigate();
-    const materials = useSelector(state => state.material.materials);
-    const data = useSelector(state => state.product.products);
+    const data = useSelector(state => state.product.products.products);
     const loading = useSelector(state => state.product.loading);
     const error = useSelector(state => state.product.error);
     const message = useSelector(state => state.product.message);
     const errors = useSelector(state => state.product.errors);
+    const pagination = useSelector(state => state.product.products.pagination);
 
     const materialOptions = materials.map(material => ({
         label: material.name,
@@ -138,39 +160,47 @@ const ProductMain = () => {
             )
         },
     ];
-    if (loading) {
-        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress />
-        </Box>;
+    const content = () => {
+        if (loading) {
+            return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                <CircularProgress/>
+            </Box>;
+        }
+
+        if (error) {
+            return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+                <Typography>Error: {error.message}</Typography>
+            </Box>;
+        }
+        return (
+            <div className="w-full">
+                <CardList
+                    pagination={pagination}
+                    onPageChange={handlePageChange}
+                    rowsPerPageOptions={rowsPerPageOptions}
+                    title={'Products List'}
+                    showAddButton={true}
+                    data={data}
+                    buttonLabel={'Tambah Jenis'}
+                    headers={headers}
+                    enableEdit={false}
+                    enableSelect={false}
+                    globalFilterPlaceholder="Search Product..."
+                    modalContent={
+                        <FormNewProduct
+                            inputs={inputs}
+                            showDialogOnMount={true}
+                            headerText={'Produk Jenis Baru'}
+                            submitButtonText={'Tambahkan'}
+                        />
+                    }
+                />
+            </div>
+        )
     }
 
-    if (error) {
-        return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <Typography>Error: {error.message}</Typography>
-        </Box>;
-    }
     return (
-        <div>
-
-            <CardList
-                title={'Products List'}
-                showAddButton={true}
-                data={data}
-                buttonLabel={'Tambah Jenis'}
-                headers={headers}
-                enableEdit={false}
-                enableSelect={false}
-                globalFilterPlaceholder="Search Product..."
-                modalContent={
-                    <FormNewProduct
-                        inputs={inputs}
-                        showDialogOnMount={true}
-                        headerText={'Produk Jenis Baru'}
-                        submitButtonText={'Tambahkan'}
-                    />
-                }
-            />
-        </div>
+        content()
     );
 };
 

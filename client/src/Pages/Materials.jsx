@@ -6,7 +6,7 @@ const Materials = () => {
 
     const content = () => {
         return (
-            <div className={'flex justify-center items-center h-full'}>
+            <div className={'flex justify-center items-center h-full min-w'}>
                 <MaterialMain/>
             </div>
         )

@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { notifyError, notifyLoading, notifySuccess, stopLoading } from '../components/Atoms/Toast.jsx';
+import {notifyError, notifyLoading, notifySuccess, stopLoading} from '../components/Atoms/Toast.jsx';
 
 const api = axios.create({
     baseURL: 'http://127.0.0.1:8000/api/v1',
 });
 
 class ApiService {
-    static async newMaterial({ name, model, description, total_quantity, unit }) {
+    static async newMaterial({name, model, description, total_quantity, unit}) {
         try {
             notifyLoading('Sending request...');
             const response = await api.post('/materials', {
@@ -19,7 +19,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to create material.');
                 return {
@@ -47,14 +47,19 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage, errors };
+            return {success: false, message: errorMessage, errors};
         }
     }
 
-    static async getMaterials() {
+    static async getMaterials(page = 1, perPage = 10) {
         try {
             notifyLoading('Mengambil daftar material...');
-            const response = await api.get('/materials');
+            const response = await api.get('/materials', {
+                params: {
+                    page: page,
+                    per_page: perPage
+                }
+            });
             stopLoading();
             if (response.data.success) {
                 return response.data.data;
@@ -70,10 +75,52 @@ class ApiService {
         }
     }
 
-    static async getProducts() {
+    static async getAllMaterials() {
+        try {
+            notifyLoading('Mengambil daftar material...');
+            const response = await api.get('/materials/full');
+            stopLoading();
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                notifyError(response.data.message || 'Gagal mengambil daftar material.');
+                return [];
+            }
+        } catch (error) {
+            stopLoading();
+            console.error('Error:', error);
+            notifyError('Terjadi kesalahan saat mengambil daftar material.');
+            return [];
+        }
+    }
+    static async getMaterialInfo() {
+        try {
+            notifyLoading('Mengambil daftar material...');
+            const response = await api.get('/materials/info');
+            stopLoading();
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                notifyError(response.data.message || 'Gagal mengambil daftar material.');
+                return [];
+            }
+        } catch (error) {
+            stopLoading();
+            console.error('Error:', error);
+            notifyError('Terjadi kesalahan saat mengambil daftar material.');
+            return [];
+        }
+    }
+
+    static async getProducts(page = 1, perPage = 10) {
         try {
             notifyLoading('Mengambil daftar products...');
-            const response = await api.get('/products');
+            const response = await api.get('/products', {
+                params: {
+                    page: page,
+                    per_page: perPage
+                }
+            });
             stopLoading();
             if (response.data.success) {
                 return response.data.data;
@@ -89,10 +136,15 @@ class ApiService {
         }
     }
 
-    static async getMaterial(id) {
+    static async getMaterial(id, page = 1, perPage = 10) {
         try {
             notifyLoading('Mengambil material...');
-            const response = await api.get(`/material/history/${id}`);
+            const response = await api.get(`/material/history/${id}`, {
+                params: {
+                    page: page,
+                    per_page: perPage
+                }
+            });
             stopLoading();
             if (response.data.success) {
                 return response.data.data;
@@ -108,26 +160,32 @@ class ApiService {
         }
     }
 
-    static async getProduct(id) {
+
+    static async getProduct(id, page = 1, perPage = 12) {
         try {
-            notifyLoading('Mengambil Products...');
-            const response = await api.get(`/product/${id}`);
+            notifyLoading('Mengambil daftar products...');
+            const response = await api.get(`/product/${id}`, {
+                params: {
+                    page: page,
+                    per_page: perPage
+                }
+            });
             stopLoading();
             if (response.data.success) {
                 return response.data.data;
             } else {
-                notifyError(response.data.message || 'Gagal mengambil product.');
-                return null;
+                notifyError(response.data.message || 'Gagal mengambil daftar products.');
+                return [];
             }
         } catch (error) {
             stopLoading();
             console.error('Error:', error);
-            notifyError('Terjadi kesalahan saat mengambil product.');
-            return null;
+            notifyError('Terjadi kesalahan saat mengambil daftar products.');
+            return [];
         }
     }
 
-    static async addMaterialHistory({ date, name, quantity, unit, status, process_id, notes, material_id }) {
+    static async addMaterialHistory({date, name, quantity, unit, status, process_id, notes, material_id}) {
         try {
             const response = await api.post('/material/history', {
                 date,
@@ -145,7 +203,7 @@ class ApiService {
                 return error.response.data;
             } else {
                 console.error('Error:', error);
-                return { error: 'Terjadi kesalahan saat mengirim permintaan.' };
+                return {error: 'Terjadi kesalahan saat mengirim permintaan.'};
             }
         }
     }
@@ -155,10 +213,10 @@ class ApiService {
             const response = await api.put(`/material/history/${id}`, data);
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to update material history.');
-                return { success: false, message: response.data.message || 'Failed to update material history.' };
+                return {success: false, message: response.data.message || 'Failed to update material history.'};
             }
         } catch (error) {
             let errorMessage = 'An unexpected error occurred.';
@@ -172,7 +230,7 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage };
+            return {success: false, message: errorMessage};
         }
     }
 
@@ -181,10 +239,10 @@ class ApiService {
             const response = await api.delete(`/material/history/${id}`);
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to delete material history.');
-                return { success: false, message: response.data.message || 'Failed to delete material history.' };
+                return {success: false, message: response.data.message || 'Failed to delete material history.'};
             }
         } catch (error) {
             let errorMessage = 'An unexpected error occurred.';
@@ -198,7 +256,7 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage };
+            return {success: false, message: errorMessage};
         }
     }
 
@@ -233,7 +291,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to create product.');
                 return {
@@ -261,25 +319,25 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage, errors };
+            return {success: false, message: errorMessage, errors};
         }
     }
 
     static async addProductProcessHistory({
-                                       product_id,
-                                       process_id,
-                                       material_id,
-                                       date,
-                                       author,
-                                       process_send_total,
-                                       process_receive_total,
-                                       total_goods,
-                                       total_not_goods,
-                                       total_quantity,
-                                       unit,
-                                       status,
-                                       notes
-                                   }) {
+                                              product_id,
+                                              process_id,
+                                              material_id,
+                                              date,
+                                              author,
+                                              process_send_total,
+                                              process_receive_total,
+                                              total_goods,
+                                              total_not_goods,
+                                              total_quantity,
+                                              unit,
+                                              status,
+                                              notes
+                                          }) {
         try {
             notifyLoading('Sending request...');
             const response = await api.post('/product-processes', {
@@ -300,7 +358,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to create product process.');
                 return {
@@ -328,7 +386,7 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage, errors };
+            return {success: false, message: errorMessage, errors};
         }
     }
 
@@ -375,10 +433,10 @@ class ApiService {
             const response = await api.put(`/product_processes/${id}`, data);
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to update product process.');
-                return { success: false, message: response.data.message || 'Failed to update product process.' };
+                return {success: false, message: response.data.message || 'Failed to update product process.'};
             }
         } catch (error) {
             let errorMessage = 'An unexpected error occurred.';
@@ -392,7 +450,7 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage };
+            return {success: false, message: errorMessage};
         }
     }
 
@@ -401,10 +459,10 @@ class ApiService {
             const response = await api.delete(`/product_processes/${id}`);
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to delete product process.');
-                return { success: false, message: response.data.message || 'Failed to delete product process.' };
+                return {success: false, message: response.data.message || 'Failed to delete product process.'};
             }
         } catch (error) {
             let errorMessage = 'An unexpected error occurred.';
@@ -418,17 +476,18 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage };
+            return {success: false, message: errorMessage};
         }
     }
+
     static async updateProduct(id, updatedFields) {
         try {
             const currentProduct = await this.getProduct(id);
             if (!currentProduct) {
-                return { success: false, message: 'Product not found.' };
+                return {success: false, message: 'Product not found.'};
             }
 
-            const updatedProduct = { ...currentProduct, ...updatedFields };
+            const updatedProduct = {...currentProduct, ...updatedFields};
 
             // Determine what fields have changed
             const changedFields = {};
@@ -441,10 +500,10 @@ class ApiService {
             const response = await api.put(`/product/${id}`, changedFields);
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to update product.');
-                return { success: false, message: response.data.message || 'Failed to update product.' };
+                return {success: false, message: response.data.message || 'Failed to update product.'};
             }
         } catch (error) {
             let errorMessage = 'An unexpected error occurred.';
@@ -458,10 +517,11 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage };
+            return {success: false, message: errorMessage};
         }
     }
-    static async addProcess({ product_id, name, description }) {
+
+    static async addProcess({product_id, name, description}) {
         try {
             notifyLoading('Adding process...');
             const response = await api.post('/processes', {
@@ -472,7 +532,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to add process.');
                 return {
@@ -500,11 +560,11 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage, errors };
+            return {success: false, message: errorMessage, errors};
         }
     }
 
-    static async updateProcess(id, { name, description }) {
+    static async updateProcess(id, {name, description}) {
         try {
             notifyLoading('Updating process...');
             const response = await api.put(`/processes/${id}`, {
@@ -514,7 +574,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to update process.');
                 return {
@@ -542,7 +602,7 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage, errors };
+            return {success: false, message: errorMessage, errors};
         }
     }
 
@@ -553,7 +613,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to delete process.');
                 return {
@@ -575,7 +635,131 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage };
+            return {success: false, message: errorMessage};
+        }
+    }
+
+    static async updateMaterial(id, updatedFields) {
+        try {
+            notifyLoading('Updating material...');
+            const response = await api.put(`/materials/${id}`, updatedFields);
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return {success: true, message: response.data.message};
+            } else {
+                notifyError(response.data.message || 'Failed to update material.');
+                return {
+                    success: false,
+                    message: response.data.message || 'Failed to update material.',
+                    errors: response.data.errors
+                };
+            }
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred.';
+            let errors = null;
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+                if (error.response.data.errors) {
+                    errors = error.response.data.errors;
+                    const errorDetails = Object.values(errors).flat().join(' ');
+                    errorMessage += ` ${errorDetails}`;
+                }
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return {success: false, message: errorMessage, errors};
+        }
+    }
+
+    static async deleteMaterial(id) {
+        try {
+            notifyLoading('Deleting material...');
+            const response = await api.delete(`/materials/${id}`);
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return {success: true, message: response.data.message};
+            } else {
+                notifyError(response.data.message || 'Failed to delete material.');
+                return {success: false, message: response.data.message || 'Failed to delete material.'};
+            }
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return {success: false, message: errorMessage};
+        }
+    }
+
+    static async updateProcessHistory(id, data) {
+        try {
+            notifyLoading('Updating material history...');
+            const response = await api.put(`/product-processes/${id}`, data);
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return {success: true, message: response.data.message};
+            } else {
+                notifyError(response.data.message || 'Failed to update material history.');
+                return {success: false, message: response.data.message || 'Failed to update material history.'};
+            }
+        } catch (error) {
+            let errorMessage = 'An unexpected error occurred.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return {success: false, message: errorMessage};
+        }
+    }
+
+    static async deleteProcessHistory(id) {
+        try {
+            notifyLoading('Deleting material history...');
+            const response = await api.delete(`/product-processes/${id}`);
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return {success: true, message: response.data.message};
+            } else {
+                notifyError(response.data.message || 'Failed to delete material history.');
+                return {success: false, message: response.data.message || 'Failed to delete material history.'};
+            }
+        } catch (error) {
+            let errorMessage = 'An unexpected error occurred.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return {success: false, message: errorMessage};
         }
     }
 }

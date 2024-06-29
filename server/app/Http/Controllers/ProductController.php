@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Constants\UnitOptions;
 use App\Models\Material;
 use App\Models\Process;
+use App\Models\ProductProcess;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -34,7 +35,7 @@ class ProductController extends Controller
                 'processes.*.name' => 'required|string|max:255',
                 'processes.*.description' => 'required|string|max:255',
                 'material_used' => 'required|numeric',
-                'material_id' => 'sometimes|exists:materials,id',
+                'material_id' => 'required|exists:materials,id',
             ]);
 
             $product = new Product();
@@ -91,15 +92,33 @@ class ProductController extends Controller
         $process->save();
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $products = Product::all();
-            return $this->successResponse('Daftar Product berhasil diambil', $products);
+            $perPage = $request->get('per_page', 10);
+            $products = Product::orderBy('created_at', 'desc')->paginate($perPage);
+
+            $paginationData = [
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+                'next_page_url' => $products->nextPageUrl(),
+                'prev_page_url' => $products->previousPageUrl(),
+            ];
+
+            $response = [
+                'products' => $products->items(),
+                'pagination' => $paginationData
+            ];
+
+            return $this->successResponse('Daftar Product berhasil diambil', $response);
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
+
 
     public function show(Request $request, $id)
     {
@@ -109,19 +128,47 @@ class ProductController extends Controller
                 return $this->notFoundResponse('Product tidak ditemukan');
             }
 
-            // Memuat proses terkait dengan product dan laporan produksi untuk setiap proses
-            $processes = Process::with('productProcesses')->where('product_id', $product->id)->get();
+            $perPage = $request->get('per_page', 10);
+            $page = $request->get('page', 1);
+
+            // Get all processes related to the product
+            $processes = Process::where('product_id', $product->id)->get();
+
+
+            $processesWithPaginatedProductProcesses = [];
+
+            foreach ($processes as $process) {
+                $paginatedProductProcesses = ProductProcess::where('process_id', $process->id)
+                    ->orderBy('date', 'desc')
+                    ->paginate($perPage, ['*'], 'page', $page);
+
+                $processData = [
+                    'process' => $process,
+                    'product_processes' => $paginatedProductProcesses->items(),
+                    'pagination' => [
+                        'current_page' => $paginatedProductProcesses->currentPage(),
+                        'last_page' => $paginatedProductProcesses->lastPage(),
+                        'per_page' => $paginatedProductProcesses->perPage(),
+                        'total' => $paginatedProductProcesses->total(),
+                        'next_page_url' => $paginatedProductProcesses->nextPageUrl(),
+                        'prev_page_url' => $paginatedProductProcesses->previousPageUrl(),
+                    ]
+                ];
+
+                $processesWithPaginatedProductProcesses[] = $processData;
+            }
 
             $response = [
                 'product' => $product,
-                'processes' => $processes
+                'processes' => $processesWithPaginatedProductProcesses
             ];
+
             return $this->successResponse('Data berhasil diambil', $response);
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
-
     }
+
 
     public function update(Request $request, $id)
     {

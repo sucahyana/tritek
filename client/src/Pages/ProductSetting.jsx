@@ -394,7 +394,7 @@ const ProductSetting = () => {
                                         </label>
                                         <InputText
                                             id={`process-name-${index}`}
-                                            value={process?.name || ''}
+                                            value={process?.process?.name || ''}
                                             onChange={(e) => handleProcessChange(index, "name", e.target.value)}
                                             className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                         />
@@ -406,7 +406,7 @@ const ProductSetting = () => {
                                         </label>
                                         <InputText
                                             id={`process-description-${index}`}
-                                            value={process?.description || ''}
+                                            value={process?.process?.description || ''}
                                             onChange={(e) => handleProcessChange(index, "description", e.target.value)}
                                             className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                         />

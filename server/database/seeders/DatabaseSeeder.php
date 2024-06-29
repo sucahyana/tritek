@@ -1,6 +1,8 @@
 <?php
+
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,158 +14,133 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // Seed data for materials table
-        DB::table('materials')->insert([
-            'id' => '1',
-            'name' => 'Material 1',
-            'model' => 'MTL1',
-            'unit' => 'kg',
-            'description' => 'Description of Material 1',
-            'total_quantity' => 100,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('materials')->insert([
-            'id' => '2',
-            'name' => 'Material 2',
-            'model' => 'MTL2',
-            'unit' => 'pcs',
-            'description' => 'Description of Material 2',
-            'total_quantity' => 150,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($i = 1; $i <= 100; $i++) {
+            DB::table('materials')->insert([
+                'id' => $i,
+                'name' => 'Material ' . $i,
+                'model' => 'MTL' . $i,
+                'unit' => 'kg',
+                'description' => 'Description of Material ' . $i,
+                'total_quantity' => rand(50, 200),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         // Seed data for products table
-        DB::table('products')->insert([
-            'id' => '1',
-            'name' => 'Product 1',
-            'description' => 'Description of Product 1',
-            'net_weight' => 10.5,
-            'total_quantity' => 1000,
-            'unit' => 'pcs',
-            'status' => 'Active',
-            'update_date' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-            'model' => 'KLKK1',
-            'material_id' => '1',
-            'material_used' => 20,
-        ]);
-
-        DB::table('products')->insert([
-            'id' => '2',
-            'name' => 'Product 2',
-            'description' => 'Description of Product 2',
-            'net_weight' => 8.75,
-            'total_quantity' => 800,
-            'unit' => 'pcs',
-            'status' => 'Active',
-            'update_date' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-            'model' => 'KLKK2',
-            'material_id' => '1',
-            'material_used' => 20,
-        ]);
+        for ($i = 1; $i <= 100; $i++) {
+            DB::table('products')->insert([
+                'id' => $i,
+                'name' => 'Product ' . $i,
+                'description' => 'Description of Product ' . $i,
+                'net_weight' => rand(5, 20) + 0.5,
+                'total_quantity' => rand(500, 2000),
+                'unit' => 'pcs',
+                'status' => 'Active',
+                'update_date' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'model' => 'KLKK' . $i,
+                'material_id' => $i, // Assign material_id sequentially to ensure it exists
+                'material_used' => rand(10, 50),
+            ]);
+        }
 
         // Seed data for processes table
-        DB::table('processes')->insert([
-            'id' => '1',
-            'name' => 'Process 1',
-            'description' => 'Description of Process 1',
-            'created_at' => now(),
-            'updated_at' => now(),
-            'product_id' => '1'
-        ]);
+        $processCounter = 1;
+        for ($productId = 1; $productId <= 100; $productId++) {
+            for ($j = 1; $j <= 5; $j++) {
+                DB::table('processes')->insert([
+                    'id' => $processCounter,
+                    'name' => 'Process ' . $processCounter,
+                    'description' => 'Description of Process ' . $processCounter,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'product_id' => $productId,
+                ]);
+                $processCounter++;
+            }
+        }
 
-        DB::table('processes')->insert([
-            'id' => '2',
-            'name' => 'Process 2',
-            'description' => 'Description of Process 2',
-            'created_at' => now(),
-            'updated_at' => now(),
-            'product_id' => '1'
-        ]);
+        // Seed data for product_processes table
+        for ($processId = 1; $processId <= 500; $processId++) {
+            for ($k = 1; $k <= 100; $k++) {
+                DB::table('product_process')->insert([
+                    'id' => (string)Str::uuid(),
+                    'product_id' => rand(1, 100),
+                    'process_id' => rand(1, 500),
+                    'date' => now(),
+                    'author' => 'Author ' . $k,
+                    'unit' => 'kg',
+                    'material_id' => rand(1, 100),
+                    'process_send_total' => rand(10, 50),
+                    'process_receive_total' => rand(5, 45),
+                    'total_goods' => rand(5, 40),
+                    'total_not_goods' => rand(1, 10),
+                    'total_quantity' => rand(10, 50),
+                    'status' => 'Active',
+                    'notes' => 'Notes for process ' . $processId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
 
         // Seed data for production_reports table
-        DB::table('production_reports')->insert([
-            'id' => '1',
-            'product_id' => '1', // Ensure this matches with an existing product ID
-            'report_date' => now(),
-            'total_produced' => 1000,
-            'total_used' => 500,
-            'status' => 'Completed',
-            'notes' => 'Initial production report for Product 1',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('production_reports')->insert([
-            'id' => '2',
-            'product_id' => '2', // Ensure this matches with an existing product ID
-            'report_date' => now(),
-            'total_produced' => 800,
-            'total_used' => 400,
-            'status' => 'Completed',
-            'notes' => 'Initial production report for Product 2',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($i = 1; $i <= 100; $i++) {
+            DB::table('production_reports')->insert([
+                'id' => $i,
+                'product_id' => $i, // Ensure product_id exists
+                'report_date' => now(),
+                'total_produced' => rand(500, 2000),
+                'total_used' => rand(100, 1000),
+                'status' => 'Completed',
+                'notes' => 'Initial production report for Product ' . $i,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         // Seed data for users table
-        DB::table('users')->insert([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('password'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($i = 1; $i <= 100; $i++) {
+            DB::table('users')->insert([
+                'name' => 'User ' . $i,
+                'email' => 'user' . $i . '@example.com',
+                'password' => bcrypt('password'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         // Seed data for inventory_reports table
-        DB::table('inventory_reports')->insert([
-            'id' => '1',
-            'material_id' => '1',
-            'report_date' => now(),
-            'quantity' => 50,
-            'notes' => 'Initial inventory report for Material 1',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('inventory_reports')->insert([
-            'id' => '2',
-            'material_id' => '2',
-            'report_date' => now(),
-            'quantity' => 75,
-            'notes' => 'Initial inventory report for Material 2',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($i = 1; $i <= 100; $i++) {
+            DB::table('inventory_reports')->insert([
+                'id' => $i,
+                'material_id' => $i, // Ensure material_id exists
+                'report_date' => now(),
+                'quantity' => rand(20, 100),
+                'notes' => 'Initial inventory report for Material ' . $i,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
 
         // Seed data for material_histories table
-        DB::table('material_histories')->insert([
-            'id' => '1',
-            'material_id' => '1',
-            'process_id' => '1',
-            'unit' => 'kg',
-            'quantity' => 25,
-            'status' => 'In',
-            'notes' => 'Material 1 received for Process 1',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('material_histories')->insert([
-            'id' => '2',
-            'material_id' => '2',
-            'process_id' => '2',
-            'unit' => 'kg',
-            'quantity' => 30,
-            'status' => 'In',
-            'notes' => 'Material 2 received for Process 2',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        for ($materialId = 1; $materialId <= 100; $materialId++) {
+            for ($i = 1; $i <= 100; $i++) {
+                DB::table('material_histories')->insert([
+                    'id' => ($materialId - 1) * 100 + $i,
+                    'material_id' => $materialId,
+                    'process_id' => rand(1, 500),
+                    'date' => now(),
+                    'unit' => 'kg',
+                    'quantity' => rand(10, 50),
+                    'status' => 'In',
+                    'notes' => 'Material ' . $materialId . ' received for Process ' . rand(1, 500),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
     }
 }

@@ -1,24 +1,21 @@
-import React, {useState, useEffect} from 'react';
-import {useSelector} from 'react-redux';
-import {PDFDownloadLink} from '@react-pdf/renderer';
+import React, { useState } from 'react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import * as XLSX from 'xlsx';
-
 import CardList from '../../CardList.jsx';
-import {unitOptions} from '../../../constants/UnitOption.jsx';
+import { unitOptions } from '../../../constants/UnitOption.jsx';
 import FormInput from '../../Materials/FormInput.jsx';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Button from '@mui/material/Button';
-import ReportProses from "../ReportProsses.jsx";
-import ExternalProsses from "@/components/Molecules/Products/Data/ExternalProsses.jsx";
-import Packaging from "@/components/Molecules/Products/Data/Packaging.jsx";
-import ApiService from "@/services/ApiService.jsx";
-import {notifyError, notifySuccess} from "@/components/Atoms/Toast.jsx";
-
+import ReportProses from '../ReportProsses.jsx';
+import ExternalProsses from '@/components/Molecules/Products/Data/ExternalProsses.jsx';
+import Packaging from '@/components/Molecules/Products/Data/Packaging.jsx';
+import ApiService from '@/services/ApiService.jsx';
+import { notifyError, notifySuccess } from '@/components/Atoms/Toast.jsx';
 
 const TabPanel = (props) => {
-    const {children, value, index, ...other} = props;
+    const { children, value, index, ...other } = props;
 
     return (
         <div
@@ -30,7 +27,7 @@ const TabPanel = (props) => {
             className={'bg-none'}
         >
             {value === index && (
-                <Box sx={{p: 3}} className={`bg-none`}>
+                <Box sx={{ p: 3 }} className={`bg-none`}>
                     {children}
                 </Box>
             )}
@@ -38,29 +35,13 @@ const TabPanel = (props) => {
     );
 };
 
-const DataProduct = ({product, processes}) => {
+const DataProduct = ({ product, processes, pagination, onPageChange, materials }) => {
     const [value, setValue] = useState(0);
     const [formData, setFormData] = useState([]);
-
-    const materials = useSelector(state => state.material.materials);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('https://api.example.com/report');
-            const data = await response.json();
-            const formattedData = data.map(item => ({
-                label: item.fieldName,
-                value: ''
-            }));
-            setFormData(formattedData);
-        };
-
-        fetchData();
-    }, []);
 
     const handleSubmitProcess = async (data) => {
         try {
@@ -77,9 +58,13 @@ const DataProduct = ({product, processes}) => {
     };
 
     const getMaterialName = (materialId) => {
-        const material = materials.find(mat => mat.id === materialId);
-        return material ? material.name : 'Unknown';
+        if (Array.isArray(materials)) {
+            const material = materials.find((mat) => mat.id === materialId);
+            return material ? material.name : 'Unknown';
+        }
+        return 'Unknown';
     };
+
     const formInputs = [
         {
             title: 'Tanggal',
@@ -104,8 +89,7 @@ const DataProduct = ({product, processes}) => {
             title: 'Status',
             inputName: 'status',
             type: 'dropdown',
-            options: [{label: 'plus', value: 'plus'},
-                {label: 'minus', value: 'minus'}],
+            options: [{ label: 'plus', value: 'plus' }, { label: 'minus', value: 'minus' }],
             placeholder: 'Masukan Status'
         },
         {
@@ -131,49 +115,71 @@ const DataProduct = ({product, processes}) => {
             inputName: 'notes',
             inputType: 'text',
             placeholder: 'Masukan Catatan'
-        },
+        }
     ];
+
+    const handleUpdateHistory = async (historyId, newData) => {
+        try {
+            await ApiService.updateProcessHistory(historyId, newData);
+        } catch (error) {
+            console.error('Failed to update process history:', error);
+        }
+    };
+
+    const handleDeleteHistory = async (historyId) => {
+        try {
+            await ApiService.deleteProcessHistory(historyId);
+        } catch (error) {
+            console.error('Failed to delete process history:', error);
+        }
+    };
 
     const dataTable = (tabData) => {
         if (tabData.component) {
             return tabData.component;
         }
 
-        const dataWithMaterialNames = tabData.history.map(item => ({
+        const dataWithMaterialNames = tabData.product_processes.map((item) => ({
             ...item,
             material: getMaterialName(item.material_id)
         }));
-        console.log(tabData.id)
 
         return (
             <CardList
+                onUpdate={handleUpdateHistory}
+                onDelete={handleDeleteHistory}
+                pagination={tabData.pagination}
+                onPageChange={onPageChange}
+                rowsPerPageOptions={[10, 15, 30, 50, 100]}
                 title={tabData.title}
                 buttonLabel={tabData.buttonLabel}
                 data={dataWithMaterialNames}
                 headers={[
-                    {field: 'created_at', header: 'Tanggal'},
-                    {field: 'author', header: 'Author'},
-                    {field: 'unit', header: 'Satuan/Unit barang jadi'},
-                    {field: 'material', header: 'Material'},
-                    {field: 'total_quantity', header: 'Jumlah'},
-                    {field: 'total_not_goods', header: 'NG'},
-                    {field: 'total_goods', header: 'Good'},
-                    {field: 'notes', header: 'Alasan/Keterangan'},
+                    { field: 'date', header: 'Tanggal' },
+                    { field: 'author', header: 'Author' },
+                    { field: 'unit', header: 'Satuan/Unit barang jadi' },
+                    { field: 'material', header: 'Material' },
+                    { field: 'total_quantity', header: 'Jumlah' },
+                    { field: 'total_not_goods', header: 'NG' },
+                    { field: 'total_goods', header: 'Good' },
+                    { field: 'notes', header: 'Alasan/Keterangan' }
                 ]}
                 globalFilterPlaceholder="Search history..."
-                modalContent={<FormInput
-                    inputs={formInputs}
-                    showDialogOnMount={true}
-                    headerText={tabData.title}
-                    submitButtonText={'Tambahkan'}
-                    onSubmit={handleSubmitProcess}
-                    core_id={{
-                        'product_id': product.id,
-                        'process_id': tabData.id,
-                        'material_id': product.material_id,
-                    }}
-                    endpoint={'addProductProcessHistory'}
-                />}
+                modalContent={
+                    <FormInput
+                        inputs={formInputs}
+                        showDialogOnMount={true}
+                        headerText={tabData.title}
+                        submitButtonText={'Tambahkan'}
+                        onSubmit={handleSubmitProcess}
+                        core_id={{
+                            product_id: product.id,
+                            process_id: tabData.id,
+                            material_id: product.material_id
+                        }}
+                        endpoint={'addProductProcessHistory'}
+                    />
+                }
             />
         );
     };
@@ -181,43 +187,57 @@ const DataProduct = ({product, processes}) => {
     const handleExportExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(formData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
-        XLSX.writeFile(workbook, "laporan-produksi.xlsx");
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+        XLSX.writeFile(workbook, 'laporan-produksi.xlsx');
     };
 
     let tabsData = [];
 
-    processes.forEach(process => {
-        if (process.name !== 'External Process' && process.name !== 'Packaging') {
+    processes.forEach((process) => {
+        if (process.process.name !== 'External Process' && process.process.name !== 'Packaging') {
             tabsData.push({
-                label: process.name,
-                title: `Riwayat ${process.name}`,
-                buttonLabel: `Laporan ${process.name}`,
-                history: process.product_processes,
-                id: process.id
-
+                label: process.process.name,
+                title: `Riwayat ${process.process.name}`,
+                buttonLabel: `Laporan ${process.process.name}`,
+                product_processes: process.product_processes,
+                id: process.process.id,
+                pagination: process.pagination
             });
         }
     });
 
-    processes.forEach(process => {
-        if (process.name === 'External Process') {
+    processes.forEach((process) => {
+        if (process.process.name === 'External Process') {
             tabsData.push({
                 label: 'External Process',
                 title: 'Riwayat Proses Diluar PT',
-                component: <ExternalProsses/>
+                component: (
+                    <ExternalProsses
+                        onPageChange = {onPageChange}
+                        product={process}
+                        materialId={product}
+                    />
+                )
+            });
+        }
+
+        if (process.process.name === 'Packaging') {
+            tabsData.push({
+                label: 'Packaging',
+                title: 'Riwayat Proses Pengemasan',
+                component: (
+                    <Packaging
+                        process={process}
+                        product={product}
+                        onPageChange = {onPageChange}
+                    />
+                )
             });
         }
     });
 
-    tabsData.push({
-        label: 'Pengemasan',
-        title: 'Riwayat Proses Pengemasan',
-        component: <Packaging/>
-    });
-
     return (
-        <Box sx={{width: '100%'}}>
+        <Box sx={{ width: '100%' }}>
             <Tabs
                 value={value}
                 onChange={handleChange}
@@ -229,23 +249,23 @@ const DataProduct = ({product, processes}) => {
                     textTransform: 'none',
                     color: 'rgba(255, 255, 255, 0.7)',
                     '& .Mui-selected': {
-                        color: '#fff',
+                        color: '#fff'
                     },
                     '& .Mui-focusVisible': {
-                        backgroundColor: 'rgba(100, 95, 228, 0.32)',
-                    },
+                        backgroundColor: 'rgba(100, 95, 228, 0.32)'
+                    }
                 }}
             >
                 {tabsData.map((tab, index) => (
-                    <Tab key={index} label={tab.label}/>
+                    <Tab key={index} label={tab.label} />
                 ))}
             </Tabs>
             {tabsData.map((tab, index) => (
                 <TabPanel key={index} value={value} index={index}>
                     {dataTable(tab)}
                     <Box display="flex" justifyContent="space-between" mt={2}>
-                        <PDFDownloadLink document={<ReportProses data={formData}/>} fileName="laporan-produksi.pdf">
-                            {({loading}) => (
+                        <PDFDownloadLink document={<ReportProses data={formData} />} fileName="laporan-produksi.pdf">
+                            {({ loading }) => (
                                 <Button variant="contained" color="primary">
                                     {loading ? 'Loading document...' : 'Download PDF'}
                                 </Button>

@@ -19,6 +19,7 @@ return new class extends Migration
 		    $table->string('unit');
 		    $table->string('status');
 		    $table->text('notes')->nullable();
+            $table->date('date')->nullable();
 		    $table->timestamps();
 	    });
     }

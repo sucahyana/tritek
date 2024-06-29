@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { IoMdSettings } from "react-icons/io";
 import {IoArrowBack} from "react-icons/io5";
 
-const DetailHeader = ({ pageName, onBack, id }) => (
+const DetailHeader = ({ pageName, onBack, id,setting }) => (
     <motion.div
         className="flex justify-between items-center"
         initial={{ opacity: 0 }}
@@ -23,7 +23,7 @@ const DetailHeader = ({ pageName, onBack, id }) => (
             </h1>
 
         </div>
-        <Link to={`/product/${id}/setting`}>
+        <Link to={`/${setting}/${id}/setting`}>
             <Button
                 label={'Setting'}
                 icon={

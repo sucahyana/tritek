@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Material
- * 
+ *
  * @property string $id
  * @property string $name
  * @property string $unit
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null $total_quantity
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * 
+ *
  * @property Collection|InventoryReport[] $inventory_reports
  * @property Collection|MaterialHistory[] $material_histories
  * @property Collection|ProductProcess[] $product_processes
@@ -61,4 +61,6 @@ class Material extends Model
 	{
 		return $this->hasMany(ProductProcess::class);
 	}
+
+
 }

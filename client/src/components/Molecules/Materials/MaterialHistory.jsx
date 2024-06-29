@@ -5,7 +5,9 @@ import { unitOptions } from "../../constants/UnitOption.jsx";
 import ApiService from "@/services/ApiService.jsx";
 
 
-const MaterialHistory = ({ material, history }) => {
+const MaterialHistory = ({ material, history, pagination, onPageChange, rowsPerPageOptions }) => {
+
+
     const [defaultDate, setDefaultDate] = useState('');
     const [defaultName, setDefaultName] = useState('');
 
@@ -34,11 +36,12 @@ const MaterialHistory = ({ material, history }) => {
 
     return (
         <CardList
+
             title="Riwayat Material"
             buttonLabel={'Laporan Material'}
             data={history}
             headers={[
-                { field: 'created_at', header: 'Tanggal' },
+                { field: 'date', header: 'Tanggal' },
                 { field: 'unit', header: 'Satuan/Unit' },
                 { field: 'quantity', header: 'Jumlah' },
                 { field: 'status', header: 'Status' },
@@ -94,6 +97,9 @@ const MaterialHistory = ({ material, history }) => {
                 endpoint="addMaterialHistory"
                 core_id={{ material_id: material.id }}
             />}
+            pagination={pagination}
+            onPageChange={onPageChange}
+            rowsPerPageOptions={rowsPerPageOptions}
             onUpdate={handleUpdateHistory}
             onDelete={handleDeleteHistory}
         />

@@ -13,6 +13,8 @@ use App\Http\Controllers\InventoryReportController;
 Route::prefix('v1')->group(function () {
 // Materials
 	Route::get('/materials', [MaterialController::class, 'index']);
+	Route::get('/materials/info', [MaterialController::class, 'getMaterialInfo']);
+	Route::get('/materials/full', [MaterialController::class, 'full']);
 	Route::post('/materials', [MaterialController::class, 'store']);
 	Route::get('/materials/{id}', [MaterialController::class, 'show']);
 	Route::put('/materials/{id}', [MaterialController::class, 'update']);

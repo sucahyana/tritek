@@ -12,11 +12,11 @@ import {
 import ApiService from '../../services/ApiService';
 
 
-export const fetchMaterials = () => {
+export const fetchMaterials = (page = 1, rows = 10) => {
     return async dispatch => {
         dispatch({ type: FETCH_MATERIALS_REQUEST });
         try {
-            const data = await ApiService.getMaterials();
+            const data = await ApiService.getMaterials(page, rows);
             dispatch({ type: FETCH_MATERIALS_SUCCESS, payload: data });
         } catch (error) {
             dispatch({ type: FETCH_MATERIALS_FAILURE, error: error.message });

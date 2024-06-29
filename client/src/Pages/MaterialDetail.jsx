@@ -12,20 +12,26 @@ import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
 
+
 const MaterialDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [material, setMaterial] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [history, setHistory] = useState(null);
+    const [history, setHistory] = useState([]);
+    const [pagination, setPagination] = useState({});
+    const [page, setPage] = useState(1);
+    const [rows, setRows] = useState(10);
 
     useEffect(() => {
         async function fetchMaterial() {
             try {
-                const response = await ApiService.getMaterial(id);
+                const response = await ApiService.getMaterial(id, page, rows);
                 setMaterial(response.material);
                 setHistory(response.history);
+                setPagination(response.pagination);
+                console.log('material',response.pagination);
             } catch (err) {
                 setError(err);
             } finally {
@@ -33,7 +39,12 @@ const MaterialDetail = () => {
             }
         }
         fetchMaterial();
-    }, [id]);
+    }, [id, page, rows]);
+
+    const handlePageChange = (event) => {
+        setPage(event.page + 1);
+        setRows(event.rows);
+    };
 
     const contentFish = () => (
         <motion.div
@@ -63,10 +74,10 @@ const MaterialDetail = () => {
             <Card sx={{ maxWidth: 345, bgcolor: 'primary.main' }}>
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div" color="primary.contrastText">
-                    {material.total_quantity} {material.unit}
+                        {material.total_quantity} {material.unit}
                     </Typography>
                     <Typography variant="body2" color="primary.contrastText">
-                       Jumlah Material
+                        Jumlah Material
                     </Typography>
                 </CardContent>
             </Card>
@@ -88,12 +99,18 @@ const MaterialDetail = () => {
 
         return (
             <div className="flex flex-col gap-8 justify-center w-full">
-                <DetailHeader pageName={'Material Detail'} material={material} onBack={() => navigate(-1)} />
+                <DetailHeader pageName={'Material Detail'} material={material} onBack={() => navigate(-1)} id={material.model} setting={'material'}/>
                 <hr className="border-martinique-400 -mt-4 border" />
                 <DetailInfo info={material} infoWaste={'Info Material'} pageName={'Material Detail'} infoReady={'Material Siap'}
-                contentFish={contentFish()}
-                contentCat={contentCat()}/>
-                <MaterialHistory material={material} history={history} />
+                            contentFish={contentFish()}
+                            contentCat={contentCat()}/>
+                <MaterialHistory
+                    material={material}
+                    history={history}
+                    pagination={pagination}
+                    onPageChange={handlePageChange}
+                    rowsPerPageOptions={[10, 20, 30,50,100]}
+                />
             </div>
         );
     }

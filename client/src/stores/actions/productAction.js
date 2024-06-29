@@ -9,11 +9,11 @@ import {
 import ApiService from '../../services/ApiService';
 
 
-export const fetchProducts = () => {
+export const fetchProducts = (page = 1, rows = 10) => {
     return async dispatch => {
         dispatch({ type: FETCH_PRODUCTS_REQUEST });
         try {
-            const data = await ApiService.getProducts();
+            const data = await ApiService.getProducts(page, rows);
             dispatch({ type: FETCH_PRODUCTS_SUCCESS, payload: data });
         } catch (error) {
             dispatch({ type: FETCH_PRODUCTS_FAILURE, error: error.message });

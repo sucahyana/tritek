@@ -2,13 +2,15 @@ import ContainerStarter from "../components/Organisms/ContainerStarter.jsx";
 import ProductMain from "../components/Organisms/ProductMain.jsx";
 
 
+
 const Products = () => {
 
 
     const content = () => {
         return (
-            <div className={'flex justify-center items-center -mt-20 h-full'}>
-                <ProductMain/>
+            <div className={'flex justify-center items-center h-full'}>
+                <ProductMain
+                />
             </div>
         )
     }

@@ -9,6 +9,7 @@ import {useDispatch} from "react-redux";
 import {fetchMaterials} from "@/stores/actions/materialActions.js";
 import {fetchProducts} from "@/stores/actions/productAction.js";
 import ProductSetting from "@/Pages/ProductSetting.jsx";
+import MaterialSetting from "@/Pages/MaterialSetting.jsx";
 
 const AppRoutes = () => {
     const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const AppRoutes = () => {
             <Route path="/products" element={<Products/>}/>
             <Route path="/product/:id" element={<ProductDetail/>}/>
             <Route path="/product/:id/setting" element={<ProductSetting/>}/>
+            <Route path="/material/:id/setting" element={<MaterialSetting/>}/>
         </Routes>
     );
 };

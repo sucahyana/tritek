@@ -58,26 +58,42 @@ class MaterialHistoryController extends Controller
 		}
 	}
 
-	public function index(Request $request, $id)
-	{
-		try {
-			$material = Material::where('model', $id)->first();
-			if (!$material) {
-				return $this->notFoundResponse('Material tidak ditemukan');
-			}
+    public function index(Request $request, $id)
+    {
+        try {
+            $material = Material::where('model', $id)->first();
+            if (!$material) {
+                return $this->notFoundResponse('Material tidak ditemukan');
+            }
 
-			$materialHistory = MaterialHistory::where('material_id', $material->id)->get();
-			$response = [
-				'material' => $material,
-				'history' => $materialHistory
-			];
-			return $this->successResponse('Riwayat material berhasil diambil', $response);
-		} catch (\Exception $e) {
-			return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
-		}
-	}
+            $perPage = $request->get('per_page', 10);
+            $materialHistory = MaterialHistory::where('material_id', $material->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage);
 
-	public function update(Request $request, $id)
+            $paginationData = [
+                'current_page' => $materialHistory->currentPage(),
+                'last_page' => $materialHistory->lastPage(),
+                'per_page' => $materialHistory->perPage(),
+                'total' => $materialHistory->total(),
+                'next_page_url' => $materialHistory->nextPageUrl(),
+                'prev_page_url' => $materialHistory->previousPageUrl(),
+            ];
+
+            $response = [
+                'material' => $material,
+                'history' => $materialHistory->items(),
+                'pagination' => $paginationData
+            ];
+
+            return $this->successResponse('Riwayat material berhasil diambil', $response);
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+        }
+    }
+
+
+    public function update(Request $request, $id)
 	{
 		try {
 			$validated = $request->validate([
@@ -102,12 +118,10 @@ class MaterialHistoryController extends Controller
 			$originalQuantity = $materialHistory->quantity;
 			$originalStatus = $materialHistory->status;
 
-			// Update fields only if they are present in the request
+
 			$materialHistory->update($validated);
 
 			$material = Material::findOrFail($materialHistory->material_id);
-
-			// Adjust total quantity if status or quantity changes
 			if (isset($validated['quantity']) || isset($validated['status'])) {
 				$newQuantity = $validated['quantity'] ?? $originalQuantity;
 				$newStatus = $validated['status'] ?? $originalStatus;
