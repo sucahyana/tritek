@@ -40,12 +40,25 @@ Menampilkan data thumbnail produk dan material dengan fitur pencarian dan pagina
 Menampilkan thumbnail produk dengan fitur paginasi dan tambah produk baru.
 
 ### Detail Produk '/product/{model}'
-![Detail Produk](/assets/productDetail.png)
+[![Product Detail](/assets/productDetail.png)](/assets/productDetail.mkv)
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
 
 ### Pengaturan Produk '/product/{model}/setting'
-![Pengaturan Produk](/assets/productSetting.png)
+[![Product setting](/assets/productSetting.png)](/assets/productSetting.mkv)
 Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
+
+
+### Material Thumbnail '/materials'
+![Material](/assets/materials.png)
+Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.
+
+### Detail Material'/material/{model}'
+[![Material Detail](/assets/productDetail.png)](/assets/materialDetail.mkv)
+Menampilkan detail produk dengan fitur pengelolaan dan edit.
+
+### Pengaturan Material '/material/{model}/setting'
+[![material setting](/assets/materialSetting.png)]
+Menampilkan pengaturan material dengan fitur tambah, edit, dan hapus.
 
 ## Video Demo
 *(Tambahkan video demo dari aplikasi di sini)*
@@ -173,4 +186,3 @@ Berikut adalah beberapa contoh penggunaan API dari aplikasi ini:
 Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
 
 ---
-
