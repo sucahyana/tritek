@@ -1,99 +1,112 @@
 
-# Monitoring Produksi
+---
 
-Monitoring Produksi adalah sebuah aplikasi berbasis web yang dikembangkan oleh PT Tritek Indonesia untuk memantau dan mengelola proses produksi secara efektif. Aplikasi ini dibangun menggunakan framework Laravel untuk backend dan React untuk frontend.
+# SISTEM INFORMASI PENANGANAN MONITORING PRODUKSI BERBASIS WEBSITE DI PT. TRITEK INDONESIA
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Features](#features)
+Sebuah aplikasi berbasis web yang dikembangkan oleh PT Tritek Indonesia untuk memantau dan mengelola proses produksi secara efektif. Aplikasi ini dibangun menggunakan framework Laravel untuk backend dan React untuk frontend.
+
+## Daftar Isi
+- [Pendahuluan](#introduction)
+- [Fitur-fitur](#features)
 - [Screenshots](#screenshots)
-- [Demo Video](#demo-video)
-- [Installation](#installation)
-- [Usage](#usage)
+- [Video Demo](#demo-video)
+- [Instalasi](#installation)
+- [Penggunaan](#usage)
 - [Dependencies](#dependencies)
-- [Configuration](#configuration)
-- [Documentation](#documentation)
-- [Examples](#examples)
-- [Troubleshooting](#troubleshooting)
-- [Contributors](#contributors)
-- [License](#license)
+- [Konfigurasi](#configuration)
+- [Dokumentasi](#documentation)
+- [Contoh Penggunaan API](#examples)
+- [Permasalahan Umum](#troubleshooting)
+- [Kontributor](#contributors)
+- [Lisensi](#license)
 
-## Introduction
-Aplikasi Monitoring Produksi dirancang untuk membantu perusahaan dalam memantau dan mengelola proses produksi secara real-time. Dengan menggunakan aplikasi ini, pengguna dapat melacak status produksi, mengevaluasi efisiensi, dan mengidentifikasi potensi masalah sebelum menjadi isu besar.
+## Pendahuluan
+Aplikasi Monitoring Produksi dirancang untuk membantu PT Tritek Indonesia dalam memantau dan mengelola proses produksi secara real-time. Dengan menggunakan aplikasi ini, pengguna dapat melacak status produksi, mengevaluasi efisiensi, dan mengidentifikasi potensi masalah sebelum menjadi isu besar.
 
-## Features
-- Real-time production monitoring
-- User-friendly interface
-- Detailed reporting and analytics
-- Notification system for alerts and updates
-- Role-based access control
+## Fitur-fitur
+- Pemantauan produksi real-time
+- Antarmuka yang ramah pengguna
+- Pelaporan dan analisis terperinci
+- Sistem notifikasi untuk peringatan dan pembaruan
+- Kontrol akses berbasis peran
 
 ## Screenshots
-*(Tambahkan tangkapan layar dari aplikasi di sini)*
+### Dashboard '/'
+![Dashboard](/assets/dashboard.png)
+Menampilkan data thumbnail produk dan material dengan fitur pencarian dan paginasi.
 
-![Screenshot 1](path/to/screenshot1.png)
-![Screenshot 2](path/to/screenshot2.png)
+### Produk Thumbnail '/products'
+![Produk Thumbnail](/assets/productThumbnail.png)
+Menampilkan thumbnail produk dengan fitur paginasi dan tambah produk baru.
 
-## Demo Video
+### Detail Produk '/product/{model}'
+![Detail Produk](/assets/productDetail.png)
+Menampilkan detail produk dengan fitur pengelolaan dan edit.
+
+### Pengaturan Produk '/product/{model}/setting'
+![Pengaturan Produk](/assets/productSetting.png)
+Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
+
+## Video Demo
 *(Tambahkan video demo dari aplikasi di sini)*
 
 [![Demo Video](path/to/video_thumbnail.png)](path/to/demo_video.mp4)
 
-## Installation
-### Prerequisites
+## Instalasi
+### Prasyarat
 - PHP >= 7.3
 - Node.js >= 12.x
 - Composer
-- NPM or Yarn
+- NPM atau Yarn
 - MySQL
 
-### Steps
-1. Clone the repository:
+### Langkah-langkah
+1. Clone repository:
    ```sh
-   git clone https://github.com/username/monitoring-produksi.git
-   cd monitoring-produksi
+   git clone https://github.com/sucahyana/tritek.git
+   cd tritek
    ```
 
-2. Install backend dependencies using Composer:
+2. Instal dependensi backend menggunakan Composer:
    ```sh
    composer install
    ```
 
-3. Install frontend dependencies using NPM or Yarn:
+3. Instal dependensi frontend menggunakan NPM atau Yarn:
    ```sh
    npm install
-   # or
+   # atau
    yarn install
    ```
 
-4. Copy the `.env.example` file to `.env` and configure your environment variables:
+4. Salin file `.env.example` menjadi `.env` dan konfigurasikan variabel lingkungan:
    ```sh
    cp .env.example .env
    ```
 
-5. Generate application key:
+5. Generate aplikasi key:
    ```sh
    php artisan key:generate
    ```
 
-6. Run database migrations:
+6. Jalankan migrasi database:
    ```sh
    php artisan migrate
    ```
 
-7. Build the frontend assets:
+7. Bangun aset frontend:
    ```sh
    npm run dev
-   # or
+   # atau
    yarn dev
    ```
 
-8. Start the development server:
+8. Jalankan server pengembangan:
    ```sh
    php artisan serve
    ```
 
-## Usage
+## Penggunaan
 1. Akses aplikasi melalui browser di `http://localhost:8000`.
 2. Login menggunakan akun yang sudah terdaftar.
 3. Navigasi melalui dashboard untuk memantau status produksi dan mendapatkan laporan.
@@ -102,13 +115,13 @@ Aplikasi Monitoring Produksi dirancang untuk membantu perusahaan dalam memantau 
 - **Backend**: Laravel
 - **Frontend**: React, Redux
 - **Database**: MySQL
-- **Other Libraries**:
+- **Library Lain**:
   - Axios
   - React Router
   - Chart.js
 
-## Configuration
-Konfigurasi aplikasi dilakukan melalui file `.env`. Berikut adalah beberapa konfigurasi penting:
+## Konfigurasi
+Konfigurasi aplikasi dilakukan melalui file `.env`. Berikut beberapa konfigurasi penting:
 - **Database**:
   ```env
   DB_CONNECTION=mysql
@@ -128,10 +141,10 @@ Konfigurasi aplikasi dilakukan melalui file `.env`. Berikut adalah beberapa konf
   MAIL_ENCRYPTION=tls
   ```
 
-## Documentation
+## Dokumentasi
 Dokumentasi lengkap aplikasi dapat ditemukan di folder `docs` pada repository ini.
 
-## Examples
+## Contoh Penggunaan API
 Berikut adalah beberapa contoh penggunaan API dari aplikasi ini:
 - Mendapatkan daftar produksi:
   ```sh
@@ -146,16 +159,18 @@ Berikut adalah beberapa contoh penggunaan API dari aplikasi ini:
   }
   ```
 
-## Troubleshooting
+## Permasalahan Umum
 - **Masalah koneksi database**: Pastikan konfigurasi database di file `.env` sudah benar.
 - **Error saat migrasi**: Periksa struktur database dan pastikan tidak ada tabel yang bertabrakan.
 - **Masalah dependensi**: Jalankan `composer install` dan `npm install` untuk memastikan semua dependensi terinstal dengan benar.
 
-## Contributors
+## Kontributor
 - [Nama Anda](https://github.com/username) - Pengembang Utama
 - [Nama Kontributor Lain](https://github.com/username2) - Pengembang Backend
 - [Nama Kontributor Lain](https://github.com/username3) - Pengembang Frontend
 
-## License
+## Lisensi
 Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
-```
+
+---
+
