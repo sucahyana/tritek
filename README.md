@@ -41,7 +41,9 @@ Menampilkan thumbnail produk dengan fitur paginasi dan tambah produk baru.
 
 ### Detail Produk '/product/{model}'
 [![Product Detail](/assets/productDetail.png)](/assets/productDetail.mp4)
+https://github.com/sucahyana/tritek/assets/97436856/353c2844-7c9f-4a0f-8288-adaa75702b6d
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
+
 
 ### Pengaturan Produk '/product/{model}/setting'
 [![Product setting](/assets/productSetting.png)](/assets/productSetting.mp4)
