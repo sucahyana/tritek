@@ -6,19 +6,19 @@
 Sebuah aplikasi berbasis web yang dikembangkan oleh PT Tritek Indonesia untuk memantau dan mengelola proses produksi secara efektif. Aplikasi ini dibangun menggunakan framework Laravel untuk backend dan React untuk frontend.
 
 ## Daftar Isi
-- [Pendahuluan](#introduction)
-- [Fitur-fitur](#features)
+- [Pendahuluan](#pendahuluan)
+- [Fitur-fitur](#fitur-fitur)
 - [Screenshots](#screenshots)
-- [Video Demo](#demo-video)
-- [Instalasi](#installation)
-- [Penggunaan](#usage)
+- [Video Demo](#video-demo)
+- [Instalasi](#instalasi)
+- [Penggunaan](#penggunaan)
 - [Dependencies](#dependencies)
-- [Konfigurasi](#configuration)
-- [Dokumentasi](#documentation)
-- [Contoh Penggunaan API](#examples)
-- [Permasalahan Umum](#troubleshooting)
-- [Kontributor](#contributors)
-- [Lisensi](#license)
+- [Konfigurasi](#konfigurasi)
+- [Dokumentasi](#dokumentasi)
+- [Contoh Penggunaan API](#contoh-penggunaan-api)
+- [Permasalahan Umum](#permasalahan-umum)
+- [Kontributor](#kontributor)
+- [Lisensi](#lisensi)
 
 ## Pendahuluan
 Aplikasi Monitoring Produksi dirancang untuk membantu PT Tritek Indonesia dalam memantau dan mengelola proses produksi secara real-time. Dengan menggunakan aplikasi ini, pengguna dapat melacak status produksi, mengevaluasi efisiensi, dan mengidentifikasi potensi masalah sebelum menjadi isu besar.
@@ -36,7 +36,7 @@ Aplikasi Monitoring Produksi dirancang untuk membantu PT Tritek Indonesia dalam 
 Menampilkan data thumbnail produk dan material dengan fitur pencarian dan paginasi.
 
 ### Produk Thumbnail '/products'
-![Produk Thumbnail](/assets/productThumbnail.png)
+![Produk Thumbnail](/assets/products.png)
 Menampilkan thumbnail produk dengan fitur paginasi dan tambah produk baru.
 
 ### Detail Produk '/product/{model}'
@@ -47,7 +47,6 @@ Menampilkan detail produk dengan fitur pengelolaan dan edit.
 [![Product setting](/assets/productSetting.png)](/assets/productSetting.mp4)
 Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
 
-
 ### Material Thumbnail '/materials'
 ![Material](/assets/materials.png)
 Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.
@@ -57,13 +56,8 @@ Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
 
 ### Pengaturan Material '/material/{model}/setting'
-[![material setting](/assets/materialSetting.png)]
+[![material setting](/assets/materialSetting.png)](/assets/materialSetting.mp4)
 Menampilkan pengaturan material dengan fitur tambah, edit, dan hapus.
-
-## Video Demo
-*(Tambahkan video demo dari aplikasi di sini)*
-
-[![Demo Video](path/to/video_thumbnail.png)](path/to/demo_video.mp4)
 
 ## Instalasi
 ### Prasyarat
