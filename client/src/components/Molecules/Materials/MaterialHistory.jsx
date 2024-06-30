@@ -84,12 +84,6 @@ const MaterialHistory = ({ material, history, pagination, onPageChange, rowsPerP
                         inputType: 'text',
                         placeholder: 'Masukkan Catatan'
                     },
-                    {
-                        title: 'Process ID',
-                        inputName: 'process_id',
-                        inputType: 'number',
-                        placeholder: 'Masukkan Process ID'
-                    },
                 ]}
                 showDialogOnMount={true}
                 headerText={`Atur ${material.name}`}

@@ -68,8 +68,7 @@ const Packaging = ({ product, process,onPageChange }) => {
                                 inputName: 'status',
                                 type: 'dropdown',
                                 options: [
-                                    { label: 'penambahan', value: 'plus' },
-                                    { label: 'pengurangan', value: 'minus' },
+                                    { label: 'pilih ini', value: 'plus' },
                                 ],
                                 placeholder: 'Masukan statusnya',
                             },

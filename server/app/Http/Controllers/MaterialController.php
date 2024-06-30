@@ -15,6 +15,7 @@ class MaterialController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validasi input dari request
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'model' => 'required|string|max:255|unique:materials',
@@ -27,9 +28,6 @@ class MaterialController extends Controller
                 ],
             ]);
 
-            $validated['total_quantity'] = UnitOptions::convertToKilograms($validated['total_quantity'], $validated['unit']);
-            $validated['unit'] = 'kg';
-
             $material = Material::create($validated);
 
             return $this->createdResponse('Material berhasil dibuat', $material);
@@ -40,6 +38,7 @@ class MaterialController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
     public function full()
     {
         try {
@@ -110,11 +109,13 @@ class MaterialController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            // Mencari material berdasarkan model
             $material = Material::where('model', $id)->first();
             if (!$material) {
                 return $this->notFoundResponse('Material tidak ditemukan');
             }
 
+            // Validasi input dari request
             $validated = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
                 'model' => [
@@ -134,10 +135,6 @@ class MaterialController extends Controller
                 ],
             ]);
 
-            if (isset($validated['total_quantity']) && isset($validated['unit'])) {
-                $validated['total_quantity'] = UnitOptions::convertToKilograms($validated['total_quantity'], $validated['unit']);
-                $validated['unit'] = 'kg';
-            }
 
             $material->update($validated);
 
@@ -151,6 +148,7 @@ class MaterialController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
 
     public function destroy($id)
     {

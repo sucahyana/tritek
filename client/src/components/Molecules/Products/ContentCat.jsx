@@ -31,8 +31,11 @@ const ContentCat = ({ product, progress, materials}) => {
                     <Typography variant="body1" sx={{ mb: 1, fontWeight: 'bold', color: 'white' }}>
                         {material.name}
                     </Typography>
+                    <Typography variant="body" sx={{ color: 'white' }}>
+                        Stok Material : {material.total_quantity} {material.unit}
+                    </Typography>
                     <Typography variant="body2" sx={{ color: 'white' }}>
-                        Stok: {material.total_quantity} {material.unit}
+                        Untuk Membuat 1 Produk membutuhkan: {product.material_used} {material.unit} Material
                     </Typography>
                 </Paper>
             ) : (

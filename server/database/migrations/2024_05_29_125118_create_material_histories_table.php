@@ -14,7 +14,6 @@ return new class extends Migration
 	    Schema::create('material_histories', function (Blueprint $table) {
 		    $table->uuid('id')->primary();
 		    $table->foreignUuid('material_id')->constrained('materials')->onDelete('cascade');
-		    $table->foreignUuid('process_id')->constrained('processes')->onDelete('cascade');
 		    $table->float('quantity');
 		    $table->string('unit');
 		    $table->string('status');

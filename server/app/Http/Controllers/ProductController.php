@@ -52,7 +52,6 @@ class ProductController extends Controller
 
             $createdProcesses = [];
 
-            // Create processes based on request
             foreach ($validated['processes'] as $processData) {
                 $process = new Process();
                 $process->product_id = $product->id;
@@ -62,11 +61,9 @@ class ProductController extends Controller
                 $createdProcesses[] = $process;
             }
 
-            // Create packaging process
             $this->createProcess($product->id, 'Packaging', 'Packaging');
             $createdProcesses[] = ['name' => 'Packaging', 'description' => 'Packaging'];
 
-            // Create external_process if needed
             if ($validated['external_process']) {
                 $this->createProcess($product->id, 'External Process', 'External Process');
                 $createdProcesses[] = ['name' => 'External Process', 'description' => 'External Process'];
@@ -127,13 +124,9 @@ class ProductController extends Controller
             if (!$product) {
                 return $this->notFoundResponse('Product tidak ditemukan');
             }
-
             $perPage = $request->get('per_page', 10);
             $page = $request->get('page', 1);
-
-            // Get all processes related to the product
             $processes = Process::where('product_id', $product->id)->get();
-
 
             $processesWithPaginatedProductProcesses = [];
 

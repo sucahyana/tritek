@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Constants\UnitOptions;
+use App\Models\Material;
+use App\Models\MaterialHistory;
+use App\Models\Process;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Models\ProductProcess;
@@ -35,10 +38,20 @@ class ProductProcessController extends Controller
                 'status' => [
                     'sometimes',
                     'string',
-                    Rule::in(['plus', 'minus','delivery','return']),
+                    Rule::in(['plus', 'minus', 'delivery', 'return']),
                 ],
                 'notes' => 'sometimes|string',
             ]);
+
+            $process = Process::find($validated['process_id']);
+            if (!$process) {
+                return $this->notFoundResponse('Process tidak ditemukan');
+            }
+
+            $product = Product::find($validated['product_id']);
+            if (!$product) {
+                return $this->notFoundResponse('Product tidak ditemukan');
+            }
 
             $productProcess = ProductProcess::create([
                 'product_id' => $validated['product_id'],
@@ -56,16 +69,40 @@ class ProductProcessController extends Controller
                 'notes' => $validated['notes'] ?? '',
             ]);
 
-            // Update product data based on process
-            $product = Product::find($validated['product_id']);
+            if (strtolower($process->name) === 'packaging') {
+                $material = Material::find($validated['material_id']);
+                if (!$material) {
+                    return $this->notFoundResponse('Material tidak ditemukan');
+                }
 
-            if ($validated['status'] === 'plus') {
-                $product->total_quantity += $validated['total_quantity'];
-            } else if ($validated['status'] === 'minus') {
-                $product->total_quantity -= $validated['total_quantity'];
+                $materialUsed = $product->material_used;
+                $productUnit = $product->unit;
+                $materialUnit = $material->unit;
+
+                if ($productUnit !== $materialUnit) {
+                    $convertedQuantity = UnitOptions::convertToUnit($materialUsed * $validated['total_quantity'], $productUnit, $materialUnit);
+                } else {
+                    $convertedQuantity = $materialUsed * $validated['total_quantity'];
+                }
+
+                $material->total_quantity -= $convertedQuantity;
+                $material->save();
+
+                MaterialHistory::create([
+                    'material_id' => $validated['material_id'],
+                    'quantity' => -$convertedQuantity,
+                    'unit' => $materialUnit,
+                    'type' => 'usage',
+                    'description' => 'Material digunakan untuk', $product->name,
+                    'date' => $validated['date'] ?? now(),
+                    'author' => $validated['author'] ?? 'Unknown',
+                ]);
             }
 
-            $product->save();
+            if (strtolower($process->name) === 'packaging') {
+                $product->total_quantity -= $validated['total_quantity'];
+                $product->save();
+            }
 
             return $this->createdResponse('Riwayat proses produk berhasil ditambahkan', $productProcess);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -74,6 +111,11 @@ class ProductProcessController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
+
+
+
+
 
     public function update(Request $request, $id)
     {

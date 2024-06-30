@@ -40,7 +40,6 @@ class MaterialHistory extends Model
 
 	protected $fillable = [
 		'material_id',
-		'process_id',
 		'quantity',
         'date',
 		'unit',

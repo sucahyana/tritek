@@ -7,27 +7,29 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 
 class UnitOptions
 {
-	public static $massUnits = [
-		'mg', 'g', 'kg', 't', 'oz', 'lb', 'quintal'
-	];
+    public static $massUnits = [
+        'mg', 'g', 'kg', 't', 'oz', 'lb', 'quintal'
+    ];
 
-	public static $lengthUnits = [
-		'mm', 'cm', 'dm', 'm', 'dam', 'hm', 'km', 'inch', 'foot', 'yd', 'mile'
-	];
+    public static $lengthUnits = [
+        'mm', 'cm', 'dm', 'm', 'dam', 'hm', 'km', 'inch', 'foot', 'yd', 'mile'
+    ];
 
-	public static $otherUnits = [
-		'roll', 'sheet', 'rod', 'pack', 'box', 'bottle', 'sack', 'can', 'piece'
-	];
+    public static $otherUnits = [
+        'roll', 'sheet', 'rod', 'pack', 'box', 'bottle', 'sack', 'can', 'piece'
+    ];
 
-	public static function convertToKilograms($quantity, $unit)
-	{
-		if (in_array($unit, self::$massUnits)) {
-			$mass = new Mass($quantity, $unit);
-			return $mass->toUnit('kg');
-		} elseif (in_array($unit, self::$lengthUnits)) {
-			$length = new Length($quantity, $unit);
-			return $length->toUnit('m') * 1000;
-		}
-		return $quantity;
-	}
+    public static function convertToUnit($quantity, $fromUnit, $toUnit)
+    {
+        if (in_array($fromUnit, self::$massUnits) && in_array($toUnit, self::$massUnits)) {
+            $mass = new Mass($quantity, $fromUnit);
+            return $mass->toUnit($toUnit);
+        }
+
+        if (in_array($fromUnit, self::$lengthUnits) && in_array($toUnit, self::$lengthUnits)) {
+            $length = new Length($quantity, $fromUnit);
+            return $length->toUnit($toUnit);
+        }
+        throw new \Exception("Conversion from $fromUnit to $toUnit is not supported.");
+    }
 }

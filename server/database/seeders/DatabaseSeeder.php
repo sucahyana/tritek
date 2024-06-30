@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -60,15 +59,26 @@ class DatabaseSeeder extends Seeder
                 ]);
                 $processCounter++;
             }
+
+            // Add a specific process called "Packaging" for each product
+            DB::table('processes')->insert([
+                'id' => $processCounter,
+                'name' => 'Packaging',
+                'description' => 'Packaging process for Product ' . $productId,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'product_id' => $productId,
+            ]);
+            $processCounter++;
         }
 
         // Seed data for product_processes table
-        for ($processId = 1; $processId <= 500; $processId++) {
+        for ($processId = 1; $processId <= $processCounter - 1; $processId++) {
             for ($k = 1; $k <= 100; $k++) {
                 DB::table('product_process')->insert([
                     'id' => (string)Str::uuid(),
                     'product_id' => rand(1, 100),
-                    'process_id' => rand(1, 500),
+                    'process_id' => rand(1, $processCounter - 1),
                     'date' => now(),
                     'author' => 'Author ' . $k,
                     'unit' => 'kg',
@@ -131,7 +141,6 @@ class DatabaseSeeder extends Seeder
                 DB::table('material_histories')->insert([
                     'id' => ($materialId - 1) * 100 + $i,
                     'material_id' => $materialId,
-                    'process_id' => rand(1, 500),
                     'date' => now(),
                     'unit' => 'kg',
                     'quantity' => rand(10, 50),

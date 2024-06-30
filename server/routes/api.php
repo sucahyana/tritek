@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function () {
 	Route::delete('/materials/{id}', [MaterialController::class, 'destroy']);
 // Material Reports
 	Route::post('/material/history', [MaterialHistoryController::class, 'store']);
+	Route::get('/material/export/{id}', [MaterialHistoryController::class, 'export']);
 	Route::get('/material/history/{id}', [MaterialHistoryController::class, 'index']);
 	Route::put('/material/history/{id}', [MaterialHistoryController::class, 'update']);
 	Route::delete('/material/history/{id}', [MaterialHistoryController::class, 'destroy']);

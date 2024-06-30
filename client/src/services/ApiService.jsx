@@ -93,6 +93,24 @@ class ApiService {
             return [];
         }
     }
+    static async getAllMaterialsExport(id) {
+        try {
+            notifyLoading('Mengambil daftar material...');
+            const response = await api.get(`/material/export/${id}`);
+            stopLoading();
+            if (response.data.success) {
+                return response.data.data;
+            } else {
+                notifyError(response.data.message || 'Gagal mengambil daftar material.');
+                return [];
+            }
+        } catch (error) {
+            stopLoading();
+            console.error('Error:', error);
+            notifyError('Terjadi kesalahan saat mengambil daftar material.');
+            return [];
+        }
+    }
     static async getMaterialInfo() {
         try {
             notifyLoading('Mengambil daftar material...');

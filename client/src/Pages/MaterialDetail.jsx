@@ -11,7 +11,8 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Button from '@mui/material/Button';
+import {FaDownload} from "react-icons/fa";
 
 const MaterialDetail = () => {
     const { id } = useParams();
@@ -45,6 +46,8 @@ const MaterialDetail = () => {
         setPage(event.page + 1);
         setRows(event.rows);
     };
+
+  
 
     const contentFish = () => (
         <motion.div
@@ -109,8 +112,9 @@ const MaterialDetail = () => {
                     history={history}
                     pagination={pagination}
                     onPageChange={handlePageChange}
-                    rowsPerPageOptions={[10, 20, 30,50,100]}
+                    rowsPerPageOptions={[10, 20, 30, 50, 100]}
                 />
+
             </div>
         );
     }
