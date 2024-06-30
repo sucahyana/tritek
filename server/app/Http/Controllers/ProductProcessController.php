@@ -79,11 +79,7 @@ class ProductProcessController extends Controller
                 $productUnit = $product->unit;
                 $materialUnit = $material->unit;
 
-                if ($productUnit !== $materialUnit) {
-                    $convertedQuantity = UnitOptions::convertToUnit($materialUsed * $validated['total_quantity'], $productUnit, $materialUnit);
-                } else {
-                    $convertedQuantity = $materialUsed * $validated['total_quantity'];
-                }
+                $convertedQuantity = $materialUsed * $validated['total_quantity'];
 
                 $material->total_quantity -= $convertedQuantity;
                 $material->save();
@@ -93,7 +89,8 @@ class ProductProcessController extends Controller
                     'quantity' => -$convertedQuantity,
                     'unit' => $materialUnit,
                     'type' => 'usage',
-                    'description' => 'Material digunakan untuk', $product->name,
+                    'status' => 'minus',
+                    'description' => "Material digunakan untuk {$product->name}",
                     'date' => $validated['date'] ?? now(),
                     'author' => $validated['author'] ?? 'Unknown',
                 ]);
@@ -111,6 +108,7 @@ class ProductProcessController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
 
 
 

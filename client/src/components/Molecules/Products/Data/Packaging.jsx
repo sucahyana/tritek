@@ -57,22 +57,6 @@ const Packaging = ({ product, process,onPageChange }) => {
                                 placeholder: 'Masukan Kuantitas',
                             },
                             {
-                                title: 'Satuan/Unit',
-                                inputName: 'unit',
-                                type: 'dropdown',
-                                options: unitOptions,
-                                placeholder: 'Masukan Satuan/Unit barang jadi',
-                            },
-                            {
-                                title: 'Status',
-                                inputName: 'status',
-                                type: 'dropdown',
-                                options: [
-                                    { label: 'pilih ini', value: 'plus' },
-                                ],
-                                placeholder: 'Masukan statusnya',
-                            },
-                            {
                                 title: 'Alasan / keterangan',
                                 inputName: 'notes',
                                 inputType: 'text',
@@ -86,6 +70,8 @@ const Packaging = ({ product, process,onPageChange }) => {
                             product_id: product.id,
                             process_id: process.process.id,
                             material_id: product.material_id,
+                            unit : product.unit,
+                            status : 'plus',
                         }}
                         endpoint={'addProductProcessHistory'}
                     />

@@ -47,7 +47,7 @@ const MaterialDetail = () => {
         setRows(event.rows);
     };
 
-  
+
 
     const contentFish = () => (
         <motion.div

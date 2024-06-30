@@ -15,8 +15,9 @@ export default function LeftSidebar() {
 
     return (
         <aside className="shadow-2xl hidden lg:flex flex-col justify-between h-screen p-2 sm:p-3 md:p-4 border-r sticky top-0 whitespace-nowrap px-1 sm:px-2 md:px-3 lg:px-4 xl:px-5 bg-martinique-800">
-            <Link to={"/"} className="mx-auto">
-                <img className="w-auto h-20 sm:h-24 md:h-28 lg:h-32 bg-none" src={logo} alt="Logo Kumpulin" />
+            <Link to={"/"} className="mx-auto flex flex-col justify-center border-dashed border shadow-xl border-martinique-400 p-4 rounded-2xl">
+                <img className="w-auto bg-none" src={logo} alt="Logo Kumpulin" />
+                <h1 className={'text-center text-martinique-200'}>PT Tritek Indonesia</h1>
             </Link>
             <div className="flex flex-col justify-between w-full mt-12 sm:mt-14 md:mt-16 lg:mt-18">
                 <nav className="-mx-2 space-y-3 sm:space-y-4 md:space-y-5">
