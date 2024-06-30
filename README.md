@@ -40,11 +40,11 @@ Menampilkan data thumbnail produk dan material dengan fitur pencarian dan pagina
 Menampilkan thumbnail produk dengan fitur paginasi dan tambah produk baru.
 
 ### Detail Produk '/product/{model}'
-[![Product Detail](/assets/productDetail.png)](/assets/productDetail.mkv)
+[![Product Detail](/assets/productDetail.png)](/assets/productDetail.mp4)
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
 
 ### Pengaturan Produk '/product/{model}/setting'
-[![Product setting](/assets/productSetting.png)](/assets/productSetting.mkv)
+[![Product setting](/assets/productSetting.png)](/assets/productSetting.mp4)
 Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
 
 
@@ -53,7 +53,7 @@ Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
 Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.
 
 ### Detail Material'/material/{model}'
-[![Material Detail](/assets/productDetail.png)](/assets/materialDetail.mkv)
+[![Material Detail](/assets/productDetail.png)](/assets/materialDetail.mp4)
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
 
 ### Pengaturan Material '/material/{model}/setting'
