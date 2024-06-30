@@ -47,17 +47,16 @@ Menampilkan detail produk dengan fitur pengelolaan dan edit.
 [![Product setting](/assets/productSetting.png)](/assets/productSetting.mp4)
 Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
 
-
 ### Material Thumbnail '/materials'
 ![Material](/assets/materials.png)
 Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.
 
 ### Detail Material'/material/{model}'
-[![Material Detail](/assets/productDetail.png)](/assets/materialDetail.mp4)
+[![Material Detail](/assets/materialDetail.png)](/assets/materialDetail.mp4)
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
 
 ### Pengaturan Material '/material/{model}/setting'
-[![material setting](/assets/materialSetting.png)]
+[![Material setting](/assets/materialSetting.png)](/assets/materialSetting.mp4)
 Menampilkan pengaturan material dengan fitur tambah, edit, dan hapus.
 
 ## Video Demo
@@ -186,3 +185,4 @@ Berikut adalah beberapa contoh penggunaan API dari aplikasi ini:
 Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
 
 ---
+```
