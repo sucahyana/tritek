@@ -41,19 +41,42 @@ Menampilkan thumbnail produk dengan fitur paginasi dan tambah produk baru.
 
 ### Detail Produk '/product/{model}'
 [![Product Detail](/assets/productDetail.png)](/assets/productDetail.mp4)
+
+
+https://github.com/sucahyana/tritek/assets/97436856/353c2844-7c9f-4a0f-8288-adaa75702b6d
+
+
+
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
+
 
 ### Pengaturan Produk '/product/{model}/setting'
 [![Product setting](/assets/productSetting.png)](/assets/productSetting.mp4)
+
+<<<<<<< HEAD
+=======
+
+https://github.com/sucahyana/tritek/assets/97436856/09589a2d-d933-4249-987b-cdb5e153fe60
+
+
 Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
 
+>>>>>>> ef8ab9f773295d815d8d8887be31f5a063eae820
 ### Material Thumbnail '/materials'
 ![Material](/assets/materials.png)
 Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.
 
 ### Detail Material'/material/{model}'
 [![Material Detail](/assets/productDetail.png)](/assets/materialDetail.mp4)
+
+
+
+https://github.com/sucahyana/tritek/assets/97436856/cb52962f-1d1a-456c-86e4-113049ab8607
+
+
+
 Menampilkan detail produk dengan fitur pengelolaan dan edit.
+
 
 ### Pengaturan Material '/material/{model}/setting'
 [![material setting](/assets/materialSetting.png)](/assets/materialSetting.mp4)
@@ -61,10 +84,10 @@ Menampilkan pengaturan material dengan fitur tambah, edit, dan hapus.
 
 ## Instalasi
 ### Prasyarat
-- PHP >= 7.3
-- Node.js >= 12.x
+- PHP >= 8.2
+- Node.js >= v18.13.0
 - Composer
-- NPM atau Yarn
+- NPM atau Yarn atau pnpm
 - MySQL
 
 ### Langkah-langkah
@@ -123,9 +146,50 @@ Menampilkan pengaturan material dengan fitur tambah, edit, dan hapus.
 - **Frontend**: React, Redux
 - **Database**: MySQL
 - **Library Lain**:
-  - Axios
-  - React Router
-  - Chart.js
+  - **React :
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.19",
+    "@mui/styled-engine-sc": "6.0.0-alpha.18",
+    "@mui/system": "^5.15.20",
+    "@mui/x-charts": "^7.6.1",
+    "@react-pdf/renderer": "^3.4.4",
+    "@reduxjs/toolkit": "^2.2.5",
+    "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
+    "docx": "^8.5.0",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^11.2.11",
+    "jspdf": "^2.5.1",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.6.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.3.1",
+    "react-full-screen": "^1.1.1",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^5.2.1",
+    "react-pdf": "^9.0.0",
+    "react-redux": "^9.1.2",
+    "react-router-dom": "^6.23.1",
+    "react-youtube": "^10.1.0",
+    "recharts": "^2.12.7",
+    "redux": "^5.0.1",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^3.1.0",
+    "styled-components": "^6.1.11",
+    "xlsx": "^0.18.5",
+    "@react-buddy/ide-toolbox": "^2.4.0",
+    "@react-buddy/palette-mui": "^5.0.1"
+  - **Laravel
+    "php-units-of-measure/php-units-of-measure": "^2.1"
+    "maatwebsite/excel": "^3.1",
+    "barryvdh/laravel-dompdf": "^2.2",
+    "laravel/telescope": "^5.0",
+    "mockery/mockery": "^1.6",
+    "nunomaduro/collision": "^8.0",
+    "phpunit/phpunit": "^11.0.1",
+    "reliese/laravel": "^1.3",
+    "spatie/laravel-ignition": "^2.4"
 
 ## Konfigurasi
 Konfigurasi aplikasi dilakukan melalui file `.env`. Berikut beberapa konfigurasi penting:
@@ -138,18 +202,7 @@ Konfigurasi aplikasi dilakukan melalui file `.env`. Berikut beberapa konfigurasi
   DB_USERNAME=username
   DB_PASSWORD=password
   ```
-- **Mail**:
-  ```env
-  MAIL_MAILER=smtp
-  MAIL_HOST=smtp.example.com
-  MAIL_PORT=587
-  MAIL_USERNAME=your_email@example.com
-  MAIL_PASSWORD=your_email_password
-  MAIL_ENCRYPTION=tls
-  ```
 
-## Dokumentasi
-Dokumentasi lengkap aplikasi dapat ditemukan di folder `docs` pada repository ini.
 
 ## Contoh Penggunaan API
 Berikut adalah beberapa contoh penggunaan API dari aplikasi ini:
@@ -172,9 +225,8 @@ Berikut adalah beberapa contoh penggunaan API dari aplikasi ini:
 - **Masalah dependensi**: Jalankan `composer install` dan `npm install` untuk memastikan semua dependensi terinstal dengan benar.
 
 ## Kontributor
-- [Nama Anda](https://github.com/username) - Pengembang Utama
-- [Nama Kontributor Lain](https://github.com/username2) - Pengembang Backend
-- [Nama Kontributor Lain](https://github.com/username3) - Pengembang Frontend
+- [Sud Ulam cahyana](https://github.com/sucahyana) - Pengembang Tunggal Front End,Back End
+- [Muhammad Akbar] ([https://github.com/akbar](https://github.com/Akbaroke)) - Pemecah Kebosanan (Valorant teamate)
 
 ## Lisensi
 Aplikasi ini dilisensikan di bawah [MIT License](LICENSE).
