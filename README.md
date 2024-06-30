@@ -1,4 +1,4 @@
-```markdown
+
 # Monitoring Produksi
 
 Monitoring Produksi adalah sebuah aplikasi berbasis web yang dikembangkan oleh PT Tritek Indonesia untuk memantau dan mengelola proses produksi secara efektif. Aplikasi ini dibangun menggunakan framework Laravel untuk backend dan React untuk frontend.
