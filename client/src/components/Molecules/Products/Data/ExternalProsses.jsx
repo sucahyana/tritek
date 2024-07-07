@@ -1,28 +1,36 @@
-import CardList from '../../CardList.jsx';
-import {unitOptions} from '../../../constants/UnitOption.jsx';
-import FormInput from '../../Materials/FormInput.jsx';
+import React from 'react';
+import CardList from '@/components/Molecules/CardList.jsx';
+import FormInput from '@/components/Molecules/Materials/FormInput.jsx';
+import { unitOptions } from '@/components/constants/UnitOption.jsx';
+import ApiService from '@/services/ApiService.jsx';
 
-const ExternalProsses = (dataProcess,onUpdate) => {
+const ExternalProsses = ({ dataProcess, onUpdate, trigger }) => {
+    const { product, materialId, onPageChange } = dataProcess;
 
-
-    const product = dataProcess.product;
-    const materialId = dataProcess.materialId.material_id;
-
-    const externalHistoryData = dataProcess.product.product_processes.filter(
+    const externalHistoryData = product.product_processes.filter(
         item => item.status === 'delivery'
     );
 
-    const internalHistoryData = dataProcess.product.product_processes.filter(
+    const internalHistoryData = product.product_processes.filter(
         item => item.status === 'return'
     );
 
-    const handleUpdate = (id, updatedData) => {
-        if (onUpdate) onUpdate();
-
+    const handleUpdate = async (id, updatedData) => {
+        try {
+            await ApiService.updateProcessHistory(id, updatedData);
+            if (onUpdate) onUpdate();
+        } catch (error) {
+            console.error('Failed to update process history:', error);
+        }
     };
 
-    const handleDelete = (id) => {
-        if (onUpdate) onUpdate();
+    const handleDelete = async (id) => {
+        try {
+            await ApiService.deleteProcessHistory(id);
+            if (onUpdate) onUpdate();
+        } catch (error) {
+            console.error('Failed to delete process history:', error);
+        }
     };
 
     const dataTable = (tabData) => {
@@ -33,23 +41,26 @@ const ExternalProsses = (dataProcess,onUpdate) => {
                 data={tabData.history}
                 headers={tabData.headers}
                 globalFilterPlaceholder="Search history..."
-                modalContent={<FormInput
-                    inputs={tabData.formInputs}
-                    showDialogOnMount={true}
-                    headerText={tabData.formHeader}
-                    submitButtonText={'Tambahkan'}
-                    core_id={{
-                        product_id: product.process.product_id,
-                        process_id: product.process.id,
-                        material_id: materialId
-                    }}
-                    endpoint={'addProductProcessHistory'}
-                />}
+                modalContent={
+                    <FormInput
+                        inputs={tabData.formInputs}
+                        showDialogOnMount={true}
+                        headerText={tabData.formHeader}
+                        submitButtonText={'Tambahkan'}
+                        core_id={{
+                            product_id: product.process.product_id,
+                            process_id: product.process.id,
+                            material_id: materialId,
+                        }}
+                        endpoint={'addProductProcessHistory'}
+                        trigger={trigger} // Meneruskan trigger ke FormInput
+                    />
+                }
                 onUpdate={handleUpdate}
                 onDelete={handleDelete}
                 pagination={product.pagination}
-                onPageChange={dataProcess.onPageChange}
-                rowsPerPageOptions={[10, 15, 20,50,100]}
+                onPageChange={onPageChange}
+                rowsPerPageOptions={[10, 15, 20, 50, 100]}
             />
         );
     };

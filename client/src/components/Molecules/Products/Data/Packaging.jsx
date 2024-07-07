@@ -4,7 +4,7 @@ import FormInput from '@/components/Molecules/Materials/FormInput.jsx';
 import { unitOptions } from '@/components/constants/UnitOption.jsx';
 import ApiService from '@/services/ApiService.jsx';
 
-const Packaging = ({ product, process,onPageChange }) => {
+const Packaging = ({ product, process, onUpdate, onPageChange, trigger }) => {
     const handleUpdateHistory = async (historyId, newData) => {
         try {
             await ApiService.updateProcessHistory(historyId, newData);
@@ -17,6 +17,7 @@ const Packaging = ({ product, process,onPageChange }) => {
     const handleDeleteHistory = async (historyId) => {
         try {
             await ApiService.deleteProcessHistory(historyId);
+            if (onUpdate) onUpdate();
         } catch (error) {
             console.error('Failed to delete process history:', error);
         }
@@ -65,7 +66,7 @@ const Packaging = ({ product, process,onPageChange }) => {
                             },
                         ]}
                         showDialogOnMount={true}
-                        headerText={'Packaging History'}
+                        headerText={`Packaging History Produk / ${product.unit}`}
                         submitButtonText={'Tambahkan'}
                         core_id={{
                             product_id: product.id,
@@ -75,14 +76,14 @@ const Packaging = ({ product, process,onPageChange }) => {
                             status : 'plus',
                         }}
                         endpoint={'addProductProcessHistory'}
+                        trigger={trigger}
                     />
                 }
                 onUpdate={handleUpdateHistory}
                 onDelete={handleDeleteHistory}
-                pagination ={process.pagination}
-                rowsPerPageOptions={[10, 15, 20,50,100]}
+                pagination={process.pagination}
+                rowsPerPageOptions={[10, 15, 20, 50, 100]}
                 onPageChange={onPageChange}
-
             />
         );
     };

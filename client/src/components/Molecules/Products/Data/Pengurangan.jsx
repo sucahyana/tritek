@@ -1,14 +1,13 @@
 import React from 'react';
 import CardList from '@/components/Molecules/CardList.jsx';
 import FormInput from '@/components/Molecules/Materials/FormInput.jsx';
-import { unitOptions } from '@/components/constants/UnitOption.jsx';
 import ApiService from '@/services/ApiService.jsx';
 
-const Pengurangan = ({ product, process,onPageChange }) => {
+const Pengurangan = ({ product, process, onPageChange, trigger }) => {
     const handleUpdateHistory = async (historyId, newData) => {
         try {
             await ApiService.updateProcessHistory(historyId, newData);
-            if (onUpdate) onUpdate();
+            if (trigger) trigger(); // Memanggil trigger jika tersedia
         } catch (error) {
             console.error('Failed to update process history:', error);
         }
@@ -17,6 +16,7 @@ const Pengurangan = ({ product, process,onPageChange }) => {
     const handleDeleteHistory = async (historyId) => {
         try {
             await ApiService.deleteProcessHistory(historyId);
+            if (trigger) trigger(); // Memanggil trigger jika tersedia
         } catch (error) {
             console.error('Failed to delete process history:', error);
         }
@@ -65,24 +65,24 @@ const Pengurangan = ({ product, process,onPageChange }) => {
                             },
                         ]}
                         showDialogOnMount={true}
-                        headerText={'Penguranan Produk'}
+                        headerText={`Pengurangan Produk / ${product.unit}`}
                         submitButtonText={'Tambahkan'}
                         core_id={{
                             product_id: product.id,
                             process_id: process.process.id,
                             material_id: product.material_id,
-                            unit : product.unit,
-                            status : 'minus',
+                            unit: product.unit,
+                            status: 'minus',
                         }}
                         endpoint={'addProductProcessHistory'}
+                        trigger={trigger} // Meneruskan trigger ke FormInput
                     />
                 }
                 onUpdate={handleUpdateHistory}
                 onDelete={handleDeleteHistory}
-                pagination ={process.pagination}
-                rowsPerPageOptions={[10, 15, 20,50,100]}
+                pagination={process.pagination}
+                rowsPerPageOptions={[10, 15, 20, 50, 100]}
                 onPageChange={onPageChange}
-
             />
         );
     };

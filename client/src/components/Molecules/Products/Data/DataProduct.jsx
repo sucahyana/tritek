@@ -229,6 +229,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
                         onPageChange={onPageChange}
                         product={process}
                         materialId={product}
+                        trigger={trigger}
                     />
                 )
             });
@@ -243,6 +244,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
                         process={process}
                         product={product}
                         onPageChange={onPageChange}
+                        trigger={trigger}
                     />
                 )
             });
@@ -256,6 +258,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
                         process={process}
                         product={product}
                         onPageChange={onPageChange}
+                        trigger={trigger}
                     />
                 )
             });
