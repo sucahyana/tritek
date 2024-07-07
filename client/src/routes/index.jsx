@@ -10,7 +10,8 @@ import {fetchMaterials} from "@/stores/actions/materialActions.js";
 import {fetchProducts} from "@/stores/actions/productAction.js";
 import ProductSetting from "@/Pages/ProductSetting.jsx";
 import MaterialSetting from "@/Pages/MaterialSetting.jsx";
-import PageNotFound from "@/Pages/404.jsx";
+import PageNotFound from "@/Pages/404/404.jsx";
+
 
 const AppRoutes = () => {
     const dispatch = useDispatch();

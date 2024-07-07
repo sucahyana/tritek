@@ -1,9 +1,11 @@
 import React from 'react';
+import '@/Pages/404/404.css';
+import ContainerStarter from "@/components/Organisms/ContainerStarter.jsx";
 
 const PageNotFound = () => {
-    return (
-        <div className="absolute top-0 left-0 h-screen w-screen bg-gradient-to-br from-purple-900 to-purple-700 overflow-hidden">
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    const content = () => (
+        <div className="wey h-screen bg-gradient-to-br from-purple-900 to-purple-700 flex justify-center items-center rounded-2xl shadow">
+            <div className="wey">
                 <svg id="svgWrap_1" xmlns="http://www.w3.org/2000/svg" className="h-auto w-full max-w-full" viewBox="0 0 700 250">
                     <g>
                         <path id="id3_1" d="M195.7 232.67h-37.1V149.7H27.76c-2.64 0-5.1-.5-7.36-1.49-2.27-.99-4.23-2.31-5.88-3.96-1.65-1.65-2.95-3.61-3.89-5.88s-1.42-4.67-1.42-7.22V29.62h36.82v82.98H158.6V29.62h37.1v203.05z"/>
@@ -12,9 +14,15 @@ const PageNotFound = () => {
                     </g>
                 </svg>
 
-                <h2 className="text-3xl text-center text-white font-audiowide mt-12">Page Not Found</h2>
+                <h2 className="heu text-3xl text-center text-white font-audiowide mt-12">Page Not Found</h2>
             </div>
         </div>
+    );
+
+    return (
+
+            <ContainerStarter Content={content()} />
+
     );
 }
 
