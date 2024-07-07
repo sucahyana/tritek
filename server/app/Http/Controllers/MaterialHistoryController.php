@@ -89,7 +89,7 @@ class MaterialHistoryController extends Controller
 
             $perPage = $request->get('per_page', 10);
             $materialHistory = MaterialHistory::where('material_id', $material->id)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('date', 'desc')
                 ->paginate($perPage);
 
             $paginationData = [

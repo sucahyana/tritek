@@ -203,8 +203,9 @@ class ApiService {
         }
     }
 
-    static async addMaterialHistory({date, name, quantity, unit, status, process_id, notes, material_id}) {
+    static async addMaterialHistory({ date, name, quantity, unit, status, process_id, notes, material_id }) {
         try {
+            notifyLoading('Sending request...');
             const response = await api.post('/material/history', {
                 date,
                 name,
@@ -215,16 +216,41 @@ class ApiService {
                 status,
                 process_id
             });
-            return response.data;
-        } catch (error) {
-            if (error.response) {
-                return error.response.data;
+            stopLoading();
+            if (response.data.success) {
+                notifySuccess(response.data.message);
+                return { success: true, message: response.data.message };
             } else {
-                console.error('Error:', error);
-                return {error: 'Terjadi kesalahan saat mengirim permintaan.'};
+                notifyError(response.data.message || 'Failed to add material history.');
+                return {
+                    success: false,
+                    message: response.data.message || 'Failed to add material history.',
+                    errors: response.data.errors
+                };
             }
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred.';
+            let errors = null;
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+                if (error.response.data.errors) {
+                    errors = error.response.data.errors;
+                    const errorDetails = Object.values(errors).flat().join(' ');
+                    errorMessage += ` ${errorDetails}`;
+                }
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage, errors };
         }
     }
+
 
     static async updateMaterialHistory(id, data) {
         try {

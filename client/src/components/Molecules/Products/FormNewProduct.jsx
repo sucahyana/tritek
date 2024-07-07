@@ -43,7 +43,7 @@ const FormNewProduct = ({ inputs, showDialogOnMount, headerText, submitButtonTex
         const isChecked = e.target.checked;
         setFormData({
             ...formData,
-            [inputName]: isChecked ? true : false // Pastikan false diatur secara eksplisit jika tidak dicentang
+            [inputName]: isChecked ? true : false
         });
     };
 

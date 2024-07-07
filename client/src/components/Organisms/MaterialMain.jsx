@@ -23,8 +23,8 @@ const MaterialMain = () => {
     const message = useSelector(state => state.material.message);
     const errors = useSelector(state => state.material.errors);
     const [page, setPage] = useState(1);
-    const [rows, setRows] = useState(10);
-    const rowsPerPageOptions = [5, 10, 25, 50, 100];
+    const [rows, setRows] = useState(15);
+    const rowsPerPageOptions = [5, 10,15,25, 50, 100];
     const pagination = useSelector(state => state.material.materials.pagination);
 
 

@@ -23,8 +23,6 @@ const ProductDetail = () => {
     const [perPage, setPerPage] = useState(15);
     const [materials, setMaterials] = useState([]);
     const [fetchTrigger, setFetchTrigger] = useState(false);
-
-    // Referensi untuk komponen DataProduct
     const dataProductRef = useRef(null);
 
     useEffect(() => {

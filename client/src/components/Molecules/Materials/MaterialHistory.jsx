@@ -5,7 +5,7 @@ import { unitOptions } from "../../constants/UnitOption.jsx";
 import ApiService from "@/services/ApiService.jsx";
 
 
-const MaterialHistory = ({ material, history, pagination, onPageChange, rowsPerPageOptions }) => {
+const MaterialHistory = ({ material, history, pagination, onPageChange, rowsPerPageOptions ,trigger}) => {
 
 
     const [defaultDate, setDefaultDate] = useState('');
@@ -88,6 +88,7 @@ const MaterialHistory = ({ material, history, pagination, onPageChange, rowsPerP
                 submitButtonText={'Tambahkan'}
                 endpoint="addMaterialHistory"
                 core_id={{ material_id: material.id }}
+                trigger={trigger}
             />}
             pagination={pagination}
             onPageChange={onPageChange}

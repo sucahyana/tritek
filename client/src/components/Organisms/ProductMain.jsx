@@ -16,7 +16,7 @@ import apiService from "@/services/ApiService.jsx";
 const ProductMain = () => {
     const dispatch = useDispatch();
     const [page, setPage] = useState(1);
-    const [rows, setRows] = useState(10);
+    const [rows, setRows] = useState(15);
     const [materials, setMaterials] = useState([]);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const ProductMain = () => {
         setPage(event.page + 1);
         setRows(event.rows);
     };
-    const rowsPerPageOptions = [5, 10, 25, 50, 100];
+    const rowsPerPageOptions = [5, 10,15, 25, 50, 100];
     const navigate = useNavigate();
     const data = useSelector(state => state.product.products.products);
     const loading = useSelector(state => state.product.loading);

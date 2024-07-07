@@ -63,12 +63,12 @@ const Home = () => {
     }, [searchTerm, products, materials]);
 
     const onPageChangeProduct = (event) => {
-        setPageProduct(event.page + 1); // PrimeReact Paginator starts indexing from 0
+        setPageProduct(event.page + 1);
         setRowsProduct(event.rows);
     };
 
     const onPageChangeMaterial = (event) => {
-        setPageMaterial(event.page + 1); // PrimeReact Paginator starts indexing from 0
+        setPageMaterial(event.page + 1);
         setRowsMaterial(event.rows);
     };
 

@@ -333,7 +333,7 @@ const ProductSetting = () => {
                                     onChange={(e) => setProduct({...product, description: e.target.value})}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                     rows={4}
-                                    textarea // Pastikan menggunakan textarea di sini
+                                    textarea
                                 />
                             </div>
                             <div className="lg:col-span-1">

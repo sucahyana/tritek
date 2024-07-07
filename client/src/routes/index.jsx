@@ -10,6 +10,7 @@ import {fetchMaterials} from "@/stores/actions/materialActions.js";
 import {fetchProducts} from "@/stores/actions/productAction.js";
 import ProductSetting from "@/Pages/ProductSetting.jsx";
 import MaterialSetting from "@/Pages/MaterialSetting.jsx";
+import PageNotFound from "@/Pages/404.jsx";
 
 const AppRoutes = () => {
     const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const AppRoutes = () => {
             <Route path="/product/:id" element={<ProductDetail/>}/>
             <Route path="/product/:id/setting" element={<ProductSetting/>}/>
             <Route path="/material/:id/setting" element={<MaterialSetting/>}/>
+            <Route path="*" element={<PageNotFound />} />
         </Routes>
     );
 };

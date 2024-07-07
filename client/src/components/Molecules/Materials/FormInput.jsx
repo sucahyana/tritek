@@ -9,14 +9,14 @@ import { fetchProduct } from "@/stores/actions/productAction.js";
 import { useDispatch } from "react-redux";
 
 const FormInput = ({
-  inputs,
-  showDialogOnMount,
-  headerText,
-  submitButtonText,
-  endpoint,
-  core_id,
-  trigger,
-}) => {
+                     inputs,
+                     showDialogOnMount,
+                     headerText,
+                     submitButtonText,
+                     endpoint,
+                     core_id,
+                     trigger,
+                   }) => {
   const [formData, setFormData] = useState({});
   const [showDialog, setShowDialog] = useState(showDialogOnMount);
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,6 @@ const FormInput = ({
   }, [showDialogOnMount]);
 
   useEffect(() => {
-    // Set default values for form data
     const defaultFormData = {};
     inputs.forEach((input) => {
       if (input.defaultValue !== undefined) {
@@ -63,7 +62,7 @@ const FormInput = ({
       const response = await ApiService[endpoint]({ ...formData, ...core_id });
 
       setLoading(false);
-      trigger();
+      if (trigger) trigger();
 
       if (response.success) {
         setSuccessMessage(response.message);
@@ -86,79 +85,79 @@ const FormInput = ({
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <Dialog
-        visible={showDialog}
-        onHide={onHide}
-        header={headerText || "Form Input"}
-        className="w-full max-w-md rounded-lg shadow-xl border-martinique-600 border-2 bg-white"
-        dismissable={false}
-        modal
-        footer={
-          <div className="flex justify-center mt-6 mb-8">
-            <Button
-              onClick={handleSubmit}
-              label={submitButtonText || "Submit"}
-              className="bg-martinique-600 text-white rounded-md px-6 py-3 hover:bg-martinique-700 transition duration-300 ease-in-out"
-              disabled={loading}
-            />
+      <div className="flex justify-center items-center">
+        <Dialog
+            visible={showDialog}
+            onHide={onHide}
+            header={headerText || "Form Input"}
+            className="w-full max-w-md rounded-lg shadow-xl border-martinique-600 border-2 bg-white"
+            dismissable={false}
+            modal
+            footer={
+              <div className="flex justify-center mt-6 mb-8">
+                <Button
+                    onClick={handleSubmit}
+                    label={submitButtonText || "Submit"}
+                    className="bg-martinique-600 text-white rounded-md px-6 py-3 hover:bg-martinique-700 transition duration-300 ease-in-out"
+                    disabled={loading}
+                />
+              </div>
+            }
+        >
+          <div className="p-6">
+            {inputs.map((input, index) => (
+                <div key={index} className="mb-4">
+                  {input.type === "dropdown" ? (
+                      <div className="mb-2">
+                        <label
+                            htmlFor={input.inputName}
+                            className="block text-sm font-medium text-martinique-600"
+                        >
+                          {input.title}
+                        </label>
+                        <Dropdown
+                            id={input.inputName}
+                            name={input.inputName}
+                            optionLabel="label"
+                            filter
+                            options={input.options}
+                            value={formData[input.inputName] || null}
+                            onChange={(e) => handleDropdownChange(e, input.inputName)}
+                            placeholder={input.placeholder}
+                            className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
+                        />
+                      </div>
+                  ) : (
+                      <div className="mb-2">
+                        <label
+                            htmlFor={input.inputName}
+                            className="block text-sm font-medium text-martinique-600"
+                        >
+                          {input.title}
+                        </label>
+                        <InputText
+                            id={input.inputName}
+                            name={input.inputName}
+                            type={input.inputType}
+                            disabled={input.disabled}
+                            value={formData[input.inputName] || ""}
+                            onChange={(e) => handleChange(e, input.inputName)}
+                            placeholder={input.placeholder}
+                            className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
+                        />
+                      </div>
+                  )}
+                </div>
+            ))}
           </div>
-        }
-      >
-        <div className="p-6">
-          {inputs.map((input, index) => (
-            <div key={index} className="mb-4">
-              {input.type === "dropdown" ? (
-                <div className="mb-2">
-                  <label
-                    htmlFor={input.inputName}
-                    className="block text-sm font-medium text-martinique-600"
-                  >
-                    {input.title}
-                  </label>
-                  <Dropdown
-                    id={input.inputName}
-                    name={input.inputName}
-                    optionLabel="label"
-                    filter
-                    options={input.options}
-                    value={formData[input.inputName] || null}
-                    onChange={(e) => handleDropdownChange(e, input.inputName)}
-                    placeholder={input.placeholder}
-                    className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
-                  />
-                </div>
-              ) : (
-                <div className="mb-2">
-                  <label
-                    htmlFor={input.inputName}
-                    className="block text-sm font-medium text-martinique-600"
-                  >
-                    {input.title}
-                  </label>
-                  <InputText
-                    id={input.inputName}
-                    name={input.inputName}
-                    type={input.inputType}
-                    disabled={input.disabled}
-                    value={formData[input.inputName] || ""}
-                    onChange={(e) => handleChange(e, input.inputName)}
-                    placeholder={input.placeholder}
-                    className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        {errorMessage && (
-          <div className="text-red-600 text-sm mt-2">{errorMessage}</div>
-        )}
-        {successMessage && (
-          <div className="text-green-600 text-sm mt-2">{successMessage}</div>
-        )}
-      </Dialog>
-    </div>
+          {errorMessage && (
+              <div className="text-red-600 text-sm mt-2">{errorMessage}</div>
+          )}
+          {successMessage && (
+              <div className="text-green-600 text-sm mt-2">{successMessage}</div>
+          )}
+        </Dialog>
+      </div>
   );
 };
 

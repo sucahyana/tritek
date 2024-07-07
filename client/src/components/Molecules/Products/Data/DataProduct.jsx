@@ -56,7 +56,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
             const response = await ApiService.newProductProcess(data);
             if (response.success) {
                 notifySuccess(response.message);
-                if (onUpdate) onUpdate(); // Call onUpdate to fetch new data
+                if (onUpdate) onUpdate();
             } else {
                 notifyError(response.message);
             }
