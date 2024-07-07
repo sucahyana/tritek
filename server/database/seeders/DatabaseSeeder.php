@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
                 'model' => 'MTL' . $i,
                 'unit' => 'kg',
                 'description' => 'Description of Material ' . $i,
+                'information' => 'informasi ada disini' . $i,
                 'total_quantity' => rand(50, 200),
                 'created_at' => now(),
                 'updated_at' => now(),

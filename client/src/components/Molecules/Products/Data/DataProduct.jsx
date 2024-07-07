@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import * as XLSX from 'xlsx';
 import CardList from '../../CardList.jsx';
@@ -35,12 +35,20 @@ const TabPanel = (props) => {
     );
 };
 
-const DataProduct = ({ product, processes, pagination, onPageChange, materials }) => {
+const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, materials, trigger }) => {
     const [value, setValue] = useState(0);
     const [formData, setFormData] = useState([]);
 
+    useEffect(() => {
+        const savedTabValue = localStorage.getItem('selectedTab');
+        if (savedTabValue !== null) {
+            setValue(Number(savedTabValue));
+        }
+    }, []);
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        localStorage.setItem('selectedTab', newValue);
     };
 
     const handleSubmitProcess = async (data) => {
@@ -48,6 +56,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, materials }
             const response = await ApiService.newProductProcess(data);
             if (response.success) {
                 notifySuccess(response.message);
+                if (onUpdate) onUpdate(); // Call onUpdate to fetch new data
             } else {
                 notifyError(response.message);
             }
@@ -121,6 +130,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, materials }
     const handleUpdateHistory = async (historyId, newData) => {
         try {
             await ApiService.updateProcessHistory(historyId, newData);
+            if (onUpdate) onUpdate();
         } catch (error) {
             console.error('Failed to update process history:', error);
         }
@@ -129,6 +139,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, materials }
     const handleDeleteHistory = async (historyId) => {
         try {
             await ApiService.deleteProcessHistory(historyId);
+            if (onUpdate) onUpdate();
         } catch (error) {
             console.error('Failed to delete process history:', error);
         }
@@ -168,6 +179,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, materials }
                 modalContent={
                     <FormInput
                         inputs={formInputs}
+                        trigger = {trigger}
                         showDialogOnMount={true}
                         headerText={tabData.title}
                         submitButtonText={'Tambahkan'}
@@ -213,7 +225,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, materials }
                 title: 'Riwayat Proses Diluar PT',
                 component: (
                     <ExternalProsses
-                        onPageChange = {onPageChange}
+                        onPageChange={onPageChange}
                         product={process}
                         materialId={product}
                     />
@@ -229,7 +241,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, materials }
                     <Packaging
                         process={process}
                         product={product}
-                        onPageChange = {onPageChange}
+                        onPageChange={onPageChange}
                     />
                 )
             });

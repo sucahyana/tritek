@@ -109,13 +109,10 @@ class MaterialController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // Mencari material berdasarkan model
             $material = Material::where('model', $id)->first();
             if (!$material) {
                 return $this->notFoundResponse('Material tidak ditemukan');
             }
-
-            // Validasi input dari request
             $validated = $request->validate([
                 'name' => 'sometimes|required|string|max:255',
                 'model' => [
@@ -127,6 +124,7 @@ class MaterialController extends Controller
                 ],
                 'description' => 'sometimes|required|string|max:255',
                 'total_quantity' => 'sometimes|required|numeric',
+                'information' => 'sometimes|string',
                 'unit' => [
                     'sometimes',
                     'required',

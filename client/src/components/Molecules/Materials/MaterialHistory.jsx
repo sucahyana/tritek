@@ -21,8 +21,6 @@ const MaterialHistory = ({ material, history, pagination, onPageChange, rowsPerP
         try {
             await ApiService.updateMaterialHistory(historyId, newData);
         } catch (error) {
-            console.error('Failed to update material history:', error);
-            // Handle error
         }
     };
 

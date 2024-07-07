@@ -1,151 +1,165 @@
-import React, {useState, useEffect} from 'react';
-import {Button} from 'primereact/button';
-import {InputText} from 'primereact/inputtext';
-import {Dropdown} from 'primereact/dropdown';
-import {Dialog} from 'primereact/dialog';
-import ApiService from '../../../services/ApiService.jsx';
-import {fetchMaterials} from "@/stores/actions/materialActions.js";
-import {fetchProduct} from "@/stores/actions/productAction.js";
-import {useDispatch} from "react-redux";
+import React, { useState, useEffect } from "react";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { Dropdown } from "primereact/dropdown";
+import { Dialog } from "primereact/dialog";
+import ApiService from "../../../services/ApiService.jsx";
+import { fetchMaterials } from "@/stores/actions/materialActions.js";
+import { fetchProduct } from "@/stores/actions/productAction.js";
+import { useDispatch } from "react-redux";
 
-const FormInput = ({inputs, showDialogOnMount, headerText, submitButtonText, endpoint, core_id}) => {
-    const [formData, setFormData] = useState({});
-    const [showDialog, setShowDialog] = useState(showDialogOnMount);
-    const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const dispatch = useDispatch();
-    const [successMessage, setSuccessMessage] = useState('');
+const FormInput = ({
+  inputs,
+  showDialogOnMount,
+  headerText,
+  submitButtonText,
+  endpoint,
+  core_id,
+  trigger,
+}) => {
+  const [formData, setFormData] = useState({});
+  const [showDialog, setShowDialog] = useState(showDialogOnMount);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const dispatch = useDispatch();
+  const [successMessage, setSuccessMessage] = useState("");
 
-    useEffect(() => {
-        setShowDialog(showDialogOnMount);
-    }, [showDialogOnMount]);
+  useEffect(() => {
+    setShowDialog(showDialogOnMount);
+  }, [showDialogOnMount]);
 
-    useEffect(() => {
-        // Set default values for form data
-        const defaultFormData = {};
-        inputs.forEach(input => {
-            if (input.defaultValue !== undefined) {
-                defaultFormData[input.inputName] = input.defaultValue;
-            }
-        });
-        setFormData(defaultFormData);
-    }, [inputs]);
+  useEffect(() => {
+    // Set default values for form data
+    const defaultFormData = {};
+    inputs.forEach((input) => {
+      if (input.defaultValue !== undefined) {
+        defaultFormData[input.inputName] = input.defaultValue;
+      }
+    });
+    setFormData(defaultFormData);
+  }, [inputs]);
 
-    const handleChange = (e, inputName) => {
-        setFormData({
-            ...formData,
-            [inputName]: e.target.value
-        });
-        setErrorMessage('');
-        setSuccessMessage('');
-    };
+  const handleChange = (e, inputName) => {
+    setFormData({
+      ...formData,
+      [inputName]: e.target.value,
+    });
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
 
-    const handleDropdownChange = (e, inputName) => {
-        setFormData({
-            ...formData,
-            [inputName]: e.value
-        });
-        setErrorMessage('');
-        setSuccessMessage('');
-    };
+  const handleDropdownChange = (e, inputName) => {
+    setFormData({
+      ...formData,
+      [inputName]: e.value,
+    });
+    setErrorMessage("");
+    setSuccessMessage("");
+  };
 
-    const handleSubmit = async () => {
-        setLoading(true);
-        try {
-            const response = await ApiService[endpoint]({...formData, ...core_id});
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const response = await ApiService[endpoint]({ ...formData, ...core_id });
 
-            // Logging the request payload for debugging
-            console.log('Request Payload:', {...formData, core_id});
-            console.log('Response:', response);
+      setLoading(false);
+      trigger();
 
-            setLoading(false);
-            if (response.success) {
-                setSuccessMessage(response.message);
-                setShowDialog(false);
-            } else {
-                setErrorMessage(response.message);
-            }
-        } catch (error) {
-            setLoading(false);
-            setErrorMessage('Terjadi kesalahan saat mengirim permintaan.');
-            console.error('Error:', error);
-        } finally {
-            dispatch(fetchMaterials)
-            dispatch(fetchProduct)
-        }
-    };
-
-    const onHide = () => {
+      if (response.success) {
+        setSuccessMessage(response.message);
         setShowDialog(false);
-    };
+      } else {
+        setErrorMessage(response.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      setErrorMessage("Terjadi kesalahan saat mengirim permintaan.");
+      console.error("Error:", error);
+    } finally {
+      dispatch(fetchMaterials);
+      dispatch(fetchProduct);
+    }
+  };
 
-    return (
-        <div className="flex justify-center items-center">
-            <Dialog
-                visible={showDialog}
-                onHide={onHide}
-                header={headerText || 'Form Input'}
-                className="w-full max-w-md rounded-lg shadow-xl border-martinique-600 border-2 bg-white"
-                dismissable={false}
-                modal
-                footer={
-                    <div className="flex justify-center mt-6 mb-8">
-                        <Button
-                            onClick={handleSubmit}
-                            label={submitButtonText || 'Submit'}
-                            className="bg-martinique-600 text-white rounded-md px-6 py-3 hover:bg-martinique-700 transition duration-300 ease-in-out"
-                            disabled={loading}
-                        />
-                    </div>
-                }
-            >
-                <div className="p-6">
-                    {inputs.map((input, index) => (
-                        <div key={index} className="mb-4">
-                            {input.type === 'dropdown' ? (
-                                <div className="mb-2">
-                                    <label htmlFor={input.inputName}
-                                           className="block text-sm font-medium text-martinique-600">{input.title}</label>
-                                    <Dropdown
-                                        id={input.inputName}
-                                        name={input.inputName}
-                                        optionLabel="label"
-                                        filter
-                                        options={input.options}
-                                        value={formData[input.inputName] || null}
-                                        onChange={(e) => handleDropdownChange(e, input.inputName)}
-                                        placeholder={input.placeholder}
-                                        className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
-                                    />
-                                </div>
-                            ) : (
-                                <div className="mb-2">
-                                    <label htmlFor={input.inputName}
-                                           className="block text-sm font-medium text-martinique-600">{input.title}</label>
-                                    <InputText
-                                        id={input.inputName}
-                                        name={input.inputName}
-                                        type={input.inputType}
-                                        disabled={input.disabled}
-                                        value={formData[input.inputName] || ''}
-                                        onChange={(e) => handleChange(e, input.inputName)}
-                                        placeholder={input.placeholder}
-                                        className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    ))}
+  const onHide = () => {
+    setShowDialog(false);
+  };
+
+  return (
+    <div className="flex justify-center items-center">
+      <Dialog
+        visible={showDialog}
+        onHide={onHide}
+        header={headerText || "Form Input"}
+        className="w-full max-w-md rounded-lg shadow-xl border-martinique-600 border-2 bg-white"
+        dismissable={false}
+        modal
+        footer={
+          <div className="flex justify-center mt-6 mb-8">
+            <Button
+              onClick={handleSubmit}
+              label={submitButtonText || "Submit"}
+              className="bg-martinique-600 text-white rounded-md px-6 py-3 hover:bg-martinique-700 transition duration-300 ease-in-out"
+              disabled={loading}
+            />
+          </div>
+        }
+      >
+        <div className="p-6">
+          {inputs.map((input, index) => (
+            <div key={index} className="mb-4">
+              {input.type === "dropdown" ? (
+                <div className="mb-2">
+                  <label
+                    htmlFor={input.inputName}
+                    className="block text-sm font-medium text-martinique-600"
+                  >
+                    {input.title}
+                  </label>
+                  <Dropdown
+                    id={input.inputName}
+                    name={input.inputName}
+                    optionLabel="label"
+                    filter
+                    options={input.options}
+                    value={formData[input.inputName] || null}
+                    onChange={(e) => handleDropdownChange(e, input.inputName)}
+                    placeholder={input.placeholder}
+                    className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
+                  />
                 </div>
-                {errorMessage && (
-                    <div className="text-red-600 text-sm mt-2">{errorMessage}</div>
-                )}
-                {successMessage && (
-                    <div className="text-green-600 text-sm mt-2">{successMessage}</div>
-                )}
-            </Dialog>
+              ) : (
+                <div className="mb-2">
+                  <label
+                    htmlFor={input.inputName}
+                    className="block text-sm font-medium text-martinique-600"
+                  >
+                    {input.title}
+                  </label>
+                  <InputText
+                    id={input.inputName}
+                    name={input.inputName}
+                    type={input.inputType}
+                    disabled={input.disabled}
+                    value={formData[input.inputName] || ""}
+                    onChange={(e) => handleChange(e, input.inputName)}
+                    placeholder={input.placeholder}
+                    className="w-full p-inputtext-sm p-2 rounded-md border-martinique-600 border-2"
+                  />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-    );
+        {errorMessage && (
+          <div className="text-red-600 text-sm mt-2">{errorMessage}</div>
+        )}
+        {successMessage && (
+          <div className="text-green-600 text-sm mt-2">{successMessage}</div>
+        )}
+      </Dialog>
+    </div>
+  );
 };
 
 export default FormInput;

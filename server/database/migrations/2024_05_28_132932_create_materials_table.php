@@ -19,6 +19,7 @@ class CreateMaterialsTable extends Migration
 			$table->string('unit');
 			$table->string('model')->nullable();
 			$table->string('description')->nullable();
+            $table->string('information')->nullable();;
 			$table->float('total_quantity')->nullable();
 			$table->timestamps();
 		});

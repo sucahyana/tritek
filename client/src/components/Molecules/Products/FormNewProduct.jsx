@@ -1,17 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {Button} from 'primereact/button';
-import {InputText} from 'primereact/inputtext';
-import {Dropdown} from 'primereact/dropdown';
-import {TabView, TabPanel} from 'primereact/tabview';
+import React, { useState, useEffect } from 'react';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
+import { TabView, TabPanel } from 'primereact/tabview';
 import axios from 'axios';
-import {Dialog} from 'primereact/dialog';
+import { Dialog } from 'primereact/dialog';
 import Checkbox from '@mui/material/Checkbox';
 import ApiService from "@/services/ApiService.jsx";
-import {fetchProduct} from "@/stores/actions/productAction.js";
-import {useDispatch} from "react-redux"; // Import Checkbox from Material-UI
+import { fetchProduct } from "@/stores/actions/productAction.js";
+import { useDispatch } from "react-redux";
 
-
-const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText}) => {
+const FormNewProduct = ({ inputs, showDialogOnMount, headerText, submitButtonText }) => {
     const [formData, setFormData] = useState({});
     const [showDialog, setShowDialog] = useState(showDialogOnMount);
     const [processFields, setProcessFields] = useState([]);
@@ -24,7 +23,7 @@ const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText
     useEffect(() => {
         const count = parseInt(formData.process_count, 10);
         if (count > 0) {
-            setProcessFields(Array.from({length: count}, (_, index) => ({
+            setProcessFields(Array.from({ length: count }, (_, index) => ({
                 process_name: `process_name_${index + 1}`,
                 process_description: `process_description_${index + 1}`
             })));
@@ -41,9 +40,10 @@ const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText
     };
 
     const handleCheckboxChange = (e, inputName) => {
+        const isChecked = e.target.checked;
         setFormData({
             ...formData,
-            [inputName]: e.target.checked
+            [inputName]: isChecked ? true : false // Pastikan false diatur secara eksplisit jika tidak dicentang
         });
     };
 
@@ -64,7 +64,7 @@ const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText
                 }))
             };
             const response = await ApiService.newProduct(productData);
-            dispatch(fetchProduct)
+            dispatch(fetchProduct);
         } catch (error) {
             console.error('Error submitting form:', error);
         }
@@ -186,7 +186,6 @@ const FormNewProduct = ({inputs, showDialogOnMount, headerText, submitButtonText
                 }
             >
                 <TabView
-
                 >
                     {inputs.map((tab, tabIndex) => (
                         <TabPanel

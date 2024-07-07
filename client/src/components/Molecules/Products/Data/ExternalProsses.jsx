@@ -2,7 +2,7 @@ import CardList from '../../CardList.jsx';
 import {unitOptions} from '../../../constants/UnitOption.jsx';
 import FormInput from '../../Materials/FormInput.jsx';
 
-const ExternalProsses = (dataProcess) => {
+const ExternalProsses = (dataProcess,onUpdate) => {
 
 
     const product = dataProcess.product;
@@ -17,11 +17,12 @@ const ExternalProsses = (dataProcess) => {
     );
 
     const handleUpdate = (id, updatedData) => {
+        if (onUpdate) onUpdate();
 
     };
 
     const handleDelete = (id) => {
-
+        if (onUpdate) onUpdate();
     };
 
     const dataTable = (tabData) => {

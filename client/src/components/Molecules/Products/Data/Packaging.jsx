@@ -8,6 +8,7 @@ const Packaging = ({ product, process,onPageChange }) => {
     const handleUpdateHistory = async (historyId, newData) => {
         try {
             await ApiService.updateProcessHistory(historyId, newData);
+            if (onUpdate) onUpdate();
         } catch (error) {
             console.error('Failed to update process history:', error);
         }

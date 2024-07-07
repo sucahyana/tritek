@@ -15,7 +15,7 @@ export default function LeftSidebar() {
 
     return (
         <aside className="shadow-2xl hidden lg:flex flex-col justify-between h-screen p-2 sm:p-3 md:p-4 border-r sticky top-0 whitespace-nowrap px-1 sm:px-2 md:px-3 lg:px-4 xl:px-5 bg-martinique-800">
-            <Link to={"/"} className="mx-auto flex flex-col justify-center border-dashed border shadow-xl border-martinique-400 p-4 rounded-2xl">
+            <Link to={"/"} className="mx-auto flex flex-col justify-center  p-4">
                 <img className="w-auto bg-none" src={logo} alt="Logo Kumpulin" />
                 <h1 className={'text-center text-martinique-200'}>PT Tritek Indonesia</h1>
             </Link>

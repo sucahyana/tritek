@@ -44,6 +44,7 @@ class Material extends Model
 		'unit',
 		'model',
 		'description',
+        'information',
 		'total_quantity'
 	];
 

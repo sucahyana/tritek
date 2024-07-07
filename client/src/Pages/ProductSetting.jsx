@@ -6,7 +6,6 @@ import {Dropdown} from "primereact/dropdown";
 import {Toast} from "primereact/toast";
 import {motion} from "framer-motion";
 import {IoSave, IoArrowBack, IoAdd, IoTrash} from "react-icons/io5";
-import {BiDetail} from "react-icons/bi";
 import {Skeleton} from "primereact/skeleton";
 
 import {useNavigate, useParams} from "react-router-dom";
@@ -49,6 +48,7 @@ const ProductSetting = () => {
                     setInitialProcesses(response.processes || []);
                     setProduct(response.product);
                     setProcesses(response.processes || []);
+                    
                 } else {
                     throw new Error("Product not found");
                 }
@@ -88,10 +88,22 @@ const ProductSetting = () => {
     };
 
     const handleProcessChange = (index, field, value) => {
-        const updatedProcesses = [...processes];
-        updatedProcesses[index][field] = value;
-        setProcesses(updatedProcesses);
+        setProcesses(prevProcesses => {
+            const updatedProcesses = [...prevProcesses];
+            if (updatedProcesses[index]) {
+                updatedProcesses[index] = {
+                    ...updatedProcesses[index],
+                    process: {
+                        ...updatedProcesses[index].process,
+                        [field]: value
+                    }
+                };
+            }
+            return updatedProcesses;
+        });
     };
+    
+
     const [isDialogVisible, setIsDialogVisible] = useState(false);
     const [processToDelete, setProcessToDelete] = useState(null);
 
@@ -137,18 +149,28 @@ const ProductSetting = () => {
             });
         }
     };
+
     const handleProcessSave = async (index) => {
         try {
             const process = processes[index];
-            await ApiService.updateProcess(process.id, process);
-            toast.current.show({
-                severity: "success",
-                summary: "Success",
-                detail: "Process updated",
-                life: 3000,
-            });
+        
+            const response = await ApiService.updateProcess(process.process.id, process.process);
+            if (response.success) {
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "Process updated",
+                    life: 3000,
+                });
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: response.message || "Failed to update process",
+                    life: 3000,
+                });
+            }
         } catch (err) {
-
             toast.current.show({
                 severity: "error",
                 summary: "Error",
@@ -157,6 +179,7 @@ const ProductSetting = () => {
             });
         }
     };
+    
 
     const handleNewProcessChange = (field, value) => {
         setNewProcess({...newProcess, [field]: value});
@@ -310,7 +333,7 @@ const ProductSetting = () => {
                                     onChange={(e) => setProduct({...product, description: e.target.value})}
                                     className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                     rows={4}
-                                    textarea
+                                    textarea // Pastikan menggunakan textarea di sini
                                 />
                             </div>
                             <div className="lg:col-span-1">
@@ -394,7 +417,7 @@ const ProductSetting = () => {
                                         </label>
                                         <InputText
                                             id={`process-name-${index}`}
-                                            value={process?.process?.name || ''}
+                                            value={process?.process.name || ''}
                                             onChange={(e) => handleProcessChange(index, "name", e.target.value)}
                                             className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                         />
@@ -406,7 +429,7 @@ const ProductSetting = () => {
                                         </label>
                                         <InputText
                                             id={`process-description-${index}`}
-                                            value={process?.process?.description || ''}
+                                            value={process?.process.description || ''}
                                             onChange={(e) => handleProcessChange(index, "description", e.target.value)}
                                             className="mt-1 p-2 bg-martinique-300 text-gray-800 rounded-md w-full"
                                         />

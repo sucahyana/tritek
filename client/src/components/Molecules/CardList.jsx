@@ -240,7 +240,7 @@ const CardList = ({
                     </tbody>
                 </table>
             </div>
-            <div className="flex justify-end mt-4">
+            <div className="flex ju stify-end mt-4">
                 <Paginator
                     first={(currentPage - 1) * perPage}
                     rows={perPage}

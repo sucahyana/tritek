@@ -30,9 +30,9 @@ const ProductCard = ({ product }) => {
         >
             <CardHeader
                 avatar={
-                    <GiJigsawBox  className={`text-${product.status === 'Active' ? 'martinique-500' : 'red-500'}`} size={32} />
+                    <GiJigsawBox className={`text-${product.status.toLowerCase() === 'active' ? 'martinique-500' : 'red-500'}`} size={32} />
                 }
-                title= <span className='text-base font-bold'>{product.name}</span>
+                title={<span className='text-base font-bold'>{product.name}</span>}
                 subheader={ 
                     <Typography variant="body2" color="text.secondary">
                         <span className='text-base font-bold'>{product.model}</span>
@@ -44,14 +44,13 @@ const ProductCard = ({ product }) => {
                     Total Quantity: {product.total_quantity} {product.unit}
                 </Typography>
                 <Typography variant="body2" className="text-end" color="text.secondary">
-                <span className='text-base font-bold'> Last Updated: {formattedUpdateDate}</span>
+                    <span className='text-base font-bold'> Last Updated: {formattedUpdateDate}</span>
                 </Typography>
                 <Chip 
                     className='w-fit '
-                    label={product.status} 
-                    color={product.status === 'Active' ? 'success' : 'warning'} 
+                    label={product.status.toLowerCase()} 
+                    color={product.status.toLowerCase() === 'active' ? 'success' : 'warning'} 
                     sx={{ mt: 1 }}
-                  
                 />
             </CardContent>
         </Card>
