@@ -64,6 +64,9 @@ class ProductController extends Controller
             $this->createProcess($product->id, 'Packaging', 'Packaging');
             $createdProcesses[] = ['name' => 'Packaging', 'description' => 'Packaging'];
 
+            $this->createProcess($product->id, 'Pengurangan Produk', 'Pengurangan Produk');
+            $createdProcesses[] = ['name' => 'Pengurangan', 'description' => 'Pengurangan'];
+
             if ($validated['external_process']) {
                 $this->createProcess($product->id, 'External Process', 'External Process');
                 $createdProcesses[] = ['name' => 'External Process', 'description' => 'External Process'];

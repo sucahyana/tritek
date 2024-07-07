@@ -1,57 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { RiEditCircleFill } from 'react-icons/ri';
-import { PieChart } from '@mui/x-charts';
-import { Slider } from '@mui/material';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 
 const ContentFish = ({ productReady, unit, update }) => {
-    const [progressValue, setProgressValue] = useState(productReady * 0.5);
-
     return (
-        <div className={'flex flex-col'}>
-            <header className={'uppercase align-middle text-end text-white text-xl'}>
+        <div className="bg-martinique-700 text-white rounded-lg p-4 shadow-md w-full">
+            <header className="text-center uppercase text-xl">
                 {productReady} {unit}
             </header>
-            <main className={'flex flex-row'}>
-                <div className={'flex flex-col gap-2'}>
-                    <section className={'flex flex-row gap-2'}>
-                        <IoIosCheckmarkCircle size={28} className={'text-green-500'} />
-                        <h1 className={'item-center align-middle text-center justify-center'}>Good</h1>
-                    </section>
-                    <section className={'flex flex-row gap-2'}>
-                        <RiEditCircleFill size={24} className={'text-yellow-500 spin'} />   
-                        <h1 className={'item-center align-middle text-center justify-center'}>sweetener</h1>
-                        <Slider
-                            min={0}
-                            max={productReady}
-                            value={progressValue}
-                            onChange={(event, newValue) => setProgressValue(newValue)}
-                            aria-labelledby="progress-slider"
-                            style={{ width: 200 }}
-                        />
-                    </section>
+            <main className="mt-4">
+                <div className="flex items-center gap-2">
+                    <IoIosCheckmarkCircle size={28} className="text-green-500" />
+                    <h1 className="text-center text-xl">Good</h1>
                 </div>
-                <PieChart
-                    series={[
-                        {
-                            data: [
-                                { id: 'good', value: productReady, color: '#22c55e' },
-                                { id: 'progress', value: progressValue, color: '#eab308' },
-                            ],
-                            highlightScope: { faded: 'global', highlighted: 'item' },
-                            faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
-                        },
-                    ]}
-                    width={400}
-                    height={200}
-                />
             </main>
-            <footer className={''}>
-                <hr />
-                <div className={'flex flex-row justify-between'}>
-                    <span>Last Update</span>
+            <footer className="mt-4 border-t border-martinique-500 pt-4">
+                <div className="flex justify-between text-sm">
+                    <span>Last Update :</span>
                     <span>{format(new Date(update), 'PP', { locale: id })}</span>
                 </div>
             </footer>

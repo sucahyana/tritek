@@ -13,6 +13,7 @@ import ExternalProsses from '@/components/Molecules/Products/Data/ExternalProsse
 import Packaging from '@/components/Molecules/Products/Data/Packaging.jsx';
 import ApiService from '@/services/ApiService.jsx';
 import { notifyError, notifySuccess } from '@/components/Atoms/Toast.jsx';
+import Pengurangan from "@/components/Molecules/Products/Data/Pengurangan.jsx";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -206,7 +207,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
     let tabsData = [];
 
     processes.forEach((process) => {
-        if (process.process.name !== 'External Process' && process.process.name !== 'Packaging') {
+        if (process.process.name !== 'External Process' && process.process.name !== 'Packaging' && process.process.name !== 'Pengurangan') {
             tabsData.push({
                 label: process.process.name,
                 title: `Riwayat ${process.process.name}`,
@@ -239,6 +240,19 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
                 title: 'Riwayat Proses Pengemasan',
                 component: (
                     <Packaging
+                        process={process}
+                        product={product}
+                        onPageChange={onPageChange}
+                    />
+                )
+            });
+        }
+        if (process.process.name === 'Pengurangan') {
+            tabsData.push({
+                label: 'Penguranan Produk',
+                title: 'Riwayat Pengurangan Atau Pengiriman Produk',
+                component: (
+                    <Pengurangan
                         process={process}
                         product={product}
                         onPageChange={onPageChange}

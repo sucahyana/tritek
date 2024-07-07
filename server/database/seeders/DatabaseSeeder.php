@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Description of Product ' . $i,
                 'net_weight' => rand(5, 20) + 0.5,
                 'total_quantity' => rand(500, 2000),
-                'unit' => 'pcs',
+                'unit' => 'piece',
                 'status' => 'Active',
                 'update_date' => now(),
                 'created_at' => now(),
@@ -71,9 +71,18 @@ class DatabaseSeeder extends Seeder
                 'product_id' => $productId,
             ]);
             $processCounter++;
+
+            DB::table('processes')->insert([
+                'id' => $processCounter,
+                'name' => 'Pengurangan',
+                'description' => 'Pengurangan process for Product ' . $productId,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'product_id' => $productId,
+            ]);
+            $processCounter++;
         }
 
-        // Seed data for product_processes table
         for ($processId = 1; $processId <= $processCounter - 1; $processId++) {
             for ($k = 1; $k <= 100; $k++) {
                 DB::table('product_process')->insert([

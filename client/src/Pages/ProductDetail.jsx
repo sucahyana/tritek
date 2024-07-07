@@ -88,7 +88,7 @@ const ProductDetail = () => {
 
         return (
             <div className="flex flex-col gap-8 justify-center w-full">
-                <DetailHeader pageName={'Product Detail'} onBack={() => navigate(-1)} id={product.model} setting={'product'} />
+                <DetailHeader pageName={`Product Detail > ${product?.model || ''}`} onBack={() => navigate(-1)} id={product?.model} setting={'product'} />
                 <hr className="border-martinique-400 -mt-4 border" />
                 <DetailInfo
                     info={product}   

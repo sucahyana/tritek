@@ -46,6 +46,7 @@ const MaterialMain = () => {
     const headers = [
         { field: 'updated_at', header: 'Terakhir di Update' },
         { field: 'name', header: 'Nama' },
+        { field: 'model', header: 'Model' },
         { field: 'unit', header: 'Satuan' },
         { field: 'total_quantity', header: 'Stok' },
         {

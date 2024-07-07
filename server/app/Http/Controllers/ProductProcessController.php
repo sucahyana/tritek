@@ -69,36 +69,11 @@ class ProductProcessController extends Controller
                 'notes' => $validated['notes'] ?? '',
             ]);
 
+            // Adjust product and material quantities based on process type
             if (strtolower($process->name) === 'packaging') {
-                $material = Material::find($validated['material_id']);
-                if (!$material) {
-                    return $this->notFoundResponse('Material tidak ditemukan');
-                }
-
-                $materialUsed = $product->material_used;
-                $productUnit = $product->unit;
-                $materialUnit = $material->unit;
-
-                $convertedQuantity = $materialUsed * $validated['total_quantity'];
-
-                $material->total_quantity -= $convertedQuantity;
-                $material->save();
-
-                MaterialHistory::create([
-                    'material_id' => $validated['material_id'],
-                    'quantity' => -$convertedQuantity,
-                    'unit' => $materialUnit,
-                    'type' => 'usage',
-                    'status' => 'minus',
-                    'description' => "Material digunakan untuk {$product->name}",
-                    'date' => $validated['date'] ?? now(),
-                    'author' => $validated['author'] ?? 'Unknown',
-                ]);
-            }
-
-            if (strtolower($process->name) === 'packaging') {
-                $product->total_quantity -= $validated['total_quantity'];
-                $product->save();
+                $this->handlePackagingProcess($product, $validated);
+            } elseif (strtolower($process->name) === 'pengurangan') {
+                $this->handleReductionProcess($product, $validated);
             }
 
             return $this->createdResponse('Riwayat proses produk berhasil ditambahkan', $productProcess);
@@ -109,10 +84,74 @@ class ProductProcessController extends Controller
         }
     }
 
+    /**
+     * Handle packaging process.
+     *
+     * @param Product $product
+     * @param array $validated
+     * @return void
+     */
+    private function handlePackagingProcess(Product $product, array $validated)
+    {
+        $material = Material::find($validated['material_id']);
+        if (!$material) {
+            throw new \Exception('Material tidak ditemukan');
+        }
+
+        $materialUsed = $product->material_used;
+        $convertedQuantity = $materialUsed * $validated['total_quantity'];
+
+        // Check if material is sufficient
+        if ($material->total_quantity >= $convertedQuantity) {
+
+            $material->total_quantity -= $convertedQuantity;
+            $material->save();
+
+            // Update material history
+            MaterialHistory::create([
+                'material_id' => $validated['material_id'],
+                'quantity' => -$convertedQuantity,
+                'unit' => $material->unit,
+                'type' => 'usage',
+                'status' => 'minus',
+                'notes' => "Material digunakan untuk {$product->name}",
+                'date' => $validated['date'] ?? now(),
+                'author' => $validated['author'] ?? 'Unknown',
+            ]);
+            $product->total_quantity -= $validated['total_quantity'];
+        } else {
+            $product->total_quantity += $validated['total_quantity'];
+            $material->total_quantity -= $convertedQuantity;
+            $material->save();
+            MaterialHistory::create([
+                'material_id' => $validated['material_id'],
+                'quantity' => -$convertedQuantity,
+                'unit' => $material->unit,
+                'type' => 'usage',
+                'status' => 'minus',
+                'notes' => "Material digunakan untuk {$product->name}",
+                'date' => $validated['date'] ?? now(),
+                'author' => $validated['author'] ?? 'Unknown',
+            ]);
+        }
+
+        $product->save();
+    }
 
 
+    /**
+     * Handle reduction process.
+     *
+     * @param Product $product
+     * @param array $validated
+     * @return void
+     */
+    private function handleReductionProcess(Product $product, array $validated)
+    {
 
-
+        $product->total_quantity -= $validated['total_quantity'];
+        $product->save();
+    }
 
 
     public function update(Request $request, $id)

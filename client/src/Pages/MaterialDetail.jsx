@@ -188,7 +188,7 @@ const MaterialDetail = () => {
         return (
             <div className="flex flex-col gap-8 justify-center w-full p-4">
                 <DetailHeader
-                    pageName={"Material Detail"}
+                    pageName={`Material Detail > ${material?.model || ''}`}
                     material={material}
                     onBack={() => navigate(-1)}
                     id={material?.model}

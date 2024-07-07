@@ -4,7 +4,7 @@ import FormInput from '@/components/Molecules/Materials/FormInput.jsx';
 import { unitOptions } from '@/components/constants/UnitOption.jsx';
 import ApiService from '@/services/ApiService.jsx';
 
-const Packaging = ({ product, process,onPageChange }) => {
+const Pengurangan = ({ product, process,onPageChange }) => {
     const handleUpdateHistory = async (historyId, newData) => {
         try {
             await ApiService.updateProcessHistory(historyId, newData);
@@ -25,8 +25,8 @@ const Packaging = ({ product, process,onPageChange }) => {
     const dataTable = () => {
         return (
             <CardList
-                title="Riwayat Pengemasan"
-                buttonLabel="Laporan Pengemasan"
+                title="Riwayat Pengurangan atau Pengiriman Produk"
+                buttonLabel="Laporan Pengurangan"
                 data={process.product_processes}
                 headers={[
                     { field: 'date', header: 'Tanggal' },
@@ -65,14 +65,14 @@ const Packaging = ({ product, process,onPageChange }) => {
                             },
                         ]}
                         showDialogOnMount={true}
-                        headerText={'Packaging History'}
+                        headerText={'Penguranan Produk'}
                         submitButtonText={'Tambahkan'}
                         core_id={{
                             product_id: product.id,
                             process_id: process.process.id,
                             material_id: product.material_id,
                             unit : product.unit,
-                            status : 'plus',
+                            status : 'minus',
                         }}
                         endpoint={'addProductProcessHistory'}
                     />
@@ -94,4 +94,4 @@ const Packaging = ({ product, process,onPageChange }) => {
     return <div>{dataTable()}</div>;
 };
 
-export default Packaging;
+export default Pengurangan;

@@ -6,8 +6,11 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import {useNavigate} from "react-router-dom";
 
-const ContentCat = ({ product, progress, materials}) => {
+
+const ContentCat = ({ product, progress, materials }) => {
+    const navigate = useNavigate();
 
     const material = materials.find(mat => mat.id === product.material_id);
 
@@ -16,7 +19,8 @@ const ContentCat = ({ product, progress, materials}) => {
     };
 
     const handleEditMaterial = () => {
-        console.log('Edit material button clicked');
+        navigate(`/material/${material.model}`);
+
     };
 
     return (
@@ -27,7 +31,11 @@ const ContentCat = ({ product, progress, materials}) => {
                 </Typography>
             </Box>
             {material ? (
-                <Paper elevation={3} sx={{ p: 2, bgcolor: '#1a237e', mt: 1 }}>
+                <Paper
+                    elevation={3}
+                    sx={{ p: 2, bgcolor: '#1a237e', mt: 1, cursor: 'pointer' }} // Add cursor pointer style
+                    onClick={handleEditMaterial} // Call handleEditMaterial function on click
+                >
                     <Typography variant="body1" sx={{ mb: 1, fontWeight: 'bold', color: 'white' }}>
                         {material.name}
                     </Typography>
@@ -48,14 +56,10 @@ const ContentCat = ({ product, progress, materials}) => {
                             style={{ backgroundColor: '#666dcb' }}
                             initial={{ opacity: 0, x: -100 }}
                             animate={{ opacity: 1, x: 0 }}
-
                             whileHover={{ scale: 1.05 }}
                             className="p-2 rounded-lg"
                         >
-                            <IoHammerSharp
-                                size={24}
-                                style={{ color: randomHexColor() }}
-                            />
+                            <IoHammerSharp size={24} style={{ color: randomHexColor() }} />
                             <Typography variant="body1">{progressItem.process.name}</Typography>
                         </motion.div>
                     </Grid>

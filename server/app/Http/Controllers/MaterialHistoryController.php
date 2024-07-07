@@ -88,9 +88,22 @@ class MaterialHistoryController extends Controller
             }
 
             $perPage = $request->get('per_page', 10);
-            $materialHistory = MaterialHistory::where('material_id', $material->id)
-                ->orderBy('date', 'desc')
-                ->paginate($perPage);
+            $search = $request->get('search');
+
+            $materialHistoryQuery = MaterialHistory::where('material_id', $material->id);
+
+            // Menambahkan kondisi pencarian jika ada
+            if (!empty($search)) {
+                $materialHistoryQuery->where(function ($query) use ($search) {
+                    $query->where('date', 'like', '%' . $search . '%')
+                        ->orWhere('quantity', 'like', '%' . $search . '%')
+                        ->orWhere('status', 'like', '%' . $search . '%')
+                        ->orWhere('notes', 'like', '%' . $search . '%')
+                        ->orWhere('unit', 'like', '%' . $search . '%');
+                });
+            }
+
+            $materialHistory = $materialHistoryQuery->orderBy('date', 'desc')->paginate($perPage);
 
             $paginationData = [
                 'current_page' => $materialHistory->currentPage(),
@@ -112,6 +125,7 @@ class MaterialHistoryController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
 
 
     public function update(Request $request, $id)

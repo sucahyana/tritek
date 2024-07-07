@@ -37,6 +37,20 @@ const CardList = ({
         setFilteredData(data);
     }, [data]);
 
+    useEffect(() => {
+        if (globalFilter === '') {
+            setFilteredData(data);
+        } else {
+            const lowerCaseFilter = globalFilter.toLowerCase();
+            const filteredItems = data.filter((item) => {
+                return Object.keys(item).some((key) =>
+                    typeof item[key] === 'string' && item[key].toLowerCase().includes(lowerCaseFilter)
+                );
+            });
+            setFilteredData(filteredItems);
+        }
+    }, [globalFilter, data]);
+
     const formatColumnBody = (rowData, field, customRender) => {
         if (customRender) {
             return customRender(rowData);
@@ -121,6 +135,10 @@ const CardList = ({
     const perPage = pagination.per_page || 10;
     const totalRecords = pagination.total || 0;
 
+    const handleGlobalFilterChange = (e) => {
+        setGlobalFilter(e.target.value);
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -166,7 +184,7 @@ const CardList = ({
             <div className="mb-4 flex justify-between items-center">
                 <InputText
                     value={globalFilter}
-                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    onChange={handleGlobalFilterChange}
                     placeholder={globalFilterPlaceholder}
                     className="text-sm p-2 rounded bg-martinique-200 border border-martinique-300 w-full lg:w-1/2 focus:outline-none focus:ring-2 focus:ring-martinique-500 shadow"
                 />
@@ -232,7 +250,10 @@ const CardList = ({
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={headers.length + (editMode && enableSelect ? 1 : 0)} className="px-2 py-2 lg:px-6 text-center">
+                            <td
+                                colSpan={headers.length + (editMode && enableSelect ? 1 : 0)}
+                                className="px-2 py-2 lg:px-6 text-center"
+                            >
                                 No data available
                             </td>
                         </tr>
@@ -249,7 +270,7 @@ const CardList = ({
                     onPageChange={(e) => onPageChange(e)}
                     className="mt-4 w-full rounded-lg bg-gradient-to-r from-martinique-800 to-martinique-600 shadow active:from-martinique-600 active:to-martinique-800"
                     template="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    currentPageReportTemplate="Page {currentPage} | data     {first} Ke {last}"
+                    currentPageReportTemplate="Page {currentPage} | data {first} to {last} of {totalRecords}"
                     pt={{
                         pageButton: {
                             className:
