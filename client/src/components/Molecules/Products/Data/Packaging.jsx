@@ -89,7 +89,7 @@ const Packaging = ({ product, process, onUpdate, onPageChange, trigger }) => {
     };
 
     const handlePageChange = (page) => {
-        console.log('Page changed to:', page);
+   
     };
 
     return <div>{dataTable()}</div>;

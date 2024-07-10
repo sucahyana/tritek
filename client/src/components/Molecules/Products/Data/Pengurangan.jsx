@@ -7,7 +7,7 @@ const Pengurangan = ({ product, process, onPageChange, trigger }) => {
     const handleUpdateHistory = async (historyId, newData) => {
         try {
             await ApiService.updateProcessHistory(historyId, newData);
-            if (trigger) trigger(); // Memanggil trigger jika tersedia
+            if (trigger) trigger();
         } catch (error) {
             console.error('Failed to update process history:', error);
         }
@@ -16,7 +16,7 @@ const Pengurangan = ({ product, process, onPageChange, trigger }) => {
     const handleDeleteHistory = async (historyId) => {
         try {
             await ApiService.deleteProcessHistory(historyId);
-            if (trigger) trigger(); // Memanggil trigger jika tersedia
+            if (trigger) trigger();
         } catch (error) {
             console.error('Failed to delete process history:', error);
         }
@@ -75,7 +75,7 @@ const Pengurangan = ({ product, process, onPageChange, trigger }) => {
                             status: 'minus',
                         }}
                         endpoint={'addProductProcessHistory'}
-                        trigger={trigger} // Meneruskan trigger ke FormInput
+                        trigger={trigger}
                     />
                 }
                 onUpdate={handleUpdateHistory}
@@ -88,7 +88,6 @@ const Pengurangan = ({ product, process, onPageChange, trigger }) => {
     };
 
     const handlePageChange = (page) => {
-        console.log('Page changed to:', page);
     };
 
     return <div>{dataTable()}</div>;
