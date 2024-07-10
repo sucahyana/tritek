@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import * as XLSX from 'xlsx';
+import React, {useState, useEffect} from 'react';
 import CardList from '../../CardList.jsx';
-import { unitOptions } from '../../../constants/UnitOption.jsx';
+import {unitOptions} from '../../../constants/UnitOption.jsx';
 import FormInput from '../../Materials/FormInput.jsx';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Button from '@mui/material/Button';
-import ReportProses from '../ReportProsses.jsx';
 import ExternalProsses from '@/components/Molecules/Products/Data/ExternalProsses.jsx';
 import Packaging from '@/components/Molecules/Products/Data/Packaging.jsx';
 import ApiService from '@/services/ApiService.jsx';
-import { notifyError, notifySuccess } from '@/components/Atoms/Toast.jsx';
+import {notifyError, notifySuccess} from '@/components/Atoms/Toast.jsx';
 import Pengurangan from "@/components/Molecules/Products/Data/Pengurangan.jsx";
 
 const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
         <div
@@ -28,7 +24,7 @@ const TabPanel = (props) => {
             className={'bg-none'}
         >
             {value === index && (
-                <Box sx={{ p: 3 }} className={`bg-none`}>
+                <Box sx={{p: 3}} className={`bg-none`}>
                     {children}
                 </Box>
             )}
@@ -36,9 +32,8 @@ const TabPanel = (props) => {
     );
 };
 
-const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, materials, trigger }) => {
+const DataProduct = ({product, processes, pagination, onPageChange, onUpdate, materials, trigger}) => {
     const [value, setValue] = useState(0);
-    const [formData, setFormData] = useState([]);
 
     useEffect(() => {
         const savedTabValue = localStorage.getItem('selectedTab');
@@ -99,7 +94,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
             title: 'Status',
             inputName: 'status',
             type: 'dropdown',
-            options: [{ label: 'plus', value: 'plus' }, { label: 'minus', value: 'minus' }],
+            options: [{label: 'plus', value: 'plus'}, {label: 'minus', value: 'minus'}],
             placeholder: 'Masukan Status'
         },
         {
@@ -167,20 +162,20 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
                 buttonLabel={tabData.buttonLabel}
                 data={dataWithMaterialNames}
                 headers={[
-                    { field: 'date', header: 'Tanggal' },
-                    { field: 'author', header: 'Author' },
-                    { field: 'unit', header: 'Satuan/Unit barang jadi' },
-                    { field: 'material', header: 'Material' },
-                    { field: 'total_quantity', header: 'Jumlah' },
-                    { field: 'total_not_goods', header: 'NG' },
-                    { field: 'total_goods', header: 'Good' },
-                    { field: 'notes', header: 'Alasan/Keterangan' }
+                    {field: 'date', header: 'Tanggal'},
+                    {field: 'author', header: 'Author'},
+                    {field: 'unit', header: 'Satuan/Unit barang jadi'},
+                    {field: 'material', header: 'Material'},
+                    {field: 'total_quantity', header: 'Jumlah'},
+                    {field: 'total_not_goods', header: 'NG'},
+                    {field: 'total_goods', header: 'Good'},
+                    {field: 'notes', header: 'Alasan/Keterangan'}
                 ]}
                 globalFilterPlaceholder="Search history..."
                 modalContent={
                     <FormInput
                         inputs={formInputs}
-                        trigger = {trigger}
+                        trigger={trigger}
                         showDialogOnMount={true}
                         headerText={tabData.title}
                         submitButtonText={'Tambahkan'}
@@ -197,12 +192,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
         );
     };
 
-    const handleExportExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(formData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-        XLSX.writeFile(workbook, 'laporan-produksi.xlsx');
-    };
+
 
     let tabsData = [];
 
@@ -266,7 +256,7 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
     });
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{width: '100%'}}>
             <Tabs
                 value={value}
                 onChange={handleChange}
@@ -286,23 +276,15 @@ const DataProduct = ({ product, processes, pagination, onPageChange, onUpdate, m
                 }}
             >
                 {tabsData.map((tab, index) => (
-                    <Tab key={index} label={tab.label} />
+                    <Tab key={index} label={tab.label}/>
                 ))}
             </Tabs>
             {tabsData.map((tab, index) => (
                 <TabPanel key={index} value={value} index={index}>
+
                     {dataTable(tab)}
                     <Box display="flex" justifyContent="space-between" mt={2}>
-                        <PDFDownloadLink document={<ReportProses data={formData} />} fileName="laporan-produksi.pdf">
-                            {({ loading }) => (
-                                <Button variant="contained" color="primary">
-                                    {loading ? 'Loading document...' : 'Download PDF'}
-                                </Button>
-                            )}
-                        </PDFDownloadLink>
-                        <Button variant="contained" color="primary" onClick={handleExportExcel}>
-                            Download Excel
-                        </Button>
+
                     </Box>
                 </TabPanel>
             ))}

@@ -3796,13 +3796,13 @@ prelude-ls@^1.2.1:
 
 primeicons@^7.0.0:
   version "7.0.0"
-  resolved "https://registry.npmjs.org/primeicons/-/primeicons-7.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/primeicons/-/primeicons-7.0.0.tgz#6b25c3fdcb29bb745a3035bdc1ed5902f4a419cf"
   integrity sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==
 
-primereact@^10.6.5:
-  version "10.6.5"
-  resolved "https://registry.npmjs.org/primereact/-/primereact-10.6.5.tgz"
-  integrity sha512-YbdvyIRIGSfZVhtIbltizUISBuXVXBn2S4/491xdDJLrxohjjf0uIogu+/sSKRBVVT17b6zFEwARTvc9yUA7tQ==
+primereact@^10.7.0:
+  version "10.7.0"
+  resolved "https://registry.yarnpkg.com/primereact/-/primereact-10.7.0.tgz#82393fdeaac4e6f2cd88cc9b5a7ec3ab05209b4f"
+  integrity sha512-Rx0JaNF7WM+vcSy4sUeLA9nnEAxm5N1P2RhRXEwFpoo9527429kvwZcNanlcJiqY8JCwCaiSnGGPYgVKtGcZCw==
   dependencies:
     "@types/react-transition-group" "^4.4.1"
     react-transition-group "^4.4.1"
@@ -3857,6 +3857,11 @@ react-dom@^18.3.1:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.2"
+
+react-file-download@^0.3.5:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/react-file-download/-/react-file-download-0.3.5.tgz#7a4e75874528806bfa53ddddd98b4da427d3a897"
+  integrity sha512-gP867caQCviTw2IUQTMTOFgHn2A71zoLYzHr4KkOI0gkwc1m4ceb/dxNOkG4yB8Hent2+G3f4qbr9Rzb9yZouw==
 
 react-full-screen@^1.1.1:
   version "1.1.1"

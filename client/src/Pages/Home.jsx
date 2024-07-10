@@ -9,6 +9,7 @@ import MaterialCard from "@/components/Molecules/Materials/MaterialCard.jsx";
 import ProductCard from "@/components/Molecules/Products/ProductCard.jsx";
 import { fetchMaterials } from "@/stores/actions/materialActions.js";
 import { fetchProducts } from "@/stores/actions/productAction.js";
+import ReportHome from "@/components/Organisms/ReportHome.jsx";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -172,13 +173,18 @@ const Home = () => {
                         }}
                     />
                 </div>
+                <a href={'/materials'} className="text-lg sm:text-xl lg:text-2xl font-bold  mb-2 mt-8">
+                    Reports
+                </a>
+                <hr className="border-t-2 mb-4 "></hr>
+                <ReportHome/>
             </section>
         </div>
     );
 
     return (
         <div className="min-h-screen bg-gray-900">
-            <ContainerStarter Content={content()} />
+            <ContainerStarter Content={content()}/>
         </div>
     );
 };

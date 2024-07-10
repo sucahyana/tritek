@@ -160,6 +160,7 @@ const ProductMain = () => {
             )
         },
     ];
+
     const content = () => {
         if (loading) {
             return <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
@@ -174,6 +175,7 @@ const ProductMain = () => {
         }
         return (
             <div className="w-full">
+
                 <CardList
                     pagination={pagination}
                     onPageChange={handlePageChange}
