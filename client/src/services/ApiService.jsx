@@ -817,11 +817,44 @@ class ApiService {
             });
             stopLoading();
 
-            // Create blob URL and initiate download
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', `laporan-product-${fileName}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            notifySuccess('Export to Excel successful.');
+            return { success: true, message: 'Export to Excel successful.' };
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred during export.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
+    }
+    static async materialExport(id,fileName) {
+        try {
+            notifyLoading('Exporting to Excel...');
+            const response = await api.get(`/material/export/${id}`, {
+                responseType: 'blob',
+            });
+            stopLoading();
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `laporan-material-${fileName}.xlsx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

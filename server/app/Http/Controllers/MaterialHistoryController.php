@@ -91,8 +91,6 @@ class MaterialHistoryController extends Controller
             $search = $request->get('search');
 
             $materialHistoryQuery = MaterialHistory::where('material_id', $material->id);
-
-            // Menambahkan kondisi pencarian jika ada
             if (!empty($search)) {
                 $materialHistoryQuery->where(function ($query) use ($search) {
                     $query->where('date', 'like', '%' . $search . '%')
@@ -204,56 +202,9 @@ class MaterialHistoryController extends Controller
         }
     }
 
-    public function export(Request $request, $id)
-    {
-        try {
-            $material = Material::where('model', $id)->first();
-            if (!$material) {
-                return $this->notFoundResponse('Material tidak ditemukan');
-            }
 
 
-            $materialHistory = MaterialHistory::where('material_id', $material->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
 
-            $headers = array(
-                "Content-type"        => "text/csv",
-                "Content-Disposition" => "attachment; filename=material_history.csv",
-                "Pragma"              => "no-cache",
-                "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-                "Expires"             => "0"
-            );
-
-            $columns = ['ID', 'Material ID', 'Date', 'Quantity', 'Status', 'Notes', 'Unit', 'Created At', 'Updated At'];
-
-            $callback = function() use ($materialHistory, $columns) {
-                $file = fopen('php://output', 'w');
-                fputcsv($file, $columns);
-
-                foreach ($materialHistory as $history) {
-                    fputcsv($file, [
-                        $history->id,
-                        $history->material_id,
-                        $history->date,
-                        $history->quantity,
-                        $history->status,
-                        $history->notes,
-                        $history->unit,
-                        $history->created_at,
-                        $history->updated_at,
-                    ]);
-                }
-
-                fclose($file);
-            };
-
-            return response()->stream($callback, 200, $headers);
-
-        } catch (\Exception $e) {
-            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
-        }
-    }
 
 
 }

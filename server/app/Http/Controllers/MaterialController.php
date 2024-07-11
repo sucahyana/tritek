@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MaterialExport;
+use App\Models\MaterialHistory;
 use Illuminate\Http\Request;
 use App\Models\Material;
 use App\Traits\ResponseTrait;
 use App\Constants\UnitOptions;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MaterialController extends Controller
 {
@@ -48,6 +51,7 @@ class MaterialController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
     public function index(Request $request)
     {
         try {
@@ -161,6 +165,7 @@ class MaterialController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
     public function getMaterialInfo($id)
     {
         try {
@@ -175,6 +180,25 @@ class MaterialController extends Controller
             return $this->successResponse('Informasi material berhasil diambil', $response);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return $this->notFoundResponse('Material tidak ditemukan');
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+        }
+    }
+
+    public function export($id)
+    {
+        try {
+            $material = Material::where('model', $id)->first();
+            if (!$material) {
+                return $this->notFoundResponse('Material tidak ditemukan');
+            }
+
+            $materialHistories = MaterialHistory::where('material_id', $material->id)
+                ->orderBy('date', 'desc')
+                ->get();
+
+            return Excel::download(new MaterialExport($material, $materialHistories), 'material_export.xlsx');
+
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }

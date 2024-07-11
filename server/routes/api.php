@@ -25,6 +25,7 @@ Route::prefix('v1')->group(function () {
 	Route::get('/material/history/{id}', [MaterialHistoryController::class, 'index']);
 	Route::put('/material/history/{id}', [MaterialHistoryController::class, 'update']);
 	Route::delete('/material/history/{id}', [MaterialHistoryController::class, 'destroy']);
+    Route::get('/material/export/{id}', [MaterialController::class, 'export']);
 // Products
 	Route::get('/products', [ProductController::class, 'index']);
 	Route::post('/products', [ProductController::class, 'store']);
