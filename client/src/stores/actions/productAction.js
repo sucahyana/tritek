@@ -9,7 +9,7 @@ import {
 import ApiService from '../../services/ApiService';
 
 
-export const fetchProducts = (page = 1, rows = 10) => {
+export const fetchProducts = (page = 1, rows = 15) => {
     return async dispatch => {
         dispatch({ type: FETCH_PRODUCTS_REQUEST });
         try {

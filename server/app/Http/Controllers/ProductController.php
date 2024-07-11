@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\UnitOptions;
+use App\Exports\ProductExport;
 use App\Models\Material;
 use App\Models\Process;
 use App\Models\ProductProcess;
@@ -10,6 +11,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -214,6 +216,39 @@ class ProductController extends Controller
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return $this->badRequestResponse('Validasi Gagal', $e->errors());
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+        }
+    }
+    public function export(Request $request, $id)
+    {
+        try {
+            $product = Product::where('model', $id)->first();
+            if (!$product) {
+                return $this->notFoundResponse('Product tidak ditemukan');
+            }
+            $material = Material::find($product['material_id']);
+            if (!$material) {
+                throw new \Exception('Material tidak ditemukan');
+            }
+
+            $processes = Process::where('product_id', $product->id)->get();
+            $processesWithProductProcesses = [];
+
+            foreach ($processes as $process) {
+                $productProcesses = ProductProcess::where('process_id', $process->id)
+                    ->orderBy('date', 'desc')
+                    ->get();
+
+                $processData = [
+                    'process' => $process,
+                    'product_processes' => $productProcesses
+                ];
+
+                $processesWithProductProcesses[] = $processData;
+            }
+
+            return Excel::download(new ProductExport($product, $processesWithProductProcesses , $material), $product->name.'.xlsx');
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }

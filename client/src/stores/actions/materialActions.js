@@ -12,7 +12,7 @@ import {
 import ApiService from '../../services/ApiService';
 
 
-export const fetchMaterials = (page = 1, rows = 10) => {
+export const fetchMaterials = (page = 1, rows = 15) => {
     return async dispatch => {
         dispatch({ type: FETCH_MATERIALS_REQUEST });
         try {

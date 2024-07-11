@@ -51,7 +51,7 @@ class ApiService {
         }
     }
 
-    static async getMaterials(page = 1, perPage = 10) {
+    static async getMaterials(page = 1, perPage = 15) {
         try {
             notifyLoading('Mengambil daftar material...');
             const response = await api.get('/materials', {
@@ -93,6 +93,7 @@ class ApiService {
             return [];
         }
     }
+
     static async getAllMaterialsExport(id) {
         try {
             notifyLoading('Mengambil daftar material...');
@@ -111,6 +112,7 @@ class ApiService {
             return [];
         }
     }
+
     static async getMaterialInfo() {
         try {
             notifyLoading('Mengambil daftar material...');
@@ -130,7 +132,7 @@ class ApiService {
         }
     }
 
-    static async getProducts(page = 1, perPage = 10) {
+    static async getProducts(page = 1, perPage = 15) {
         try {
             notifyLoading('Mengambil daftar products...');
             const response = await api.get('/products', {
@@ -154,7 +156,7 @@ class ApiService {
         }
     }
 
-    static async getMaterial(id, page = 1, perPage = 10) {
+    static async getMaterial(id, page = 1, perPage = 15) {
         try {
             notifyLoading('Mengambil material...');
             const response = await api.get(`/material/history/${id}`, {
@@ -203,7 +205,7 @@ class ApiService {
         }
     }
 
-    static async addMaterialHistory({ date, name, quantity, unit, status, process_id, notes, material_id }) {
+    static async addMaterialHistory({date, name, quantity, unit, status, process_id, notes, material_id}) {
         try {
             notifyLoading('Sending request...');
             const response = await api.post('/material/history', {
@@ -219,7 +221,7 @@ class ApiService {
             stopLoading();
             if (response.data.success) {
                 notifySuccess(response.data.message);
-                return { success: true, message: response.data.message };
+                return {success: true, message: response.data.message};
             } else {
                 notifyError(response.data.message || 'Failed to add material history.');
                 return {
@@ -247,7 +249,7 @@ class ApiService {
                 console.error('Error:', error.message);
             }
             notifyError(errorMessage);
-            return { success: false, message: errorMessage, errors };
+            return {success: false, message: errorMessage, errors};
         }
     }
 
@@ -806,6 +808,45 @@ class ApiService {
             return {success: false, message: errorMessage};
         }
     }
+
+    static async productExport(id,fileName) {
+        try {
+            notifyLoading('Exporting to Excel...');
+            const response = await api.get(`/product/export/${id}`, {
+                responseType: 'blob',
+            });
+            stopLoading();
+
+            // Create blob URL and initiate download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `laporan-product-${fileName}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            notifySuccess('Export to Excel successful.');
+            return { success: true, message: 'Export to Excel successful.' };
+        } catch (error) {
+            stopLoading();
+            let errorMessage = 'An unexpected error occurred during export.';
+            if (error.response) {
+                console.error('Error Response:', error.response);
+                errorMessage = error.response.data.message || 'An error occurred on the server.';
+            } else if (error.request) {
+                console.error('Error Request:', error.request);
+                errorMessage = 'No response received from server.';
+            } else {
+                console.error('Error:', error.message);
+            }
+            notifyError(errorMessage);
+            return { success: false, message: errorMessage };
+        }
+    }
+
+
+
 }
 
 export default ApiService;

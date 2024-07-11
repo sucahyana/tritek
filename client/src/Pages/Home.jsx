@@ -25,15 +25,15 @@ const Home = () => {
     const [filteredMaterials, setFilteredMaterials] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [pageProduct, setPageProduct] = useState(1);
-    const [rowsProduct, setRowsProduct] = useState(10);
+    const [rowsProduct, setRowsProduct] = useState(15);
     const [pageMaterial, setPageMaterial] = useState(1);
-    const [rowsMaterial, setRowsMaterial] = useState(10);
-    const rowsPerPageOptions = [5, 10, 25, 50, 100];
+    const [rowsMaterial, setRowsMaterial] = useState(15);
+    const rowsPerPageOptions = [5, 15, 25, 50, 100];
     const currentPage = paginationMaterial?.current_page || 1;
-    const perPage = paginationMaterial?.per_page || 10;
+    const perPage = paginationMaterial?.per_page || 15;
     const totalRecords = paginationMaterial?.total || 0;
     const currentPageProduct = paginationProduct?.current_page || 1;
-    const perPageProduct = paginationProduct?.per_page || 10;
+    const perPageProduct = paginationProduct?.per_page || 15;
     const totalRecordsProduct = paginationProduct?.total || 0;
 
     useEffect(() => {
@@ -177,7 +177,7 @@ const Home = () => {
                     Reports
                 </a>
                 <hr className="border-t-2 mb-4 "></hr>
-                <ReportHome/>
+                <ReportHome products = {products} materials = {materials}/>
             </section>
         </div>
     );
