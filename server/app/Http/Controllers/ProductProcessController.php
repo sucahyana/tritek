@@ -118,9 +118,8 @@ class ProductProcessController extends Controller
                 'date' => $validated['date'] ?? now(),
                 'author' => $validated['author'] ?? 'Unknown',
             ]);
-            $product->total_quantity -= $validated['total_quantity'];
+
         } else {
-            $product->total_quantity += $validated['total_quantity'];
             $material->total_quantity -= $convertedQuantity;
             $material->save();
             MaterialHistory::create([
@@ -134,7 +133,7 @@ class ProductProcessController extends Controller
                 'author' => $validated['author'] ?? 'Unknown',
             ]);
         }
-
+        $product->total_quantity += $validated['total_quantity'];
         $product->save();
     }
 

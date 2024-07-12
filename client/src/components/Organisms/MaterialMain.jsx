@@ -10,6 +10,7 @@ import { fetchMaterials} from "@/stores/actions/materialActions.js";
 import {Box} from "@mui/system";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import ApiService from "@/services/ApiService.jsx";
 
 
 
@@ -39,6 +40,13 @@ const MaterialMain = () => {
 
     const handleDetailClick = (rowData) => {
         navigate(`/material/${rowData.model}`);
+    };
+    const handleDelete = async (materialId) => {
+        try {
+            await ApiService.deleteMaterial(materialId);
+        } catch (error) {
+            console.error('Failed to delete process history:', error);
+        }
     };
 
 
@@ -83,12 +91,12 @@ const MaterialMain = () => {
                     onPageChange={handlePageChange}
                     rowsPerPageOptions={rowsPerPageOptions}
                     title={'Material List'}
-                    showAddButton={true}
+                    onDelete={handleDelete}
                     data={materials}
                     buttonLabel={'Tambah Jenis'}
                     headers={headers}
                     enableEdit={false}
-                    enableSelect={false}
+                    enableSelect={true}
                     globalFilterPlaceholder="Search Materials..."
                     modalContent={
                         <FormInput

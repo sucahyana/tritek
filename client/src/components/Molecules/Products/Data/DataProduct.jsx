@@ -218,7 +218,7 @@ const DataProduct = ({product, processes, pagination, onPageChange, onUpdate, ma
                     <ExternalProsses
                         onPageChange={onPageChange}
                         product={process}
-                        materialId={product}
+                        materialId={product.material_id}
                         trigger={trigger}
                     />
                 )

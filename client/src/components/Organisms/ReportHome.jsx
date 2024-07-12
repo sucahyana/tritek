@@ -36,18 +36,18 @@ const ReportHome = ({ products, materials }) => {
             console.error('Error exporting data:', error);
         }
     };
+
     const handleSubmitAll = async (isProduct) => {
-        const endpoint = isProduct ? 'productsExport' : 'materialsExport'
+        const endpoint = isProduct ? 'productsExport' : 'materialsExport';
         try {
             const response = await ApiService[endpoint]();
             console.log('Export success:', response);
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Error exporting data:', error);
         }
-    }
+    };
 
-    const renderSection = (title, buttonLabel, fileName, fileSource, dropdownPlaceholder, options, selectedOption, setSelectedOption, isProduct) => (
+    const renderSection = (title, buttonLabel, fileName, fileSource, dropdownPlaceholder, options, selectedOption, setSelectedOption, isProduct, showAllButton) => (
         <section className="p-2 w-full text-center rounded-lg bg-gradient-to-r from-martinique-200 to-martinique-400 shadow-lg">
             <div className="flex flex-row justify-between items-center">
                 <h2 className="text-martinique-900 text-lg font-medium text-left">{title}</h2>
@@ -77,17 +77,21 @@ const ReportHome = ({ products, materials }) => {
                     disabled={!selectedOption}
                 />
             </div>
-            <hr className="border-t-2 mb-4 border-martinique-800" />
-            <div className="flex flex-col justify-between">
-                <h2 className="text-martinique-900 text-lg font-medium text-left">
-                    Download Seluruh Data {buttonLabel}
-                </h2>
-                <Button
-                    label={`Download Seluruh ${buttonLabel}`}
-                    onClick={() =>handleSubmitAll(isProduct)}
-                    className="p-3 bg-gradient-to-r from-martinique-400 to-martinique-200 text-martinique-900 mb-2 rounded-lg shadow-lg border border-martinique-800 opacity-80"
-                />
-            </div>
+            {showAllButton && (
+                <>
+                    <hr className="border-t-2 mb-4 border-martinique-800" />
+                    <div className="flex flex-col justify-between">
+                        <h2 className="text-martinique-900 text-lg font-medium text-left">
+                            Download Seluruh Data {buttonLabel}
+                        </h2>
+                        <Button
+                            label={`Download Seluruh ${buttonLabel}`}
+                            onClick={() => handleSubmitAll(isProduct)}
+                            className="p-3 bg-gradient-to-r from-martinique-400 to-martinique-200 text-martinique-900 mb-2 rounded-lg shadow-lg border border-martinique-800 opacity-80"
+                        />
+                    </div>
+                </>
+            )}
         </section>
     );
 
@@ -104,7 +108,8 @@ const ReportHome = ({ products, materials }) => {
                     products,
                     selectedProduct,
                     setSelectedProduct,
-                    true
+                    true,
+                    false // Show "Download Seluruh Data" button
                 )}
             </div>
             <div className="flex flex-col w-full">
@@ -118,7 +123,8 @@ const ReportHome = ({ products, materials }) => {
                     materials,
                     selectedMaterial,
                     setSelectedMaterial,
-                    false
+                    false,
+                    true // Hide "Download Seluruh Data" button
                 )}
             </div>
         </div>

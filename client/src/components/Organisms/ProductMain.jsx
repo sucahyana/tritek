@@ -11,6 +11,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import {fetchProducts} from "@/stores/actions/productAction.js";
 import apiService from "@/services/ApiService.jsx";
+import ApiService from "@/services/ApiService.jsx";
 
 
 const ProductMain = () => {
@@ -139,6 +140,13 @@ const ProductMain = () => {
     const handleDetailClick = (rowData) => {
         navigate(`/product/${rowData.model}`);
     };
+    const handleDelete = async (productId) => {
+        try {
+            await ApiService.deleteProduct(productId);
+        } catch (error) {
+            console.error('Failed to delete process history:', error);
+        }
+    };
 
     const headers = [
         {field: 'updated_at', header: 'Terakhir di Update'},
@@ -183,10 +191,11 @@ const ProductMain = () => {
                     title={'Products List'}
                     showAddButton={true}
                     data={data}
+                    onDelete={handleDelete}
                     buttonLabel={'Tambah Jenis'}
                     headers={headers}
                     enableEdit={false}
-                    enableSelect={false}
+                    enableSelect={true}
                     globalFilterPlaceholder="Search Product..."
                     modalContent={
                         <FormNewProduct

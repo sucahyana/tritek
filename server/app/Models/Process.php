@@ -52,7 +52,7 @@ class Process extends Model
 	public function products()
 	{
 		return $this->belongsToMany(Product::class, 'product_process')
-					->withPivot('id', 'date', 'author', 'unit', 'material_id', 'quantity_used', 'process_send_total', 'process_receive_total', 'total_goods', 'total_not_goods', 'status', 'notes')
+					->withPivot('id', 'date', 'author', 'unit', 'material_id', 'process_send_total', 'process_receive_total', 'total_goods', 'total_not_goods', 'status', 'notes')
 					->withTimestamps();
 	}
 	public function productProcesses()

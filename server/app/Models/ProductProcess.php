@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $author
  * @property string $unit
  * @property string $material_id
- * @property int $quantity_used
  * @property float $process_send_total
  * @property float $process_receive_total
  * @property float $total_goods
@@ -54,7 +53,6 @@ class ProductProcess extends Model
         'author',
         'unit',
         'material_id',
-        'quantity_used',
         'process_send_total',
         'process_receive_total',
         'total_goods',

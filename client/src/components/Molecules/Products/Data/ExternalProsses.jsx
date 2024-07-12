@@ -4,8 +4,8 @@ import FormInput from '@/components/Molecules/Materials/FormInput.jsx';
 import { unitOptions } from '@/components/constants/UnitOption.jsx';
 import ApiService from '@/services/ApiService.jsx';
 
-const ExternalProsses = ({ dataProcess, onUpdate, trigger }) => {
-    const { product, materialId, onPageChange } = dataProcess;
+const ExternalProsses = ({ product,materialId,onPageChange, onUpdate, trigger }) => {
+
 
     const externalHistoryData = product.product_processes.filter(
         item => item.status === 'delivery'

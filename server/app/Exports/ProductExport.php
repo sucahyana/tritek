@@ -7,6 +7,7 @@ use App\Models\ProductProcess;
 use App\Models\Material;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithTitle;
@@ -17,7 +18,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
-class ProductExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class ProductExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle,ShouldAutoSize
 {
     protected $product;
     protected $processes;
@@ -85,7 +86,9 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
 
         $this->currentRow += 2;
 
+
         return [$header, $data];
+
     }
 
 
@@ -106,14 +109,14 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
                 'startColor' => ['rgb' => '0070C0'],
             ],
             'borders' => [
-                'allBorders' => [
+                'outline' => [
                     'borderStyle' => Border::BORDER_MEDIUM,
+                    'color' => ['rgb' => '000000'],
                 ],
             ],
         ]);
 
         $this->currentRow += 2;
-
 
         foreach ($this->processes as $processData) {
             $this->addProcessTable($sheet, $processData);
@@ -126,10 +129,210 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
         $process = $processData['process'];
         $productProcesses = $processData['product_processes'];
 
+        // Check if the process is External Process
+        $isExternalProcess = $process->name === 'External Process';
 
-        $sheet->setCellValue("A{$this->currentRow}", "Process: {$process->name}");
-        $sheet->mergeCells("A{$this->currentRow}:T{$this->currentRow}");
-        $sheet->getStyle("A{$this->currentRow}:T{$this->currentRow}")->applyFromArray([
+        if ($isExternalProcess) {
+            $externalSendData = [];
+            $externalReceiveData = [];
+
+            foreach ($productProcesses as $productProcess) {
+                if ($productProcess->process_send_total) {
+                    $externalSendData[] = [
+                        $productProcess->id,
+                        $productProcess->author,
+                        $productProcess->unit,
+                        $productProcess->process_send_total,
+                        $productProcess->total_goods,
+                        $productProcess->total_not_goods,
+                        $productProcess->total_quantity,
+                        $productProcess->status,
+                        $productProcess->notes,
+                        $productProcess->date,
+                        $productProcess->created_at,
+                        $productProcess->updated_at,
+                    ];
+                }
+
+                if ($productProcess->process_receive_total) {
+                    $externalReceiveData[] = [
+                        $productProcess->id,
+                        $productProcess->author,
+                        $productProcess->unit,
+                        $productProcess->process_receive_total,
+                        $productProcess->total_goods,
+                        $productProcess->total_not_goods,
+                        $productProcess->total_quantity,
+                        $productProcess->status,
+                        $productProcess->notes,
+                        $productProcess->date,
+                        $productProcess->created_at,
+                        $productProcess->updated_at,
+                    ];
+                }
+            }
+
+            if (!empty($externalSendData)) {
+                $this->currentRow = $this->addExternalProcessTable($sheet, 'External Send', $externalSendData);
+                $this->currentRow += 2;
+            }
+
+            if (!empty($externalReceiveData)) {
+                $this->currentRow = $this->addExternalProcessTable($sheet, 'External Receive', $externalReceiveData);
+                $this->currentRow += 2;
+            }
+        } else {
+            // Default table rendering for non-External Process
+            $sheet->setCellValue("A{$this->currentRow}", "Process: {$process->name}");
+            $sheet->mergeCells("A{$this->currentRow}:M{$this->currentRow}");
+            $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 14,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => '92D050'],
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => '000000'],
+                    ],
+                ],
+            ]);
+            $this->currentRow++;
+
+            $sheet->setCellValue("A{$this->currentRow}", "Description: {$process->description}");
+            $sheet->mergeCells("A{$this->currentRow}:M{$this->currentRow}");
+            $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 12,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => 'D9EAD3'],
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => '000000'],
+                    ],
+                ],
+            ]);
+            $this->currentRow++;
+
+            $sheet->setCellValue("A{$this->currentRow}", "Last Update: {$process->updated_at}");
+            $sheet->mergeCells("A{$this->currentRow}:M{$this->currentRow}");
+            $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 12,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => 'D9EAD3'],
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => '000000'],
+                    ],
+                ],
+            ]);
+            $this->currentRow++;
+
+            $sheet->fromArray(
+                [
+                    'ID',
+                    'Author',
+                    'Unit',
+                    'Process Send Total',
+                    'Process Receive Total',
+                    'Total Goods',
+                    'Total Not Goods',
+                    'Total Quantity',
+                    'Status',
+                    'Notes',
+                    'Date',
+                    'Created At',
+                    'Updated At',
+                ],
+                null,
+                "A{$this->currentRow}"
+            );
+            $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => 'D9D9D9'],
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => '000000'],
+                    ],
+                ],
+            ]);
+            $this->currentRow++;
+
+            foreach ($productProcesses as $productProcess) {
+                $sheet->fromArray(
+                    [
+                        $productProcess->id,
+                        $productProcess->author,
+                        $productProcess->unit,
+                        $productProcess->process_send_total,
+                        $productProcess->process_receive_total,
+                        $productProcess->total_goods,
+                        $productProcess->total_not_goods,
+                        $productProcess->total_quantity,
+                        $productProcess->status,
+                        $productProcess->notes,
+                        $productProcess->date,
+                        $productProcess->created_at,
+                        $productProcess->updated_at,
+                    ],
+                    null,
+                    "A{$this->currentRow}"
+                );
+                $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    ],
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => '000000'],
+                        ],
+                    ],
+                ]);
+
+                $this->currentRow++;
+            }
+        }
+    }
+
+    protected function addExternalProcessTable(Worksheet $sheet, string $title, array $data): int
+    {
+        $sheet->setCellValue("A{$this->currentRow}", "{$title}");
+        $sheet->mergeCells("A{$this->currentRow}:M{$this->currentRow}");
+        $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
             'font' => [
                 'bold' => true,
                 'size' => 14,
@@ -141,53 +344,20 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
                 'fillType' => Fill::FILL_SOLID,
                 'startColor' => ['rgb' => '92D050'],
             ],
-        ]);
-        $this->currentRow++;
-
-
-        $sheet->setCellValue("A{$this->currentRow}", "Description: {$process->description}");
-        $sheet->mergeCells("A{$this->currentRow}:T{$this->currentRow}");
-        $sheet->getStyle("A{$this->currentRow}:T{$this->currentRow}")->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 12,
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_LEFT,
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'D9EAD3'],
+            'borders' => [
+                'outline' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
             ],
         ]);
         $this->currentRow++;
-
-
-        $sheet->setCellValue("A{$this->currentRow}", "Last Update: {$process->updated_at}");
-        $sheet->mergeCells("A{$this->currentRow}:T{$this->currentRow}");
-        $sheet->getStyle("A{$this->currentRow}:T{$this->currentRow}")->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 12,
-            ],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_LEFT,
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => 'D9EAD3'],
-            ],
-        ]);
-        $this->currentRow++;
-
 
         $sheet->fromArray(
             [
                 'ID',
                 'Author',
                 'Unit',
-                'Process Send Total',
-                'Process Receive Total',
                 'Total Goods',
                 'Total Not Goods',
                 'Total Quantity',
@@ -200,7 +370,7 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
             null,
             "A{$this->currentRow}"
         );
-        $sheet->getStyle("A{$this->currentRow}:T{$this->currentRow}")->applyFromArray([
+        $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
             'font' => [
                 'bold' => true,
             ],
@@ -212,59 +382,40 @@ class ProductExport implements FromCollection, WithHeadings, WithMapping, WithSt
                 'startColor' => ['rgb' => 'D9D9D9'],
             ],
             'borders' => [
-                'allBorders' => [
+                'outline' => [
                     'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
                 ],
             ],
         ]);
-
-
-        foreach (range('A', 'T') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setAutoSize(true);
-        }
-
         $this->currentRow++;
 
-
-        foreach ($productProcesses as $productProcess) {
+        foreach ($data as $rowData) {
             $sheet->fromArray(
-                [
-                    $productProcess->id,
-                    $productProcess->author,
-                    $productProcess->unit,
-                    $productProcess->process_send_total,
-                    $productProcess->process_receive_total,
-                    $productProcess->total_goods,
-                    $productProcess->total_not_goods,
-                    $productProcess->total_quantity,
-                    $productProcess->status,
-                    $productProcess->notes,
-                    $productProcess->date,
-                    $productProcess->created_at,
-                    $productProcess->updated_at,
-                ],
+                $rowData,
                 null,
                 "A{$this->currentRow}"
             );
-            $sheet->getStyle("A{$this->currentRow}:T{$this->currentRow}")->applyFromArray([
+            $sheet->getStyle("A{$this->currentRow}:M{$this->currentRow}")->applyFromArray([
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ],
                 'borders' => [
-                    'allBorders' => [
+                    'outline' => [
                         'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => '000000'],
                     ],
                 ],
             ]);
 
-
-            foreach (range('A', 'T') as $columnID) {
-                $sheet->getColumnDimension($columnID)->setAutoSize(true);
-            }
-
             $this->currentRow++;
         }
+
+        return $this->currentRow;
+
     }
+
+
 
     public function title(): string
     {

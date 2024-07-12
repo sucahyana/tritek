@@ -58,7 +58,7 @@ class Product extends Model
 	public function processes()
 	{
 		return $this->belongsToMany(Process::class, 'product_process')
-					->withPivot('id', 'date', 'author', 'unit', 'material_id', 'quantity_used', 'process_send_total', 'process_receive_total', 'total_goods', 'total_not_goods', 'status', 'notes')
+					->withPivot('id', 'date', 'author', 'unit', 'material_id', 'process_send_total', 'process_receive_total', 'total_goods', 'total_not_goods', 'status', 'notes')
 					->withTimestamps();
 	}
 

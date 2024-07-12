@@ -25,15 +25,16 @@ Route::prefix('v1')->group(function () {
     Route::put('/material/history/{id}', [MaterialHistoryController::class, 'update']);
     Route::delete('/material/history/{id}', [MaterialHistoryController::class, 'destroy']);
     Route::get('/material/export/{id}', [MaterialController::class, 'export']);
-    Route::get('/material/export/{id}', [MaterialHistoryController::class, 'export']);
-    Route::get('/material/exports', [MaterialController::class, 'orderExport']);
+    Route::get('/material/exports', [MaterialController::class, 'exportAll']);
 // Products
     Route::get('/products', [ProductController::class, 'index']);
     Route::post('/products', [ProductController::class, 'store']);
+    Route::get('/product/exports', [ProductController::class, 'exportAll']);
     Route::get('/product/{id}', [ProductController::class, 'show']);
     Route::put('/product/{id}', [ProductController::class, 'update']);
     Route::delete('/product/{id}', [ProductController::class, 'destroy']);
     Route::get('/product/export/{id}', [ProductController::class, 'export']);
+
 // Processes
     Route::put('/processes/{id}', [ProcessController::class, 'update']);
     Route::delete('/processes/{id}', [ProcessController::class, 'destroy']);

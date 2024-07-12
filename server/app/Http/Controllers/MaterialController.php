@@ -79,7 +79,7 @@ class MaterialController extends Controller
         }
     }
 
-    public function orderExport()
+    public function exportAll()
     {
         try {
             $materials = Material::with('material_histories')->orderBy('created_at', 'desc')->get();
@@ -172,6 +172,7 @@ class MaterialController extends Controller
     {
         try {
             $material = Material::findOrFail($id);
+            $material->material_histories()->delete();
             $material->delete();
 
             return $this->successResponse('Material berhasil dihapus');
@@ -181,6 +182,7 @@ class MaterialController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
 
     public function getMaterialInfo($id)
     {

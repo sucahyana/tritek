@@ -32,7 +32,7 @@ const Pengurangan = ({ product, process, onPageChange, trigger }) => {
                     { field: 'date', header: 'Tanggal' },
                     { field: 'author', header: 'Author' },
                     { field: 'unit', header: 'Satuan/Unit barang jadi' },
-                    { field: 'total_quantity', header: 'Jumlah' },
+                    { field: 'total_quantity', header: 'Jumlah Pengurangan' },
                     { field: 'notes', header: 'Alasan/Keterangan' },
                 ]}
                 globalFilterPlaceholder="Search history..."

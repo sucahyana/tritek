@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants\UnitOptions;
 use App\Exports\ProductExport;
+use App\Exports\ProductsExport;
 use App\Models\Material;
 use App\Models\Process;
 use App\Models\ProductProcess;
@@ -66,7 +67,7 @@ class ProductController extends Controller
             $this->createProcess($product->id, 'Packaging', 'Packaging');
             $createdProcesses[] = ['name' => 'Packaging', 'description' => 'Packaging'];
 
-            $this->createProcess($product->id, 'Pengurangan Produk', 'Pengurangan Produk');
+            $this->createProcess($product->id, 'Pengurangan', 'Pengurangan Produk');
             $createdProcesses[] = ['name' => 'Pengurangan', 'description' => 'Pengurangan'];
 
             if ($validated['external_process']) {
@@ -119,7 +120,6 @@ class ProductController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
-
 
 
     public function show(Request $request, $id)
@@ -220,6 +220,7 @@ class ProductController extends Controller
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
+
     public function export(Request $request, $id)
     {
         try {
@@ -248,12 +249,68 @@ class ProductController extends Controller
                 $processesWithProductProcesses[] = $processData;
             }
 
-            return Excel::download(new ProductExport($product, $processesWithProductProcesses , $material), $product->name.'.xlsx');
+            return Excel::download(new ProductExport($product, $processesWithProductProcesses, $material), $product->name . '.xlsx');
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
     }
 
+    public function exportAll(Request $request)
+    {
+        try {
+            // Fetch all products with their related processes and materials
+            $products = Product::with(['processes'])->get();
+
+            $productsData = [];
+
+            foreach ($products as $product) {
+                $processes = $product->processes()->with('productProcesses')->get();
+
+                $processesWithProductProcesses = [];
+                foreach ($processes as $process) {
+                    $productProcesses = $process->productProcesses()->orderBy('date', 'desc')->get();
+
+                    $processData = [
+                        'process' => $process,
+                        'product_processes' => $productProcesses
+                    ];
+
+                    $processesWithProductProcesses[] = $processData;
+                }
+
+                $productsData[] = [
+                    'product' => $product,
+                    'processes' => $processesWithProductProcesses,
+                ];
+            }
+
+            // Export all collected data
+            return Excel::download(new ProductsExport($productsData), 'all_products.xlsx');
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+        }
+    }
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            if (!$product) {
+                return $this->notFoundResponse('Product tidak ditemukan');
+            }
+            $processes = $product->processes()->get();
+
+            foreach ($processes as $process) {
+                $process->productProcesses()->delete();
+            }
+
+            $product->processes()->delete();
+            $product->delete();
+
+            return $this->successResponse('Product berhasil dihapus');
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+        }
+    }
 
 
 }
