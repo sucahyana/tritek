@@ -36,6 +36,16 @@ const ReportHome = ({ products, materials }) => {
             console.error('Error exporting data:', error);
         }
     };
+    const handleSubmitAll = async (isProduct) => {
+        const endpoint = isProduct ? 'productsExport' : 'materialsExport'
+        try {
+            const response = await ApiService[endpoint]();
+            console.log('Export success:', response);
+        }
+        catch (error) {
+            console.error('Error exporting data:', error);
+        }
+    }
 
     const renderSection = (title, buttonLabel, fileName, fileSource, dropdownPlaceholder, options, selectedOption, setSelectedOption, isProduct) => (
         <section className="p-2 w-full text-center rounded-lg bg-gradient-to-r from-martinique-200 to-martinique-400 shadow-lg">
@@ -74,7 +84,7 @@ const ReportHome = ({ products, materials }) => {
                 </h2>
                 <Button
                     label={`Download Seluruh ${buttonLabel}`}
-                    onClick={() => handleExportExcel(fileName, fileSource)}
+                    onClick={() =>handleSubmitAll(isProduct)}
                     className="p-3 bg-gradient-to-r from-martinique-400 to-martinique-200 text-martinique-900 mb-2 rounded-lg shadow-lg border border-martinique-800 opacity-80"
                 />
             </div>

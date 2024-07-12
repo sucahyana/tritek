@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\MaterialExport;
+use App\Exports\MaterialsExport;
 use App\Models\MaterialHistory;
 use Illuminate\Http\Request;
 use App\Models\Material;
@@ -73,6 +74,21 @@ class MaterialController extends Controller
             ];
 
             return $this->successResponse('Daftar Material berhasil diambil', $response);
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
+        }
+    }
+
+    public function orderExport()
+    {
+        try {
+            $materials = Material::with('material_histories')->orderBy('created_at', 'desc')->get();
+
+            if ($materials->isEmpty()) {
+                return $this->notFoundResponse('Material Tidak Ditemukan');
+            }
+
+            return Excel::download(new MaterialsExport($materials), 'material_history.xlsx');
         } catch (\Exception $e) {
             return $this->serverErrorResponse('Kesalahan Server', $e->getMessage());
         }
