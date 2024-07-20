@@ -172,7 +172,6 @@ class MaterialController extends Controller
     {
         try {
             $material = Material::findOrFail($id);
-            $material->material_histories()->delete();
             $material->delete();
 
             return $this->successResponse('Material berhasil dihapus');

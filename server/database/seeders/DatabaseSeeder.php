@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Seed data for materials table
         for ($i = 1; $i <= 100; $i++) {
             DB::table('materials')->insert([
                 'id' => $i,
@@ -27,7 +26,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seed data for products table
         for ($i = 1; $i <= 100; $i++) {
             DB::table('products')->insert([
                 'id' => $i,
@@ -41,12 +39,12 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'model' => 'KLKK' . $i,
-                'material_id' => $i, // Assign material_id sequentially to ensure it exists
-                'material_used' => rand(10, 50),
+                'material_id' => $i,
+                'material_used' => rand(1 , 5),
             ]);
         }
 
-        // Seed data for processes table
+
         $processCounter = 1;
         for ($productId = 1; $productId <= 100; $productId++) {
             for ($j = 1; $j <= 5; $j++) {
@@ -61,7 +59,7 @@ class DatabaseSeeder extends Seeder
                 $processCounter++;
             }
 
-            // Add a specific process called "Packaging" for each product
+
             DB::table('processes')->insert([
                 'id' => $processCounter,
                 'name' => 'Packaging',
@@ -105,8 +103,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
-
-        // Seed data for production_reports table
+        
         for ($i = 1; $i <= 100; $i++) {
             DB::table('production_reports')->insert([
                 'id' => $i,
@@ -121,7 +118,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seed data for users table
+
         for ($i = 1; $i <= 100; $i++) {
             DB::table('users')->insert([
                 'name' => 'User ' . $i,
@@ -132,11 +129,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seed data for inventory_reports table
+
         for ($i = 1; $i <= 100; $i++) {
             DB::table('inventory_reports')->insert([
                 'id' => $i,
-                'material_id' => $i, // Ensure material_id exists
+                'material_id' => $i,
                 'report_date' => now(),
                 'quantity' => rand(20, 100),
                 'notes' => 'Initial inventory report for Material ' . $i,
@@ -145,7 +142,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seed data for material_histories table
+
         for ($materialId = 1; $materialId <= 100; $materialId++) {
             for ($i = 1; $i <= 100; $i++) {
                 DB::table('material_histories')->insert([

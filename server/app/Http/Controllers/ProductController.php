@@ -299,9 +299,7 @@ class ProductController extends Controller
             }
             $processes = $product->processes()->get();
 
-            foreach ($processes as $process) {
-                $process->productProcesses()->delete();
-            }
+
 
             $product->processes()->delete();
             $product->delete();
