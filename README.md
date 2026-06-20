@@ -53,15 +53,10 @@ Menampilkan detail produk dengan fitur pengelolaan dan edit.
 ### Pengaturan Produk '/product/{model}/setting'
 [![Product setting](/assets/productSetting.png)](/assets/productSetting.mp4)
 
-<<<<<<< HEAD
-=======
-
 https://github.com/sucahyana/tritek/assets/97436856/09589a2d-d933-4249-987b-cdb5e153fe60
 
 
 Menampilkan pengaturan produk dengan fitur tambah, edit, dan hapus.
-
->>>>>>> ef8ab9f773295d815d8d8887be31f5a063eae820
 ### Material Thumbnail '/materials'
 ![Material](/assets/materials.png)
 Menampilkan thumbnail material dengan fitur paginasi dan tambah material baru.

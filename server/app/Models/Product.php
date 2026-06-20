@@ -26,7 +26,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $updated_at
  *
  * @property Collection|Process[] $processes
- * @property Collection|ProductionReport[] $production_reports
  *
  * @package App\Models
  */
@@ -62,8 +61,4 @@ class Product extends Model
 					->withTimestamps();
 	}
 
-	public function production_reports()
-	{
-		return $this->hasMany(ProductionReport::class);
-	}
 }

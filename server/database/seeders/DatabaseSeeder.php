@@ -12,7 +12,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 100; $i++) {
+        DB::transaction(function () {
+            for ($i = 1; $i <= 100; $i++) {
             DB::table('materials')->insert([
                 'id' => $i,
                 'name' => 'Material ' . $i,
@@ -104,20 +105,6 @@ class DatabaseSeeder extends Seeder
             }
         }
         
-        for ($i = 1; $i <= 100; $i++) {
-            DB::table('production_reports')->insert([
-                'id' => $i,
-                'product_id' => $i, // Ensure product_id exists
-                'report_date' => now(),
-                'total_produced' => rand(500, 2000),
-                'total_used' => rand(100, 1000),
-                'status' => 'Completed',
-                'notes' => 'Initial production report for Product ' . $i,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
-
 
         for ($i = 1; $i <= 100; $i++) {
             DB::table('users')->insert([
@@ -129,18 +116,6 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-
-        for ($i = 1; $i <= 100; $i++) {
-            DB::table('inventory_reports')->insert([
-                'id' => $i,
-                'material_id' => $i,
-                'report_date' => now(),
-                'quantity' => rand(20, 100),
-                'notes' => 'Initial inventory report for Material ' . $i,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
 
 
         for ($materialId = 1; $materialId <= 100; $materialId++) {
@@ -158,5 +133,6 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+        });
     }
 }

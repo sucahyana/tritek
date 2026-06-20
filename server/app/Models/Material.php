@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property Collection|InventoryReport[] $inventory_reports
  * @property Collection|MaterialHistory[] $material_histories
  * @property Collection|ProductProcess[] $product_processes
  *
@@ -48,10 +47,6 @@ class Material extends Model
 		'total_quantity'
 	];
 
-	public function inventory_reports()
-	{
-		return $this->hasMany(InventoryReport::class);
-	}
 
 	public function material_histories()
 	{

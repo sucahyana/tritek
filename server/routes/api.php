@@ -7,8 +7,7 @@ use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProcessController;
 use App\Http\Controllers\ProductProcessController;
-use App\Http\Controllers\ProductionReportController;
-use App\Http\Controllers\InventoryReportController;
+
 
 Route::prefix('v1')->group(function () {
 // Materials
